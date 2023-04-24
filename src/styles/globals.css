@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-black text-slate-100;
+}
+.cl-internal-b3fm6y {
+  display: none;
+}
