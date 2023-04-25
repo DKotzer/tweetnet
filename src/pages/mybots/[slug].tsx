@@ -24,7 +24,7 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <div className="border-b p-4">
+        <div className="border-x border-b p-4">
           <div className="my-auto flex  gap-3  ">
             <Image
               src={bot.bot.image}
@@ -46,7 +46,8 @@ const ProfileFeed = (props: { userId: string }) => {
           {/* {bot.bot.follower && (
             <span> 👥 + {bot.bot.followers.length} + Human Followers</span>
           )} */}
-          {!bot.bot.followers && <span> 👥 0 Human Followers</span>}
+          {/* {!bot.bot.followers && <span> 👥 0 Human Followers</span>} */}
+          <span> 👥 0 Human Followers</span>
           <br />
           <br />
 
@@ -124,6 +125,7 @@ const CreateBotsWizard = () => {
   const { mutate, isLoading: isPosting } = api.bots.create.useMutation({
     onSuccess: () => {
       setInput("");
+      setName("");
       void ctx.bots.getAll.invalidate();
     },
     onError: (e) => {
@@ -137,55 +139,65 @@ const CreateBotsWizard = () => {
   });
 
   return (
-    <div className="flex w-full gap-3 border-b p-5">
-      <Image
-        src="/default.webP"
-        alt="default profile picture"
-        width={56}
-        height={56}
-        className="rounded-full"
-      />
-      <div className="flex gap-3">
-        <div>
-          <span className="my-auto">@</span>
-          <input
-            placeholder="Bot name"
-            className=" w-20 bg-transparent outline-none"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (name !== "") {
-                  mutate({ content: name, name: name });
+    <div className="flex w-full flex-col gap-3 border-b ">
+      <div className=" bg-slate-500 p-5 backdrop-blur-lg">
+        To create a new bot, simply give it a name and description. The more
+        detailed the description, the better your results will be.
+      </div>
+      <div className="flex gap-3 p-5">
+        <Image
+          src="/default.webP"
+          alt="default profile picture"
+          width={56}
+          height={56}
+          className="rounded-full"
+        />
+        <div className="my-auto flex gap-3">
+          <div>
+            <span>@</span>
+            <input
+              placeholder="Bot name"
+              className=" w-20  bg-transparent outline-none"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (name !== "") {
+                    mutate({ content: name, name: name });
+                  }
                 }
-              }
-            }}
-            disabled={isPosting}
-          />
-        </div>
-        <div>
-          <input
-            placeholder="Bot description"
-            className="grow bg-transparent outline-none"
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (input !== "") {
-                  mutate({ content: input, name: name });
+              }}
+              disabled={isPosting}
+            />
+          </div>
+          <div className="flex grow">
+            <input
+              placeholder="Bot description"
+              className="flex w-[400px] grow bg-transparent outline-none"
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (input !== "") {
+                    mutate({ content: input, name: name });
+                  }
                 }
-              }
-            }}
-            disabled={isPosting}
-          />
+              }}
+              disabled={isPosting}
+            />
+          </div>
         </div>
       </div>
-      <div>
-        {input !== "" && !isPosting && (
-          <button onClick={() => mutate({ content: input, name: name })}>
+      {/* use tailwind to move this to the far right */}
+      <div className="">
+        {input !== "" && !isPosting && name !== "" && (
+          <button
+            className="float-right mt-[-50px] mr-10 h-[30px] rounded-xl ring-2 ring-slate-400"
+            onClick={() => mutate({ content: input, name: name })}
+          >
             Post
           </button>
         )}
@@ -211,21 +223,21 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-600">
+        <div className="flex w-full bg-slate-600">
           <Image
             src={data.profileImageUrl}
             alt={`${
               data.username ?? data.externalUsername ?? "unknown"
             }'s profile pic`}
-            width={128}
-            height={128}
-            className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
+            width={120}
+            height={120}
+            className="my-3 ml-4 rounded-full border-4 border-black bg-black"
           />
+          <div className="my-auto p-4 text-3xl font-bold">{`${
+            data.username ?? data.externalUsername ?? "unknown"
+          }'s bots`}</div>
         </div>
-        <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">{`${
-          data.username ?? data.externalUsername ?? "unknown"
-        }'s bots`}</div>
+
         <CreateBotsWizard />
 
         <ProfileFeed userId={data.id} />

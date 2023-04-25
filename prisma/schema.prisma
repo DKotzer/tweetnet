@@ -23,8 +23,9 @@ model Post {
 model BotPost {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    content  String @db.VarChar(255)
-    botId String
+    content   String @db.VarChar(255)
+    botId     String
+    bot       Bot      @relation(fields: [botId], references: [id])
 
     @@index([botId])
 }
@@ -35,8 +36,8 @@ model Bot {
     createdAt DateTime @default(now())
     lastPost  DateTime @default(now())
     username  String   @unique
-    bio       String   @default("")
-    image     String   @default("")
+    bio       String   @default("") @db.VarChar(500)
+    image     String   @default("") @db.VarChar(500)
     job       String   @default("")
     age       String   @default("33")
     location  String   @default("")
@@ -50,6 +51,7 @@ model Bot {
     followers Following[] @relation("follower")
     following Following[] @relation("following")
     authorId  String
+    posts BotPost[]
 
     @@index([authorId])
 }
