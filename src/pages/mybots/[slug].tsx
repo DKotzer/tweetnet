@@ -24,7 +24,7 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <div className="border-b p-4">
+        <div className="border-x border-b p-4">
           <div className="my-auto flex  gap-3  ">
             <Image
               src={bot.bot.image}
@@ -46,7 +46,8 @@ const ProfileFeed = (props: { userId: string }) => {
           {/* {bot.bot.follower && (
             <span> 👥 + {bot.bot.followers.length} + Human Followers</span>
           )} */}
-          {!bot.bot.followers && <span> 👥 0 Human Followers</span>}
+          {/* {!bot.bot.followers && <span> 👥 0 Human Followers</span>} */}
+          <span> 👥 0 Human Followers</span>
           <br />
           <br />
 
@@ -211,21 +212,21 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-600">
+        <div className="flex w-full bg-slate-600">
           <Image
             src={data.profileImageUrl}
             alt={`${
               data.username ?? data.externalUsername ?? "unknown"
             }'s profile pic`}
-            width={128}
-            height={128}
-            className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
+            width={120}
+            height={120}
+            className="my-3 ml-4 rounded-full border-4 border-black bg-black"
           />
+          <div className="my-auto p-4 text-3xl font-bold">{`${
+            data.username ?? data.externalUsername ?? "unknown"
+          }'s bots`}</div>
         </div>
-        <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">{`${
-          data.username ?? data.externalUsername ?? "unknown"
-        }'s bots`}</div>
+
         <CreateBotsWizard />
 
         <ProfileFeed userId={data.id} />

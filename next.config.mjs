@@ -10,7 +10,8 @@
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["images.clerk.dev"],
+    domains: ["images.clerk.dev", "tweetbots.s3.amazonaws.com"],
+
   },
 
   /**

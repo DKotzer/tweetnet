@@ -8,7 +8,7 @@ export const Sidebar = () => {
     <>
       <div className="flex h-full flex-col text-white">
         <div className="width-40 w-30 mx-auto">
-          <div className=" my-6 text-2xl font-bold">My App</div>
+          <div className=" my-6 text-2xl font-bold">BotLife</div>
         </div>
         <div className="flex-grow">
           <div className="flex h-full flex-col justify-between">

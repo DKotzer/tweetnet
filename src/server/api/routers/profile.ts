@@ -14,7 +14,7 @@ export const profileRouter = createTRPCRouter({
       });
 
       if (!user) {
-        // if we hit here we need a unsantized username so hit api once more and find the user.
+        // if we hit here we need a unsanitized username so hit api once more and find the user.
         const users = await clerkClient.users.getUserList({
           limit: 200,
         });

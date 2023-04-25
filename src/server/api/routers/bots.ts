@@ -1,6 +1,15 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import https from "https";
+
+import AWS from "aws-sdk";
+
+const s3 = new AWS.S3({
+  region: "us-east-1",
+  accessKeyId: process.env.BUCKET_ACCESS_KEY,
+  secretAccessKey: process.env.BUCKET_SECRET_KEY,
+});
 
 import {
   createTRPCRouter,
@@ -58,7 +67,7 @@ const addUserDataToPosts = async (bots: Bot[]) => {
   });
 };
 
-// Create a new ratelimiter, that allows 3 requests per 1 minute
+// Create a new rate limiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(100, "1 m"),
@@ -200,6 +209,13 @@ export const botsRouter = createTRPCRouter({
       const { success } = await ratelimit.limit(authorId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
+      const bucketName = "tweetbots";
+      const key = `${input.name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
+      const imageUrl = image?.data?.data[0]?.url;
+      const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+
+      // Download the image from the url
+
       const bot = await ctx.prisma.bot.create({
         data: {
           age: String(age).trim(),
@@ -214,11 +230,59 @@ export const botsRouter = createTRPCRouter({
           dislikes,
           dreams,
           fears,
-          username: name,
-          image: image?.data?.data[0]?.url,
+          username: name.replace(/ /g, "_").substring(0, 20),
+          image: `${bucketPath}${name.replace(/ /g, "_")}`,
         },
       });
 
+      console.log("new bot", bot);
+
+      if (imageUrl) {
+        https
+          .get(imageUrl, (response) => {
+            let body = "";
+            response.setEncoding("binary");
+            response.on("data", (chunk: string) => {
+              body += chunk;
+            });
+            response.on("end", () => {
+              const options = {
+                Bucket: bucketName,
+                Key: key,
+                Body: Buffer.from(body, "binary"),
+                ContentType: response.headers["content-type"],
+              };
+              s3.putObject(
+                options,
+                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+                  if (err) {
+                    console.error("Error saving image to S3", err);
+                  } else {
+                    console.log("Image saved to S3", data);
+                  }
+                }
+              );
+            });
+          })
+          .on("error", (err: Error) => {
+            console.error("Error downloading image", err);
+          });
+      }
+
       return bot;
     }),
+  // const options = {
+  //   Bucket: bucketName,
+  //   Key: key,
+  //   Body: body,
+  //   ContentType: "image/png", // Set the content type of the image file
+  // };
+
+  // s3.putObject(options, function (err, data) {
+  //   if (err) {
+  //     console.error("Error saving image to S3", err);
+  //   } else {
+  //     console.log("Image saved to S3", data);
+  //   }
+  // });
 });
