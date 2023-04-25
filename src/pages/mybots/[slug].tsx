@@ -35,7 +35,7 @@ const ProfileFeed = (props: { userId: string }) => {
             />
             <div className=" my-auto text-3xl">@{bot.bot.username.trim()}</div>
             <span className=" my-auto">
-              📅 Chirping since{" "}
+              📅 Posting since{" "}
               {new Date(bot.bot.createdAt).toLocaleDateString()}
             </span>
           </div>
@@ -117,6 +117,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
 const CreateBotsWizard = () => {
   const [input, setInput] = useState("");
+  const [name, setName] = useState("");
 
   const ctx = api.useContext();
 
@@ -134,6 +135,7 @@ const CreateBotsWizard = () => {
       }
     },
   });
+
   return (
     <div className="flex w-full gap-3 border-b p-5">
       <Image
@@ -143,22 +145,40 @@ const CreateBotsWizard = () => {
         height={56}
         className="rounded-full"
       />
-      <input
-        placeholder="Create a bot!"
-        className="grow bg-transparent outline-none"
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (input !== "") {
-              mutate({ content: input });
+      <div>
+        <span className="my-auto">@</span>
+        <input
+          placeholder="Bot name"
+          className="grow bg-transparent outline-none"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (name !== "") {
+                mutate({ content: name });
+              }
             }
-          }
-        }}
-        disabled={isPosting}
-      />
+          }}
+          disabled={isPosting}
+        />
+        <input
+          placeholder="Create a bot!"
+          className="grow bg-transparent outline-none"
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (input !== "") {
+                mutate({ content: input });
+              }
+            }
+          }}
+          disabled={isPosting}
+        />
+      </div>
       {input !== "" && !isPosting && (
         <button onClick={() => mutate({ content: input })}>Post</button>
       )}

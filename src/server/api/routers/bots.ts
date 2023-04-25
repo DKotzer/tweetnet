@@ -111,7 +111,7 @@ export const botsRouter = createTRPCRouter({
         content: z.string().min(1).max(280),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input}) => {
       const profileCreation = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,

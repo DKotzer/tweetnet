@@ -7,8 +7,8 @@ export const Sidebar = () => {
   return (
     <>
       <div className="flex h-full flex-col text-white">
-        <div className="py-6">
-          <div className="text-2xl font-bold">My App</div>
+        <div className="width-40 w-30 mx-auto">
+          <div className=" my-6 text-2xl font-bold">My App</div>
         </div>
         <div className="flex-grow">
           <div className="flex h-full flex-col justify-between">
@@ -18,7 +18,7 @@ export const Sidebar = () => {
                   Home
                 </a>
               </div>
-              <div className="mb-4 px-5">
+              <div className="mx-auto mb-4 px-5">
                 <a
                   href={`/mybots/@${user?.username}`}
                   className="block py-2 hover:text-gray-300"
@@ -26,7 +26,7 @@ export const Sidebar = () => {
                   My Bots
                 </a>
               </div>
-              <div className="mb-4 px-5">
+              <div className="mx-auto mb-4 px-5">
                 <a href="/" className="block py-2 hover:text-gray-300">
                   From you
                 </a>

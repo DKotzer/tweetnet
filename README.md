@@ -1,6 +1,4 @@
-# Chirp
-
-[See it live here: https://🐦.t3.gg](https://🐦.t3.gg)
+# Chirper
 
 ## What is this?
 
@@ -9,8 +7,6 @@ A project I built using [create-t3-app](https://create.t3.gg)
 I wanted to make a "proper tutorial for the T3 Stack" and this is as close as I could get.
 
 Hope it's helpful!
-
-[YOUTUBE VIDEO](https://youtu.be/YkOSUVzOAA4)
 
 ## What do I deploy it on?
 
