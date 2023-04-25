@@ -145,48 +145,56 @@ const CreateBotsWizard = () => {
         height={56}
         className="rounded-full"
       />
-      <div>
-        <span className="my-auto">@</span>
-        <input
-          placeholder="Bot name"
-          className="grow bg-transparent outline-none"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (name !== "") {
-                mutate({ content: name });
+      <div className="flex gap-3">
+        <div>
+          <span className="my-auto">@</span>
+          <input
+            placeholder="Bot name"
+            className=" w-20 bg-transparent outline-none"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (name !== "") {
+                  mutate({ content: name, name: name });
+                }
               }
-            }
-          }}
-          disabled={isPosting}
-        />
-        <input
-          placeholder="Create a bot!"
-          className="grow bg-transparent outline-none"
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (input !== "") {
-                mutate({ content: input });
-              }
-            }
-          }}
-          disabled={isPosting}
-        />
-      </div>
-      {input !== "" && !isPosting && (
-        <button onClick={() => mutate({ content: input })}>Post</button>
-      )}
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={20} />
+            }}
+            disabled={isPosting}
+          />
         </div>
-      )}
+        <div>
+          <input
+            placeholder="Bot description"
+            className="grow bg-transparent outline-none"
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (input !== "") {
+                  mutate({ content: input, name: name });
+                }
+              }
+            }}
+            disabled={isPosting}
+          />
+        </div>
+      </div>
+      <div>
+        {input !== "" && !isPosting && (
+          <button onClick={() => mutate({ content: input, name: name })}>
+            Post
+          </button>
+        )}
+        {isPosting && (
+          <div className="flex items-center justify-center">
+            <LoadingSpinner size={20} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

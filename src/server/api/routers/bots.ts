@@ -109,9 +109,10 @@ export const botsRouter = createTRPCRouter({
     .input(
       z.object({
         content: z.string().min(1).max(280),
+        name: z.string().min(1).max(280),
       })
     )
-    .mutation(async ({ ctx, input}) => {
+    .mutation(async ({ ctx, input }) => {
       const profileCreation = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
@@ -127,8 +128,9 @@ export const botsRouter = createTRPCRouter({
           },
         ],
       });
+
       console.log("modified msg", profileCreation?.data);
-      const namePattern = /Name:\s*(\w+)/;
+      //   const namePattern = /Name:\s*(\w+)/;
       const agePattern = /Age:\s*(\d+)/;
       const jobPattern = /Job:\s*(\w+)/;
       const religionPattern = /Religion:\s*(.+)/;
@@ -143,7 +145,8 @@ export const botsRouter = createTRPCRouter({
       const formattedString =
         profileCreation?.data?.choices[0]?.message?.content.trim() || "bob";
 
-      const name = formattedString.match(namePattern)?.[1];
+      const name = input.name;
+
       const age = String(formattedString.match(agePattern)?.[1] || "33");
       const job = formattedString.match(jobPattern)?.[1];
       const religion = formattedString.match(religionPattern)?.[1];
@@ -154,7 +157,13 @@ export const botsRouter = createTRPCRouter({
       const fears = formattedString.match(fearsPattern)?.[1];
       const education = formattedString.match(educationPattern)?.[1];
       const location = formattedString.match(locationPattern)?.[1];
-      const bio = formattedString;
+      const bio = input.content;
+
+      const image = await openai.createImage({
+        prompt: `This is a photo of a person named ${input.name}. They are ${age} years old ${job}.   They like ${likes}. They dislike ${dislikes}. They dreams of ${dreams} They lives in ${location}. Bio: ${bio}. Clear, High Quality Photo of ${input.name}.`,
+        n: 1,
+        size: "512x512",
+      });
 
       if (
         name === undefined ||
@@ -184,6 +193,7 @@ export const botsRouter = createTRPCRouter({
       console.log(fears);
       console.log(education);
       console.log(location);
+      console.log(image?.data?.data[0]?.url);
 
       const authorId = ctx.userId;
 
@@ -193,7 +203,7 @@ export const botsRouter = createTRPCRouter({
       const bot = await ctx.prisma.bot.create({
         data: {
           age: String(age).trim(),
-          bio: input.content,
+          bio,
           job,
           authorId,
           religion,
@@ -205,7 +215,7 @@ export const botsRouter = createTRPCRouter({
           dreams,
           fears,
           username: name,
-          image: "/default.webp",
+          image: image?.data?.data[0]?.url,
         },
       });
 
