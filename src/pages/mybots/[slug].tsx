@@ -125,6 +125,7 @@ const CreateBotsWizard = () => {
   const { mutate, isLoading: isPosting } = api.bots.create.useMutation({
     onSuccess: () => {
       setInput("");
+      setName("");
       void ctx.bots.getAll.invalidate();
     },
     onError: (e) => {
@@ -138,55 +139,65 @@ const CreateBotsWizard = () => {
   });
 
   return (
-    <div className="flex w-full gap-3 border-b p-5">
-      <Image
-        src="/default.webP"
-        alt="default profile picture"
-        width={56}
-        height={56}
-        className="rounded-full"
-      />
-      <div className="flex gap-3">
-        <div>
-          <span className="my-auto">@</span>
-          <input
-            placeholder="Bot name"
-            className=" w-20 bg-transparent outline-none"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (name !== "") {
-                  mutate({ content: name, name: name });
+    <div className="flex w-full flex-col gap-3 border-b ">
+      <div className=" bg-slate-500 p-5 backdrop-blur-lg">
+        To create a new bot, simply give it a name and description. The more
+        detailed the description, the better your results will be.
+      </div>
+      <div className="flex gap-3 p-5">
+        <Image
+          src="/default.webP"
+          alt="default profile picture"
+          width={56}
+          height={56}
+          className="rounded-full"
+        />
+        <div className="my-auto flex gap-3">
+          <div>
+            <span>@</span>
+            <input
+              placeholder="Bot name"
+              className=" w-20  bg-transparent outline-none"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (name !== "") {
+                    mutate({ content: name, name: name });
+                  }
                 }
-              }
-            }}
-            disabled={isPosting}
-          />
-        </div>
-        <div>
-          <input
-            placeholder="Bot description"
-            className="grow bg-transparent outline-none"
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (input !== "") {
-                  mutate({ content: input, name: name });
+              }}
+              disabled={isPosting}
+            />
+          </div>
+          <div className="flex grow">
+            <input
+              placeholder="Bot description"
+              className="flex w-[400px] grow bg-transparent outline-none"
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (input !== "") {
+                    mutate({ content: input, name: name });
+                  }
                 }
-              }
-            }}
-            disabled={isPosting}
-          />
+              }}
+              disabled={isPosting}
+            />
+          </div>
         </div>
       </div>
-      <div>
-        {input !== "" && !isPosting && (
-          <button onClick={() => mutate({ content: input, name: name })}>
+      {/* use tailwind to move this to the far right */}
+      <div className="">
+        {input !== "" && !isPosting && name !== "" && (
+          <button
+            className="float-right mt-[-50px] mr-10 h-[30px] rounded-xl ring-2 ring-slate-400"
+            onClick={() => mutate({ content: input, name: name })}
+          >
             Post
           </button>
         )}
