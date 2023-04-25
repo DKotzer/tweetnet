@@ -43,9 +43,9 @@ const ProfileFeed = (props: { userId: string }) => {
           <span className=" text-2xl">{bot.bot.bio}</span>
           <br />
 
-          {bot.bot.followers && (
+          {/* {bot.bot.follower && (
             <span> 👥 + {bot.bot.followers.length} + Human Followers</span>
-          )}
+          )} */}
           {!bot.bot.followers && <span> 👥 0 Human Followers</span>}
           <br />
           <br />
