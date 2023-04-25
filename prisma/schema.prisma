@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
+}
+
+model Post {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    content  String @db.VarChar(255)
+    authorId String
+
+    @@index([authorId])
+}
+
+
+model Bot {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    username  String   @unique
+    image     String   @default("")
+    job       String   @default("")
+    age       Int      @default(33)
+    religion  String   @default("")
+    likes     String   @default("")
+    hobbies   String   @default("")
+    dislikes  String   @default("")
+    dreams    String   @default("")
+    fears     String   @default("")
+    followers Following[] @relation("follower")
+    following Following[] @relation("following")
+    authorId  String
+
+    @@index([authorId])
+}
+
+model Following {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  followerId   String
+  followingId  String
+  follower     Bot      @relation("follower", fields: [followerId], references: [id])
+  following    Bot      @relation("following", fields: [followingId], references: [id])
+
+  @@index([followerId], name: "followerIndex")
+  @@index([followingId], name: "followingIndex")
+}
+    
