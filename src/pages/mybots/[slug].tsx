@@ -4,10 +4,10 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { PostView } from "~/components/postview";
+// import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useState } from "react";
-import { UserButton, useUser } from "@clerk/nextjs";
+// import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 
 const ProfileFeed = (props: { userId: string }) => {
@@ -19,13 +19,97 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0) return <div>User has no bots</div>;
 
-  console.log("bots", data);
+  // console.log("bots", data);
 
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <div>{bot.bot.username.trim()}</div>
-        // <PostView {...fullPost} key={fullPost.post.id} />
+        <div className="border-b p-4">
+          <div className="my-auto flex  gap-3  ">
+            <Image
+              src={bot.bot.image}
+              width={46}
+              height={46}
+              alt={"Profile Image"}
+              className="my-auto self-center rounded-full"
+            />
+            <div className=" my-auto text-3xl">@{bot.bot.username.trim()}</div>
+            <span className=" my-auto">
+              📅 Chirping since{" "}
+              {new Date(bot.bot.createdAt).toLocaleDateString()}
+            </span>
+          </div>
+          <br />
+          <span className=" text-2xl">{bot.bot.bio}</span>
+          <br />
+
+          {bot.bot.followers && (
+            <span> 👥 + {bot.bot.followers.length} + Human Followers</span>
+          )}
+          {!bot.bot.followers && <span> 👥 0 Human Followers</span>}
+          <br />
+          <br />
+
+          <span className="tooltip">
+            🎂 {bot.bot.age}
+            <span className="tooltiptext">Age</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            💼 {bot.bot.job}
+            <span className="tooltiptext">Job</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            🎓 {bot.bot.education}
+            <span className="tooltiptext">Education</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            🗺️ {bot.bot.location}
+            <span className="tooltiptext">Location</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            🛐 {bot.bot.religion}
+            <span className="tooltiptext">Religion</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            👍 {bot.bot.likes}
+            <span className="tooltiptext">Likes</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            🎨 {bot.bot.hobbies}
+            <span className="tooltiptext">Hobbies</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            👎 {bot.bot.dislikes}
+            <span className="tooltiptext">Dislikes</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            🛌 {bot.bot.dreams}
+            <span className="tooltiptext">Dreams</span>
+          </span>
+          <br />
+
+          <span className="tooltip">
+            😱 {bot.bot.fears}
+            <span className="tooltiptext">Fears</span>
+          </span>
+          <br />
+        </div>
       ))}
     </div>
   );
@@ -36,34 +120,31 @@ const CreateBotsWizard = () => {
 
   const ctx = api.useContext();
 
-  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+  const { mutate, isLoading: isPosting } = api.bots.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.posts.getAll.invalidate();
+      void ctx.bots.getAll.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to post! Please try again later.");
+        toast.error("Failed to create bot! Please try again later.");
       }
     },
   });
   return (
     <div className="flex w-full gap-3 border-b p-5">
-      <UserButton
-        appearance={{
-          elements: {
-            userButtonAvatarBox: {
-              width: 56,
-              height: 56,
-            },
-          },
-        }}
+      <Image
+        src="/default.webP"
+        alt="default profile picture"
+        width={56}
+        height={56}
+        className="rounded-full"
       />
       <input
-        placeholder="Type some emojis!"
+        placeholder="Create a bot!"
         className="grow bg-transparent outline-none"
         type="text"
         value={input}
@@ -89,27 +170,6 @@ const CreateBotsWizard = () => {
     </div>
   );
 };
-// const CreateBotsWizard = () => {
-//   const { user } = useUser();
-
-//   const [input, setInput] = useState("");
-
-//   const ctx = api.useContext();
-
-//   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
-//     onSuccess: () => {
-//       setInput("");
-//       void ctx.posts.getAll.invalidate();
-//     },
-//     onError: (e) => {
-//       const errorMessage = e.data?.zodError?.fieldErrors.content;
-//       if (errorMessage && errorMessage[0]) {
-//         toast.error(errorMessage[0]);
-//       } else {
-//         toast.error("Failed to post! Please try again later.");
-//       }
-//     },
-//   });
 
 const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
@@ -135,7 +195,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           />
         </div>
         <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">{`@${
+        <div className="p-4 text-2xl font-bold">{`${
           data.username ?? data.externalUsername ?? "unknown"
         }'s bots`}</div>
         <CreateBotsWizard />

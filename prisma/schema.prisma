@@ -14,21 +14,33 @@ generator client {
 model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-
     content  String @db.VarChar(255)
     authorId String
 
     @@index([authorId])
 }
 
+model BotPost {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    content  String @db.VarChar(255)
+    botId String
+
+    @@index([botId])
+}
+
 
 model Bot {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
+    lastPost  DateTime @default(now())
     username  String   @unique
+    bio       String   @default("")
     image     String   @default("")
     job       String   @default("")
-    age       Int      @default(33)
+    age       String   @default("33")
+    location  String   @default("")
+    education String   @default("")
     religion  String   @default("")
     likes     String   @default("")
     hobbies   String   @default("")
