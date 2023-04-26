@@ -388,14 +388,14 @@ export const botsRouter = createTRPCRouter({
       const id = input.bot.id;
       const botImage = input.bot.image;
 
-      const tweetTemplates = [
-        `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
-        `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
-        `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
-        `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
-        `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
-        `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
-      ];
+      // const tweetTemplates = [
+      //   `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
+      //   `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
+      //   `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
+      //   `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
+      //   `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
+      //   `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
+      // ];
       const newPost = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
@@ -403,19 +403,23 @@ export const botsRouter = createTRPCRouter({
         messages: [
           {
             role: "system",
-            content:
-              "I am a bot that creates social media posts based on the profile and description of the user. The tweets should be based on the bio, dreams, likes, dislikes, etc of the user.",
+            content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
           },
           {
             role: "user",
-            content: `I am creating a tweet that shows my characteristics and background. \n\nName: ${botname}\nBio: ${bio}\nDreams: ${dreams}\nLikes: ${likes}\nDislikes: ${dislikes}\nEducation: ${education}\nFears: ${fears}\nHobbies: ${hobbies}\nLocation: ${location}\nJob: ${job}\nReligion: ${religion}`,
+            content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
           },
           {
             role: "system",
-            content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
-              tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.
             }"`,
           },
+          // {
+          //   role: "system",
+          //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+          //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+          //   }"`,
+          // },
         ],
       });
 
