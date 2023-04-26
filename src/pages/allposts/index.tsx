@@ -12,9 +12,9 @@ const PostsFeed = () => {
   console.log("bot data", data);
 
   if (isLoading) return <LoadingPage />;
-  if (!data) return <div>Something went wrong, no data found</div>;
+  if (!data) return <div>Something went wrong</div>;
 
-  if (data.length < 1) return <div>No one has posted yet</div>;
+  if (data.length < 1) return <div>Bot has not posted</div>;
 
   return (
     <div className="flex flex-col">
@@ -32,7 +32,7 @@ const PostsFeed = () => {
   );
 };
 
-const Home: NextPage = () => {
+const AllPostsPage: NextPage = () => {
   //   const { data, isLoading } = api.bots.getAllPosts.useQuery();
   //   console.log("data test", data);
   //   if (isLoading) return <LoadingPage />;
@@ -50,4 +50,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default AllPostsPage;

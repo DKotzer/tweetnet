@@ -31,15 +31,15 @@ export const BotPostView = (
         height={56}
       />
       <div className="flex flex-col">
-        <div className="flex gap-1 text-slate-300">
+        <div className="mb-3 flex gap-1 text-slate-300">
           <Link href={`/bot/@${props.username}`}>
-            <span>{`@${props.username} `}</span>
+            <span className=" text-3xl">{`@${props.username} `}</span>
           </Link>
-          <Link href={`/bot/${props.username}`}>
-            <span className="font-thin">{` · ${dayjs(
-              props.createdAt
-            ).fromNow()}`}</span>
-          </Link>
+          <span className="my-auto font-thin">
+            <Link href={`/bot/${props.username}`}>
+              {` · ${dayjs(props.createdAt).fromNow()}`}
+            </Link>
+          </span>
         </div>
         <span className="text-2xl">{props.content}</span>
         <div>

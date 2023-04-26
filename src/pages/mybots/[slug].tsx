@@ -9,6 +9,7 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useState } from "react";
 // import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
@@ -24,19 +25,28 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <div className="border-x border-b p-4">
+        <div className="border-x border-b p-4" key={bot.bot.username}>
           <div className="my-auto flex  gap-3  ">
-            <Image
-              src={bot.bot.image}
-              width={46}
-              height={46}
-              alt={"Profile Image"}
-              className="my-auto self-center rounded-full"
-            />
-            <div className=" my-auto text-3xl">@{bot.bot.username.trim()}</div>
+            <Link href={`/bot/@${bot.bot.username}`}>
+              <Image
+                src={bot.bot.image}
+                width={46}
+                height={46}
+                alt={"Profile Image"}
+                className="my-auto self-center rounded-full"
+              />
+            </Link>
+
+            <Link href={`/bot/@${bot.bot.username}`}>
+              <div className=" my-auto text-3xl">
+                @{bot.bot.username.trim()}
+              </div>
+            </Link>
             <span className=" my-auto">
-              📅 Posting since{" "}
-              {new Date(bot.bot.createdAt).toLocaleDateString()}
+              <Link href={`/bot/@${bot.bot.username}`}>
+                📅 Posting since{" "}
+                {new Date(bot.bot.createdAt).toLocaleDateString()}
+              </Link>
             </span>
           </div>
           <br />
@@ -145,19 +155,19 @@ const CreateBotsWizard = () => {
         detailed the description, the better your results will be.
       </div>
       <div className="flex gap-3 p-5">
-        <Image
+        {/* <Image
           src="/default.webP"
           alt="default profile picture"
           width={56}
           height={56}
           className="rounded-full"
-        />
-        <div className="my-auto flex gap-3">
-          <div>
+        /> */}
+        <div className="my-auto flex flex-col gap-3">
+          <div className="flex grow flex-row">
             <span>@</span>
             <input
               placeholder="Bot name"
-              className=" w-20  bg-transparent outline-none"
+              className=" flex grow bg-transparent outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
@@ -174,7 +184,7 @@ const CreateBotsWizard = () => {
           <div className="flex grow">
             <input
               placeholder="Bot description"
-              className="flex w-[400px] grow bg-transparent outline-none"
+              className="flex w-[530px] max-w-full grow bg-transparent outline-none"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -195,10 +205,10 @@ const CreateBotsWizard = () => {
       <div className="">
         {input !== "" && !isPosting && name !== "" && (
           <button
-            className="float-right mt-[-50px] mr-10 h-[30px] rounded-xl ring-2 ring-slate-400"
+            className="float-right mt-[-50px] mr-5 h-[30px] rounded-xl px-2 font-bold ring-2 ring-slate-400 hover:scale-105 hover:bg-slate-300 hover:text-black hover:ring-2 hover:ring-white"
             onClick={() => mutate({ content: input, name: name })}
           >
-            Post
+            Create
           </button>
         )}
         {isPosting && (
@@ -212,10 +222,11 @@ const CreateBotsWizard = () => {
 };
 
 const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
-  const { data } = api.profile.getUserByUsername.useQuery({
+  const { data, isLoading } = api.profile.getUserByUsername.useQuery({
     username,
   });
-  if (!data) return <div>404</div>;
+  if (isLoading) return <LoadingPage />;
+  if (!data) return <LoadingPage />;
 
   return (
     <>

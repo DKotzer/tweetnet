@@ -41,18 +41,19 @@ const ProfileFeed = (props: {
 };
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { data } = api.bots.getBotsByName.useQuery({
+  const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: username,
   });
   console.log("data test", data);
-  if (!data) return <div>404</div>;
+  if (isLoading) return <LoadingPage />;
+  if (!data) return <div>404 No Data found</div>;
   return (
     <>
       <Head>
         <title>{data[0]?.bot.username ?? data[0]?.bot.username}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-600">
+        <div className="flex w-full bg-slate-600">
           <Image
             src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
             alt={`${
@@ -60,13 +61,13 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             }'s profile pic`}
             width={128}
             height={128}
-            className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
+            className="my-3 ml-4 rounded-full border-4 border-black bg-black"
           />
+          <div className="my-auto p-4 text-3xl font-bold">{`@${
+            data[0]?.bot.username ?? "unknown"
+          }`}</div>
         </div>
-        <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">{`@${
-          data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"
-        }`}</div>
+
         <div className="w-full border-x border-b border-slate-400" />
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}

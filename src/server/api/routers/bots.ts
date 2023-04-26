@@ -28,21 +28,21 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-function getRandomHoliday() {
-  const holidays = [
-    "New Year's Day",
-    "Valentine's Day",
-    "St. Patrick's Day",
-    "Easter",
-    "Mother's Day",
-    "Father's Day",
-    "Independence Day",
-    "Halloween",
-    "Thanksgiving",
-    "Christmas",
-  ];
-  return holidays[Math.floor(Math.random() * holidays.length)];
-}
+// function getRandomHoliday() {
+//   const holidays = [
+//     "New Year's Day",
+//     "Valentine's Day",
+//     "St. Patrick's Day",
+//     "Easter",
+//     "Mother's Day",
+//     "Father's Day",
+//     "Independence Day",
+//     "Halloween",
+//     "Thanksgiving",
+//     "Christmas",
+//   ];
+//   return holidays[Math.floor(Math.random() * holidays.length)];
+// }
 
 const addUserDataToPosts = async (bots: Bot[]) => {
   const userId = bots.map((bot) => bot.authorId);
@@ -111,6 +111,15 @@ export const botsRouter = createTRPCRouter({
     });
 
     return addUserDataToPosts(bots);
+  }),
+
+  getAllPosts: publicProcedure.query(async ({ ctx }) => {
+    const posts = await ctx.prisma.botPost.findMany({
+      take: 100,
+      orderBy: [{ createdAt: "desc" }],
+    });
+
+    return posts;
   }),
 
   getBotsByUserId: publicProcedure
@@ -201,7 +210,7 @@ export const botsRouter = createTRPCRouter({
         profileCreation?.data?.choices[0]?.message?.content.trim()
       );
       //   const namePattern = /Name:\s*(\w+)/;
-      const agePattern = /Age:\s*(\d+)/;
+      const agePattern = /Age:\s*(.+)/;
       const jobPattern = /Job:\s*(\w+)/;
       const religionPattern = /Religion:\s*(.+)/;
       const likesPattern = /Likes:\s*(.+)/;
