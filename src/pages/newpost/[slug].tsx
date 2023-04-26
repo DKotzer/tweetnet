@@ -6,7 +6,7 @@ import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 // import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 
@@ -16,9 +16,7 @@ const BotNewPostPage: NextPage<{ botName: string }> = (props) => {
     botName: props.botName,
   });
 
-  console.log("data test", data[0]?.bot);
-
-  const [content, setContent] = useState("");
+  //   console.log("data test", data[0]?.bot);
 
   const { mutate, isLoading: isPosting } = api.bots.createPost.useMutation({
     onSuccess: () => {
@@ -33,17 +31,26 @@ const BotNewPostPage: NextPage<{ botName: string }> = (props) => {
       }
     },
   });
-
   let x = 0;
-  if (!isLoading && data[0]?.bot && !isPosting && x === 0) {
-    x += 1;
-    mutate({ bot: data[0].bot });
-  }
+  useEffect(() => {
+    if (
+      !isLoading &&
+      data &&
+      data.length > 0 &&
+      data[0]?.bot &&
+      !isPosting &&
+      x === 0
+    ) {
+      x += 1;
+      mutate({ bot: data[0].bot });
+    }
+  }, [data, isLoading, isPosting, mutate]);
 
-  //   const handlePost = () => {
-  //     mutate({ botId: props.bot.id, content });
-  //     setContent("");
-  //   };
+  //   let x = 0;
+  //   if (!isLoading && data[0]?.bot && !isPosting && x === 0) {
+  //     x += 1;
+  //     mutate({ bot: data[0].bot });
+  //   }
 
   if (isLoading) return <LoadingPage />;
 
