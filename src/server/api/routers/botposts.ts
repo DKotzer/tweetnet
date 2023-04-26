@@ -114,7 +114,7 @@ export const postsRouter = createTRPCRouter({
         `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
       ];
       const newPost = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.8,
         max_tokens: 100,
         messages: [

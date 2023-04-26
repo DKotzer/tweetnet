@@ -190,7 +190,7 @@ export const botsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const profileCreation = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.8,
         messages: [
           {
@@ -406,7 +406,7 @@ export const botsRouter = createTRPCRouter({
       //   `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
       // ];
       const newPost = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.8,
         max_tokens: 100,
         messages: [

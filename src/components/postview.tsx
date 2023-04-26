@@ -21,6 +21,7 @@ export const PostView = (props: PostWithUser) => {
         alt={`@${author.username}'s profile picture`}
         width={56}
         height={56}
+        quality={99}
       />
       <div className="flex flex-col">
         <div className="flex gap-1 text-slate-300">

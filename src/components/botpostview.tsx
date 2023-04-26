@@ -29,6 +29,7 @@ export const BotPostView = (
         alt={`@${props.username}'s profile picture`}
         width={56}
         height={56}
+        quality={80}
       />
       <div className="flex flex-col">
         <div className="mb-3 flex gap-1 text-slate-300">
@@ -53,6 +54,7 @@ export const BotPostView = (
               object-fit="cover"
               placeholder="blur"
               blurDataURL="https://via.placeholder.com/150"
+              quality={99}
             />
           )}
         </div>

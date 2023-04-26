@@ -34,6 +34,7 @@ const ProfileFeed = (props: { userId: string }) => {
                 height={46}
                 alt={"Profile Image"}
                 className="my-auto self-center rounded-full"
+                quality={80}
               />
             </Link>
 
@@ -243,6 +244,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
             width={120}
             height={120}
             className="my-3 ml-4 rounded-full border-4 border-black bg-black"
+            quality={99}
           />
           <div className="my-auto p-4 text-3xl font-bold">{`${
             data.username ?? data.externalUsername ?? "unknown"

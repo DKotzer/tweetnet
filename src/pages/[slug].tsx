@@ -44,6 +44,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             }'s profile pic`}
             width={128}
             height={128}
+            quality={99}
             className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
           />
         </div>
