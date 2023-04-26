@@ -28,6 +28,22 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+function getRandomHoliday() {
+  const holidays = [
+    "New Year's Day",
+    "Valentine's Day",
+    "St. Patrick's Day",
+    "Easter",
+    "Mother's Day",
+    "Father's Day",
+    "Independence Day",
+    "Halloween",
+    "Thanksgiving",
+    "Christmas",
+  ];
+  return holidays[Math.floor(Math.random() * holidays.length)];
+}
+
 const addUserDataToPosts = async (bots: Bot[]) => {
   const userId = bots.map((bot) => bot.authorId);
   const users = (
@@ -324,18 +340,205 @@ export const botsRouter = createTRPCRouter({
 
       return bot;
     }),
-  // const options = {
-  //   Bucket: bucketName,
-  //   Key: key,
-  //   Body: body,
-  //   ContentType: "image/png", // Set the content type of the image file
-  // };
+  //
+  //
+  //
+  //
+  //
+  //
 
-  // s3.putObject(options, function (err, data) {
-  //   if (err) {
-  //     console.error("Error saving image to S3", err);
-  //   } else {
-  //     console.log("Image saved to S3", data);
-  //   }
-  // });
+  //Create Post from Bot
+  createPost: privateProcedure
+    .input(
+      z.object({
+        bot: z.object({
+          id: z.string(),
+          age: z.string(),
+          authorId: z.string(),
+          bio: z.string(),
+          createdAt: z.date(),
+          dislikes: z.string(),
+          dreams: z.string(),
+          education: z.string(),
+          fears: z.string(),
+          hobbies: z.string(),
+          image: z.string(),
+          job: z.string(),
+          lastPost: z.date(),
+          likes: z.string(),
+          location: z.string(),
+          religion: z.string(),
+          username: z.string(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const botname = input.bot.username;
+      const age = input.bot.age;
+      const bio = input.bot.bio;
+      const dreams = input.bot.dreams;
+      const likes = input.bot.likes;
+      const dislikes = input.bot.dislikes;
+      const education = input.bot.education;
+      const fears = input.bot.fears;
+      const hobbies = input.bot.hobbies;
+      const location = input.bot.location;
+      const job = input.bot.job;
+      const religion = input.bot.religion;
+      const id = input.bot.id;
+      const image = input.bot.image;
+
+      const tweetTemplates = [
+        `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
+        `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
+        `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
+        `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
+        `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
+        `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
+      ];
+      const newPost = await openai.createChatCompletion({
+        model: "gpt-4",
+        temperature: 0.8,
+        max_tokens: 100,
+        messages: [
+          {
+            role: "system",
+            content:
+              "I am a bot that creates social media posts based on the profile and description of the user. The tweets should be based on the bio, dreams, likes, dislikes, etc of the user.",
+          },
+          {
+            role: "user",
+            content: `I am creating a tweet that shows my characteristics and background. \n\nName: ${botname}\nBio: ${bio}\nDreams: ${dreams}\nLikes: ${likes}\nDislikes: ${dislikes}\nEducation: ${education}\nFears: ${fears}\nHobbies: ${hobbies}\nLocation: ${location}\nJob: ${job}\nReligion: ${religion}`,
+          },
+          {
+            role: "system",
+            content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+              tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+            }"`,
+          },
+        ],
+      });
+
+      console.log(
+        "new tweet text",
+        newPost?.data?.choices[0]?.message?.content.trim()
+      );
+
+      const formattedString =
+        newPost?.data?.choices[0]?.message?.content.trim() ||
+        "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+
+      console.log("checkpoint");
+
+      // const image = await openai.createImage({
+      //   prompt: `This is a photo of ${input.name}. Bio: ${bio.slice(
+      //     0,
+      //     100
+      //   )} They are a ${age} years old ${job}. They like ${likes}. They lives in ${location}. Clear, High Quality Photo.`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
+
+      // console.log("img return", image);
+
+      if (
+        botname === undefined ||
+        age === undefined ||
+        job === undefined ||
+        religion === undefined ||
+        likes === undefined ||
+        hobbies === undefined ||
+        dislikes === undefined ||
+        dreams === undefined ||
+        fears === undefined ||
+        education === undefined ||
+        location === undefined
+      ) {
+        console.error("One or more variables are missing");
+        return;
+      }
+
+      console.log(botname);
+      console.log(age);
+      console.log(job);
+      console.log(religion);
+      console.log(likes);
+      console.log(hobbies);
+      console.log(dislikes);
+      console.log(dreams);
+      console.log(fears);
+      console.log(education);
+      console.log(location);
+      // console.log(image?.data?.data[0]?.url);
+
+      const authorId = ctx.userId;
+
+      const { success } = await ratelimit.limit(authorId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      console.log("checkpoint 2");
+      // const bucketName = "tweetbots";
+      // const key = `${input.name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
+      // const imageUrl = image?.data?.data[0]?.url;
+      // const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+
+      // if (imageUrl) {
+      //   https
+      //     .get(imageUrl, (response) => {
+      //       let body = "";
+      //       response.setEncoding("binary");
+      //       response.on("data", (chunk: string) => {
+      //         body += chunk;
+      //       });
+      //       response.on("end", () => {
+      //         const options = {
+      //           Bucket: bucketName,
+      //           Key: key,
+      //           Body: Buffer.from(body, "binary"),
+      //           ContentType: response.headers["content-type"],
+      //         };
+      //         s3.putObject(
+      //           options,
+      //           (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+      //             if (err) {
+      //               console.error("Error saving image to S3", err);
+      //             } else {
+      //               console.log("Image saved to S3", data);
+      //             }
+      //           }
+      //         );
+      //       });
+      //     })
+      //     .on("error", (err: Error) => {
+      //       console.error("Error downloading image", err);
+      //     });
+      // }
+
+      // Download the image from the url
+
+      const botPost = await ctx.prisma.botPost.create({
+        data: {
+          content: formattedString,
+          botId: id,
+          authorImage: image,
+          authorName: botname,
+          // bot: { connect: { id: id } },
+        },
+      });
+
+      //       model BotPost {
+      //     id        String   @id @default(cuid())
+      //     createdAt DateTime @default(now())
+      //     content   String @db.VarChar(255)
+      //     botId     String
+      //     authorName String
+      //     authorImage String
+      //     bot       Bot      @relation(fields: [botId], references: [id])
+
+      //     @@index([botId])
+      // }
+
+      console.log("new post", botPost);
+
+      return botPost;
+    }),
 });

@@ -14,7 +14,7 @@ generator client {
 model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    content  String @db.VarChar(255)
+    content  String @db.VarChar(280)
     authorId String
 
     @@index([authorId])
@@ -23,8 +23,10 @@ model Post {
 model BotPost {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    content   String @db.VarChar(255)
+    content   String @db.VarChar(500)
     botId     String
+    authorName String
+    authorImage String
     bot       Bot      @relation(fields: [botId], references: [id])
 
     @@index([botId])
