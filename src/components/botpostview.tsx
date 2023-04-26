@@ -12,6 +12,7 @@ type Post = {
   content: string;
   botId: string;
   createdAt: Date;
+  postImage?: string;
 };
 
 export const BotPostView = (
@@ -41,6 +42,21 @@ export const BotPostView = (
           </Link>
         </div>
         <span className="text-2xl">{props.content}</span>
+        <div>
+          {props.postImage && props.postImage !== "" && (
+            <Image
+              src={props.postImage || ""}
+              className="ml-1 mt-5 mb-2 rounded-lg"
+              alt={`Image related to the post`}
+              width={508}
+              height={508}
+              object-fit="cover"
+              placeholder="blur"
+              blurDataURL="https://via.placeholder.com/150"
+            />
+          )}
+        </div>
+        <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
       </div>
     </div>
   );

@@ -386,7 +386,7 @@ export const botsRouter = createTRPCRouter({
       const job = input.bot.job;
       const religion = input.bot.religion;
       const id = input.bot.id;
-      const image = input.bot.image;
+      const botImage = input.bot.image;
 
       const tweetTemplates = [
         `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
@@ -430,16 +430,16 @@ export const botsRouter = createTRPCRouter({
 
       console.log("checkpoint");
 
-      // const image = await openai.createImage({
-      //   prompt: `This is a photo of ${input.name}. Bio: ${bio.slice(
-      //     0,
-      //     100
-      //   )} They are a ${age} years old ${job}. They like ${likes}. They lives in ${location}. Clear, High Quality Photo.`,
-      //   n: 1,
-      //   size: "512x512",
-      // });
+      const image = await openai.createImage({
+        prompt: `Image version of this tweet: ${formattedString.slice(
+          0,
+          250
+        )}  Ultra High Quality Rendering. Clearer than real life.`,
+        n: 1,
+        size: "512x512",
+      });
 
-      // console.log("img return", image);
+      console.log("img return", image);
 
       if (
         botname === undefined ||
@@ -476,42 +476,46 @@ export const botsRouter = createTRPCRouter({
       const { success } = await ratelimit.limit(authorId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       console.log("checkpoint 2");
-      // const bucketName = "tweetbots";
-      // const key = `${input.name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
-      // const imageUrl = image?.data?.data[0]?.url;
-      // const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const bucketName = "tweetbots";
+      //generate random uid key
+      let randomKey = Math.random().toString(36).substring(2, 15);
 
-      // if (imageUrl) {
-      //   https
-      //     .get(imageUrl, (response) => {
-      //       let body = "";
-      //       response.setEncoding("binary");
-      //       response.on("data", (chunk: string) => {
-      //         body += chunk;
-      //       });
-      //       response.on("end", () => {
-      //         const options = {
-      //           Bucket: bucketName,
-      //           Key: key,
-      //           Body: Buffer.from(body, "binary"),
-      //           ContentType: response.headers["content-type"],
-      //         };
-      //         s3.putObject(
-      //           options,
-      //           (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-      //             if (err) {
-      //               console.error("Error saving image to S3", err);
-      //             } else {
-      //               console.log("Image saved to S3", data);
-      //             }
-      //           }
-      //         );
-      //       });
-      //     })
-      //     .on("error", (err: Error) => {
-      //       console.error("Error downloading image", err);
-      //     });
-      // }
+      const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      const imageUrl = image?.data?.data[0]?.url;
+      const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const postImage = bucketPath + key;
+
+      if (imageUrl) {
+        https
+          .get(imageUrl, (response) => {
+            let body = "";
+            response.setEncoding("binary");
+            response.on("data", (chunk: string) => {
+              body += chunk;
+            });
+            response.on("end", () => {
+              const options = {
+                Bucket: bucketName,
+                Key: key,
+                Body: Buffer.from(body, "binary"),
+                ContentType: response.headers["content-type"],
+              };
+              s3.putObject(
+                options,
+                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+                  if (err) {
+                    console.error("Error saving image to S3", err);
+                  } else {
+                    console.log("Image saved to S3", data);
+                  }
+                }
+              );
+            });
+          })
+          .on("error", (err: Error) => {
+            console.error("Error downloading image", err);
+          });
+      }
 
       // Download the image from the url
 
@@ -519,23 +523,12 @@ export const botsRouter = createTRPCRouter({
         data: {
           content: formattedString,
           botId: id,
-          authorImage: image,
+          authorImage: botImage,
           authorName: botname,
+          postImage: postImage,
           // bot: { connect: { id: id } },
         },
       });
-
-      //       model BotPost {
-      //     id        String   @id @default(cuid())
-      //     createdAt DateTime @default(now())
-      //     content   String @db.VarChar(255)
-      //     botId     String
-      //     authorName String
-      //     authorImage String
-      //     bot       Bot      @relation(fields: [botId], references: [id])
-
-      //     @@index([botId])
-      // }
 
       console.log("new post", botPost);
 

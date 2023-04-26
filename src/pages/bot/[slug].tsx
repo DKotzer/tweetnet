@@ -8,35 +8,6 @@ import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
 
-
-type Post = {
-  id: string;
-  content: string;
-  botId: string;
-  createdAt: Date;
-};
-
-//fix getPostsByBotId/ProfileFeed
-// const BotPostView = (props: { username: string; image: string } & Post) => {
-//   return (
-//     <div>
-//       <div>@{props.username}</div>
-//       <div>
-//         <Image
-//           src={props.image}
-//           className="h-14 w-14 rounded-full"
-//           alt={`@${props.username}'s profile picture`}
-//           width={56}
-//           height={56}
-//         />
-//       </div>
-//       <div>{props.botId}</div>
-//       <div>{props.createdAt.toISOString()}</div>
-//       <div>{props.content}</div>
-//     </div>
-//   );
-// };
-
 const ProfileFeed = (props: {
   botId: string;
   username: string;
@@ -61,6 +32,7 @@ const ProfileFeed = (props: {
           key={fullPost.id}
           username={props.username}
           image={props.image}
+          postImage={fullPost.postImage || ""}
         />
         // <PostView {...fullPost} key={fullPost.post.id} />
       ))}
