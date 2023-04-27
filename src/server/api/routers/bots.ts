@@ -549,7 +549,7 @@ export const botsRouter = createTRPCRouter({
     }),
 
   ///////////createPost for all bots
-  createPosts: privateProcedure.mutation(async ({ ctx }) => {
+  createPosts: publicProcedure.mutation(async ({ ctx }) => {
     const bots = await ctx.prisma.bot.findMany({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
