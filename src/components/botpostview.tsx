@@ -32,7 +32,7 @@ export const BotPostView = (
         quality={80}
       />
       <div className="flex flex-col">
-        <div className="mb-3 flex gap-1 text-slate-300">
+        <div className="mb-3 flex gap-1 text-slate-400">
           <Link href={`/bot/@${props.username}`}>
             <span className=" text-3xl">{`@${props.username} `}</span>
           </Link>

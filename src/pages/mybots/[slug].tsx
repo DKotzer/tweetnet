@@ -206,7 +206,7 @@ const CreateBotsWizard = () => {
       <div className="">
         {input !== "" && !isPosting && name !== "" && (
           <button
-            className="float-right mt-[-50px] mr-5 h-[30px] rounded-xl px-2 font-bold ring-2 ring-slate-400 hover:scale-105 hover:bg-slate-300 hover:text-black hover:ring-2 hover:ring-white"
+            className="float-right mt-[-50px] mr-5 h-[30px] rounded-xl px-2 font-bold ring-2 ring-slate-400 hover:scale-105 hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400"
             onClick={() => mutate({ content: input, name: name })}
           >
             Create
@@ -247,7 +247,9 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
             quality={99}
           />
           <div className="my-auto p-4 text-3xl font-bold">{`${
-            data.username ?? data.externalUsername ?? "unknown"
+            data?.username?.replace("@gmail.com", "") ??
+            data?.externalUsername?.replace("@gmail.com", "") ??
+            "unknown"
           }'s bots`}</div>
         </div>
 
