@@ -9,7 +9,7 @@ import { BotPostView } from "~/components/botpostview";
 const PostsFeed = () => {
   const { data, isLoading } = api.bots.getAllPosts.useQuery();
 
-  console.log("bot data", data);
+  // console.log("bot data", data);
 
   if (isLoading) return <LoadingPage />;
   if (!data) return <div>Something went wrong</div>;

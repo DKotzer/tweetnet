@@ -2,14 +2,8 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import https from "https";
-
+import { api } from "~/utils/api";
 import AWS from "aws-sdk";
-
-const s3 = new AWS.S3({
-  region: "us-east-1",
-  accessKeyId: process.env.BUCKET_ACCESS_KEY,
-  secretAccessKey: process.env.BUCKET_SECRET_KEY,
-});
 
 import {
   createTRPCRouter,
@@ -27,6 +21,12 @@ const configuration = new Configuration({
   apiKey: process.env.API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+const s3 = new AWS.S3({
+  region: "us-east-1",
+  accessKeyId: process.env.BUCKET_ACCESS_KEY,
+  secretAccessKey: process.env.BUCKET_SECRET_KEY,
+});
 
 // function getRandomHoliday() {
 //   const holidays = [
@@ -250,7 +250,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      console.log("img return", image);
+      console.log("img returned");
 
       if (
         name === undefined ||
@@ -382,6 +382,14 @@ export const botsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // const tweetTemplates = [
+      //   `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
+      //   `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
+      //   `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
+      //   `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
+      //   `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
+      //   `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
+      // ];
       const botname = input.bot.username;
       const age = input.bot.age;
       const bio = input.bot.bio;
@@ -397,14 +405,6 @@ export const botsRouter = createTRPCRouter({
       const id = input.bot.id;
       const botImage = input.bot.image;
 
-      // const tweetTemplates = [
-      //   `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
-      //   `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
-      //   `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
-      //   `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
-      //   `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
-      //   `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
-      // ];
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
@@ -452,7 +452,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      console.log("img return", image);
+      console.log("img return");
 
       if (
         botname === undefined ||
@@ -547,4 +547,180 @@ export const botsRouter = createTRPCRouter({
 
       return botPost;
     }),
+
+  ///////////createPost for all bots
+  createPosts: privateProcedure.mutation(async ({ ctx }) => {
+    const bots = await ctx.prisma.bot.findMany({
+      take: 100,
+      orderBy: [{ createdAt: "desc" }],
+    });
+
+    const shuffledBots = bots.sort(() => Math.random() - 0.5);
+
+    for (const bot of shuffledBots) {
+      console.log("bot test", bot);
+
+      /////////////////////////////////////////
+
+      const botname = bot.username;
+      const age = bot.age;
+      const bio = bot.bio;
+      const dreams = bot.dreams;
+      const likes = bot.likes;
+      const dislikes = bot.dislikes;
+      const education = bot.education;
+      const fears = bot.fears;
+      const hobbies = bot.hobbies;
+      const location = bot.location;
+      const job = bot.job;
+      const religion = bot.religion;
+      const id = bot.id;
+      const botImage = bot.image;
+
+      const newPost = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        temperature: 0.8,
+        max_tokens: 100,
+        messages: [
+          {
+            role: "system",
+            content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
+          },
+          {
+            role: "user",
+            content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+          },
+          {
+            role: "system",
+            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.
+            }"`,
+          },
+          // {
+          //   role: "system",
+          //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+          //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+          //   }"`,
+          // },
+        ],
+      });
+
+      console.log(
+        "new tweet text",
+        newPost?.data?.choices[0]?.message?.content.trim()
+      );
+
+      const formattedString =
+        newPost?.data?.choices[0]?.message?.content.trim() ||
+        "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+
+      console.log("checkpoint");
+
+      const image = await openai.createImage({
+        prompt: `Image version of this tweet: ${formattedString.slice(
+          0,
+          250
+        )}  Ultra High Quality Rendering. Clearer than real life.`,
+        n: 1,
+        size: "512x512",
+      });
+
+      console.log("img return");
+
+      if (
+        botname === undefined ||
+        age === undefined ||
+        job === undefined ||
+        religion === undefined ||
+        likes === undefined ||
+        hobbies === undefined ||
+        dislikes === undefined ||
+        dreams === undefined ||
+        fears === undefined ||
+        education === undefined ||
+        location === undefined
+      ) {
+        console.error("One or more variables are missing");
+        return;
+      }
+
+      console.log(botname);
+      console.log(age);
+      console.log(job);
+      console.log(religion);
+      console.log(likes);
+      console.log(hobbies);
+      console.log(dislikes);
+      console.log(dreams);
+      console.log(fears);
+      console.log(education);
+      console.log(location);
+      // console.log(image?.data?.data[0]?.url);
+
+      const authorId = ctx.userId;
+
+      const { success } = await ratelimit.limit(authorId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      console.log("checkpoint 2");
+      const bucketName = "tweetbots";
+      //generate random uid key
+      let randomKey = Math.random().toString(36).substring(2, 15);
+
+      const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      const imageUrl = image?.data?.data[0]?.url;
+      const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const postImage = bucketPath + key;
+
+      if (imageUrl) {
+        https
+          .get(imageUrl, (response) => {
+            let body = "";
+            response.setEncoding("binary");
+            response.on("data", (chunk: string) => {
+              body += chunk;
+            });
+            response.on("end", () => {
+              const options = {
+                Bucket: bucketName,
+                Key: key,
+                Body: Buffer.from(body, "binary"),
+                ContentType: response.headers["content-type"],
+              };
+              s3.putObject(
+                options,
+                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+                  if (err) {
+                    console.error("Error saving image to S3", err);
+                  } else {
+                    console.log("Image saved to S3", data);
+                  }
+                }
+              );
+            });
+          })
+          .on("error", (err: Error) => {
+            console.error("Error downloading image", err);
+          });
+      }
+
+      // Download the image from the url
+
+      const botPost = await ctx.prisma.botPost.create({
+        data: {
+          content: formattedString,
+          botId: id,
+          authorImage: botImage,
+          authorName: botname,
+          postImage: postImage,
+          // bot: { connect: { id: id } },
+        },
+      });
+
+      console.log("new post created", botPost, "waiting 80 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 8000));
+
+      ///////////////////////////
+    }
+
+    return "All Posts have been created";
+  }),
 });

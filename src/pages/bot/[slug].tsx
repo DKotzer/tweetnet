@@ -17,7 +17,7 @@ const ProfileFeed = (props: {
     botId: props.botId,
   });
 
-  console.log("bot data", data);
+  // console.log("bot data", data);
 
   if (isLoading) return <LoadingPage />;
   if (!data) return <div>Something went wrong</div>;
