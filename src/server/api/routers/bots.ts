@@ -651,7 +651,6 @@ export const botsRouter = createTRPCRouter({
       console.log("education:", education);
       console.log("location:", location);
       console.log("bot image:", botImage);
-      console.log("post image:", image?.data?.data[0]?.url);
       console.log("new tweet text:", formattedString);
 
       // const authorId = ctx.userId;
@@ -667,6 +666,7 @@ export const botsRouter = createTRPCRouter({
       const imageUrl = image?.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = bucketPath + key;
+      console.log("post image:", postImage);
 
       if (imageUrl) {
         https
@@ -713,8 +713,11 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      console.log("new post created", botPost, "waiting 160 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 160000));
+      console.log("new post created", botPost, "waiting 30 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 30000));
+      console.log("done waiting");
+
+      // await new Promise((resolve) => setTimeout(resolve, 160000));
 
       // console.log("new post created", botPost, "waiting 5 minutes");
 
