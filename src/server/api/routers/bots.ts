@@ -558,7 +558,7 @@ export const botsRouter = createTRPCRouter({
     const shuffledBots = bots.sort(() => Math.random() - 0.5);
 
     for (const bot of shuffledBots) {
-      console.log("bot test", bot);
+      // console.log("bot test", bot);
 
       /////////////////////////////////////////
 
@@ -604,16 +604,11 @@ export const botsRouter = createTRPCRouter({
         ],
       });
 
-      console.log(
-        "new tweet text",
-        newPost?.data?.choices[0]?.message?.content.trim()
-      );
-
       const formattedString =
         newPost?.data?.choices[0]?.message?.content.trim() ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
-      console.log("checkpoint");
+      // console.log("checkpoint");
 
       const image = await openai.createImage({
         prompt: `Image version of this tweet: ${formattedString.slice(
@@ -624,7 +619,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      console.log("img return");
+      // console.log("image generated");
 
       if (
         botname === undefined ||
@@ -643,24 +638,27 @@ export const botsRouter = createTRPCRouter({
         return;
       }
 
-      console.log(botname);
-      console.log(age);
-      console.log(job);
-      console.log(religion);
-      console.log(likes);
-      console.log(hobbies);
-      console.log(dislikes);
-      console.log(dreams);
-      console.log(fears);
-      console.log(education);
-      console.log(location);
-      console.log(image?.data?.data[0]?.url);
+      console.log("name:", botname);
+      console.log("bio:", bio || "no bio");
+      console.log("age:", age);
+      console.log("job:", job);
+      console.log("religion:", religion);
+      console.log("likes:", likes);
+      console.log("hobbies:", hobbies);
+      console.log("dislikes:", dislikes);
+      console.log("dreams:", dreams);
+      console.log("fears:", fears);
+      console.log("education:", education);
+      console.log("location:", location);
+      console.log("bot image:", botImage);
+      console.log("post image:", image?.data?.data[0]?.url);
+      console.log("new tweet text:", formattedString);
 
       // const authorId = ctx.userId;
 
       // const { success } = await ratelimit.limit(authorId);
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      console.log("checkpoint 2");
+      // console.log("checkpoint 2");
       const bucketName = "tweetbots";
       //generate random uid key
       let randomKey = Math.random().toString(36).substring(2, 15);
@@ -691,7 +689,7 @@ export const botsRouter = createTRPCRouter({
                   if (err) {
                     console.error("Error saving image to S3", err);
                   } else {
-                    console.log("Image saved to S3", data);
+                    console.log("Image saved to S3:", postImage);
                   }
                 }
               );
@@ -715,16 +713,16 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      // console.log("new post created", botPost, "waiting 160 seconds");
-      // await new Promise((resolve) => setTimeout(resolve, 160000));
+      console.log("new post created", botPost, "waiting 160 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 160000));
 
       // console.log("new post created", botPost, "waiting 5 minutes");
 
       // await new Promise((resolve) => setTimeout(resolve, 300000));
 
       // create a timeout for 5 seconds
-      console.log("new post created", botPost, "waiting 5 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      // console.log("new post created", botPost, "waiting 5 seconds");
+      // await new Promise((resolve) => setTimeout(resolve, 5000));
 
       ///////////////////////////
     }
