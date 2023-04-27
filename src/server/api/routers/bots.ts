@@ -654,12 +654,12 @@ export const botsRouter = createTRPCRouter({
       console.log(fears);
       console.log(education);
       console.log(location);
-      // console.log(image?.data?.data[0]?.url);
+      console.log(image?.data?.data[0]?.url);
 
-      const authorId = ctx.userId;
+      // const authorId = ctx.userId;
 
-      const { success } = await ratelimit.limit(authorId);
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      // const { success } = await ratelimit.limit(authorId);
+      // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       console.log("checkpoint 2");
       const bucketName = "tweetbots";
       //generate random uid key
@@ -716,7 +716,7 @@ export const botsRouter = createTRPCRouter({
       });
 
       console.log("new post created", botPost, "waiting 80 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 8000));
+      await new Promise((resolve) => setTimeout(resolve, 80000));
 
       ///////////////////////////
     }
