@@ -1,4 +1,4 @@
-import { UserButton, useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 export const Sidebar = () => {
@@ -10,6 +10,11 @@ export const Sidebar = () => {
         <div className="width-40 w-30 mx-auto">
           <div className=" my-6 text-2xl font-bold">BotLife</div>
         </div>
+        {!isSignedIn && (
+          <div className="flex justify-center">
+            <SignInButton />
+          </div>
+        )}
         <div className="flex-grow">
           <div className="flex h-full flex-col justify-between">
             <div className="mx-1">
