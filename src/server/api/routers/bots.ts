@@ -715,15 +715,16 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      console.log("new post created", botPost, "waiting 160 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 160000));
+      // console.log("new post created", botPost, "waiting 160 seconds");
+      // await new Promise((resolve) => setTimeout(resolve, 160000));
 
       // console.log("new post created", botPost, "waiting 5 minutes");
 
       // await new Promise((resolve) => setTimeout(resolve, 300000));
 
-      // create a timeout for 3 minutes
-
+      // create a timeout for 5 seconds
+      console.log("new post created", botPost, "waiting 5 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       ///////////////////////////
     }
