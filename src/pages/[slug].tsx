@@ -26,6 +26,7 @@ const ProfileFeed = (props: { userId: string }) => {
 };
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
+  console.log("nametest", username);
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
   });

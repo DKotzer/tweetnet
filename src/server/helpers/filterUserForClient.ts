@@ -3,7 +3,7 @@ export const filterUserForClient = (user: User) => {
   return {
     id: user.id,
     username:
-      user.username || user.firstName + "-" + user.lastName || user.firstName,
+      user.username || user.emailAddresses[0]?.emailAddress|| user.firstName + "-" + user.lastName || user.firstName,
     profileImageUrl: user.profileImageUrl,
     externalUsername:
       user.externalAccounts.find(
