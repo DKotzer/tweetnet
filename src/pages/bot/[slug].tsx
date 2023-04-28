@@ -44,9 +44,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: username,
   });
-  console.log("data test", data);
   if (isLoading) return <LoadingPage />;
   if (!data) return <div>404 No Data found</div>;
+  // console.log("data test", data);
   return (
     <>
       <Head>

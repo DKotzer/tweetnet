@@ -206,7 +206,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}`,
+            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them.`,
           },
         ],
       });
@@ -223,7 +223,7 @@ export const botsRouter = createTRPCRouter({
           {
             role: "system",
             content:
-              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess. Try to avoid using N/A.",
+              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. N/A is NOT an acceptable value, be createive. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess.",
           },
           {
             role: "user",
@@ -397,8 +397,8 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "system",
-            content: `Create a very creative first tweet, in your own writing style, words and character, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly.
-            }"`,
+            content: `Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly.
+            }`,
           },
           // {
           //   role: "system",
