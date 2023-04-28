@@ -2,7 +2,6 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import https from "https";
-import { api } from "~/utils/api";
 import AWS from "aws-sdk";
 
 import {
@@ -181,6 +180,7 @@ export const botsRouter = createTRPCRouter({
       // .then(addUserDataToPosts)
     ),
 
+  //create new bot and make its first post
   create: privateProcedure
     .input(
       z.object({
@@ -189,6 +189,33 @@ export const botsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const improvedBio = await openai.createChatCompletion({
+        model: "gpt-4",
+        temperature: 0.8,
+        max_tokens: 70,
+        messages: [
+          {
+            role: "system",
+            content:
+              "I am a bot that creates social media bios based on the description of the user. The bio should establish the subjects job, goals, and drive based on the included data, with a heavy weighting on dreams and job. The bio should be under 250 characters. The bio should also include very brief details on what the subject looks like for image generation. ",
+          },
+          {
+            role: "system",
+            content:
+              "An example of a good bio is '<name> is an <age> <job>. <names> goals are <goals related to names job and dreams and likes and the motives behind them(150+ characters)>. <name> has <hair style> <hair color> hair, <skin color> skin.",
+          },
+          {
+            role: "user",
+            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}`,
+          },
+        ],
+      });
+
+      const improvedBioText =
+        improvedBio?.data?.choices[0]?.message?.content.trim();
+      console.log("improved bio", improvedBioText);
+      console.log("using improved bio to generate profile");
+
       const profileCreation = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
@@ -196,11 +223,11 @@ export const botsRouter = createTRPCRouter({
           {
             role: "system",
             content:
-              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess. If I am having trouble coming up with an age some alternatives are: Immortal, Undead, ",
+              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess. Try to avoid using N/A.",
           },
           {
             role: "user",
-            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${input.name} ${input.content}`,
+            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${input.name} ${improvedBioText}`,
           },
         ],
       });
@@ -237,15 +264,18 @@ export const botsRouter = createTRPCRouter({
       const fears = formattedString.match(fearsPattern)?.[1] || "";
       const education = formattedString.match(educationPattern)?.[1] || "";
       const location = formattedString.match(locationPattern)?.[1] || "";
-      const bio = input.content;
+      const bio = improvedBioText || input.content;
+      // const bio = input.content;
 
       console.log("checkpoint");
 
       const image = await openai.createImage({
-        prompt: `This is a photo of ${input.name}. Bio: ${bio.slice(
+        prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${
+          input.name
+        } from ${location}. Bio: ${bio.slice(
           0,
           100
-        )} They are a ${age} years old ${job}. They like ${likes}. They lives in ${location}. Clear, High Quality Photo.`,
+        )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
         n: 1,
         size: "512x512",
       });
@@ -284,8 +314,8 @@ export const botsRouter = createTRPCRouter({
 
       const authorId = ctx.userId;
 
-      const { success } = await ratelimit.limit(authorId);
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      // const { success } = await ratelimit.limit(authorId);
+      // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const bucketName = "tweetbots";
       const key = `${input.name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
@@ -344,8 +374,151 @@ export const botsRouter = createTRPCRouter({
           image: `${bucketPath}${name.replace(/ /g, "_")}`,
         },
       });
-
       console.log("new bot", bot);
+
+      //create first post here, can mostly just copy the code for post create
+
+      const botname = name;
+      const id = bot.id;
+      const botImage = bot.image;
+
+      const newPost = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        temperature: 0.8,
+        max_tokens: 100,
+        messages: [
+          {
+            role: "system",
+            content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}. I am about to write my first post for TweetNet social network(a superior twitter clone)`,
+          },
+          {
+            role: "user",
+            content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter which was corrupted by corporate greed. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+          },
+          {
+            role: "system",
+            content: `Create a very creative first tweet, in your own writing style, words and character, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly.
+            }"`,
+          },
+          // {
+          //   role: "system",
+          //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+          //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+          //   }"`,
+          // },
+        ],
+      });
+
+      console.log(
+        "new tweet text",
+        newPost?.data?.choices[0]?.message?.content.trim()
+      );
+
+      const formattedRes =
+        newPost?.data?.choices[0]?.message?.content.trim() ||
+        "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+
+      console.log("checkpoint");
+
+      const firstPostImage = await openai.createImage({
+        prompt: `Image version of this tweet, with no text: ${formattedRes.slice(
+          0,
+          250
+        )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+        n: 1,
+        size: "512x512",
+      });
+
+      console.log("img return");
+
+      if (
+        botname === undefined ||
+        age === undefined ||
+        job === undefined ||
+        religion === undefined ||
+        likes === undefined ||
+        hobbies === undefined ||
+        dislikes === undefined ||
+        dreams === undefined ||
+        fears === undefined ||
+        education === undefined ||
+        location === undefined
+      ) {
+        console.error("One or more variables are missing");
+        return;
+      }
+
+      console.log(botname);
+      console.log(age);
+      console.log(job);
+      console.log(religion);
+      console.log(likes);
+      console.log(hobbies);
+      console.log(dislikes);
+      console.log(dreams);
+      console.log(fears);
+      console.log(education);
+      console.log(location);
+      // console.log(image?.data?.data[0]?.url);
+
+      // const authorId = ctx.userId;
+
+      const { success } = await ratelimit.limit(authorId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      // console.log("checkpoint 2");
+      //generate random uid key
+      let randomKey = Math.random().toString(36).substring(2, 15);
+
+      const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      const postImageUrl = firstPostImage?.data?.data[0]?.url;
+      const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const postImage = postImageBucketPath + postImageKey;
+
+      if (postImageUrl) {
+        https
+          .get(postImageUrl, (response) => {
+            let body = "";
+            response.setEncoding("binary");
+            response.on("data", (chunk: string) => {
+              body += chunk;
+            });
+            response.on("end", () => {
+              const options = {
+                Bucket: bucketName,
+                Key: postImageKey,
+                Body: Buffer.from(body, "binary"),
+                ContentType: response.headers["content-type"],
+              };
+              s3.putObject(
+                options,
+                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+                  if (err) {
+                    console.error("Error saving image to S3", err);
+                  } else {
+                    console.log("Image saved to S3", data);
+                  }
+                }
+              );
+            });
+          })
+          .on("error", (err: Error) => {
+            console.error("Error downloading image", err);
+          });
+      }
+
+      // Download the image from the url
+
+      const botPost = await ctx.prisma.botPost.create({
+        data: {
+          content: formattedRes,
+          botId: id,
+          authorImage: botImage,
+          authorName: botname,
+          postImage: postImage,
+          // bot: { connect: { id: id } },
+        },
+      });
+      console.log("first post:", botPost);
 
       return bot;
     }),
@@ -444,7 +617,7 @@ export const botsRouter = createTRPCRouter({
       console.log("checkpoint");
 
       const image = await openai.createImage({
-        prompt: `Image version of this tweet: ${formattedString.slice(
+        prompt: `Image version, with NO TEXT, of this tweet: ${formattedString.slice(
           0,
           250
         )}  Ultra High Quality Rendering. Clearer than real life.`,
@@ -543,7 +716,7 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      console.log("new post", botPost);
+      console.log("new bot", botPost);
 
       return botPost;
     }),
@@ -554,6 +727,8 @@ export const botsRouter = createTRPCRouter({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
     });
+
+    console.log("Starting post generation loop");
 
     const shuffledBots = bots.sort(() => Math.random() - 0.5);
 
@@ -611,7 +786,7 @@ export const botsRouter = createTRPCRouter({
       // console.log("checkpoint");
 
       const image = await openai.createImage({
-        prompt: `Image version of this tweet: ${formattedString.slice(
+        prompt: `Image version with NO TEXT of this tweet: ${formattedString.slice(
           0,
           250
         )}  Ultra High Quality Rendering. Clearer than real life.`,
@@ -713,10 +888,22 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      console.log("new post created", botPost, "waiting 30 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 30000));
-      console.log("done waiting");
+      /////////////////////
 
+      console.log("new post created", botPost, "waiting 45 seconds...");
+
+      // create a timeout for 80 seconds
+      await new Promise((resolve) => setTimeout(resolve, 80000));
+
+      console.log("Done waiting, generating new post...");
+      /////////////////////
+
+      // const spinner = ora("Done waiting, generating new post...")
+      //   .render()
+      //   .start();
+      // spinner.spinner = "dots";
+
+      // create a timeout for 2 minutes
       // await new Promise((resolve) => setTimeout(resolve, 160000));
 
       // console.log("new post created", botPost, "waiting 5 minutes");
@@ -730,6 +917,74 @@ export const botsRouter = createTRPCRouter({
       ///////////////////////////
     }
 
-    return "All Posts have been created";
+    return "All Posts have been created, waiting for next batch";
   }),
+
+  deleteBot: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Delete all images in S3 bucket starting with bot name
+      const bucketName = "tweetbots";
+
+      //get all images from bucket(there is definately a better way to do this)
+      const bucketObjects = {
+        Bucket: bucketName,
+      };
+      const s3ListResponseTest = await s3
+        .listObjectsV2(bucketObjects)
+        .promise();
+      const matchingObjects = s3ListResponseTest?.Contents?.filter(
+        (file) =>
+          file.Key === input.name.replace(/ /g, "_") ||
+          file?.Key?.startsWith(`${input.name.replace(/ /g, "_")}-`)
+      ) as { Key: string }[];
+
+      if (matchingObjects.length > 0) {
+        // console.log("matching objects found:", matchingObjects);
+        const deleteParams = {
+          Bucket: bucketName,
+          Delete: {
+            Objects: matchingObjects?.map((object) => ({ Key: object.Key })),
+            Quiet: false,
+          },
+        };
+        const s3DeleteResponse = await s3.deleteObjects(deleteParams).promise();
+        console.log(
+          `Deleted ${
+            s3DeleteResponse.Deleted?.length ?? 0
+          } images from S3 bucket`
+        );
+
+        if (
+          s3DeleteResponse.Errors?.length === undefined ||
+          s3DeleteResponse.Errors?.length > 0
+        ) {
+          console.log(
+            `Error deleting images from S3 bucket: ${JSON.stringify(
+              s3DeleteResponse.Errors
+            )}`
+          );
+        }
+      }
+      // Delete all BotPosts for the given bot id
+      await ctx.prisma.botPost.deleteMany({
+        where: {
+          botId: input.id,
+        },
+      });
+
+      // Delete the bot from the database
+      await ctx.prisma.bot.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      // Handle any errors during image deletion
+    }),
 });

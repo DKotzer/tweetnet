@@ -5,7 +5,7 @@ import { dark } from "@clerk/themes";
 export const Sidebar = () => {
   const { user, isSignedIn } = useUser();
 
-  console.log("user sidebar test", user);
+  // console.log("user sidebar test", user);
 
   return (
     <div className="sticky top-0 h-max ">
