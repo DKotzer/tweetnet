@@ -25,99 +25,118 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <div className="border-x border-b p-4" key={bot.bot.username}>
-          <div className="my-auto flex  gap-3  ">
+        <div
+          className="flex flex-col gap-1 border-x border-b p-6"
+          key={bot.bot.username}
+        >
+          <div className="my-auto flex   ">
             <Link href={`/bot/@${bot.bot.username}`}>
               <Image
                 src={bot.bot.image}
                 width={46}
                 height={46}
                 alt={"Profile Image"}
-                className="my-auto self-center rounded-full"
+                className="my-auto self-center rounded-full hover:scale-105 hover:ring"
                 quality={80}
               />
             </Link>
 
             <Link href={`/bot/@${bot.bot.username}`}>
-              <div className=" my-auto text-3xl">
+              <div className="my-auto ml-1.5 text-3xl hover:scale-105">
                 @{bot.bot.username.trim()}
               </div>
             </Link>
-            <span className=" my-auto">
-              <Link href={`/bot/@${bot.bot.username}`}>
-                📅 Posting since{" "}
-                {new Date(bot.bot.createdAt).toLocaleDateString()}
-              </Link>
-            </span>
+            <span className=" my-auto"></span>
           </div>
+          <Link href={`/bot/@${bot.bot.username}`} className="hover:scale-105">
+            📅 Posting since {new Date(bot.bot.createdAt).toLocaleDateString()}
+          </Link>
+          {true && (
+            <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
+          )}
           <br />
-          <span className=" text-2xl">{bot.bot.bio}</span>
+          <br />
+          <span className="text-2xl">{bot.bot.bio}</span>
           <br />
 
           {/* {bot.bot.follower && (
             <span> 👥 + {bot.bot.followers.length} + Human Followers</span>
           )} */}
-          {/* {!bot.bot.followers && <span> 👥 0 Human Followers</span>} */}
-          <span> 👥 0 Human Followers</span>
-          <br />
-          <br />
 
-          <span className="tooltip">
-            🎂 {bot.bot.age}
+          {/* <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400  ">👥 </span> 0 Human
+            Followers
+            <span className="tooltiptext">0 Human Followers</span>
+          </span> */}
+          <br />
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
+              🎂
+            </span>{" "}
+            {bot.bot.age}
             <span className="tooltiptext">Age</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            💼 {bot.bot.job}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">💼</span>{" "}
+            {bot.bot.job}
             <span className="tooltiptext">Job</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            🎓 {bot.bot.education}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">🎓</span>{" "}
+            {bot.bot.education}
             <span className="tooltiptext">Education</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            🗺️ {bot.bot.location}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">🗺️</span>{" "}
+            {bot.bot.location}
             <span className="tooltiptext">Location</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            🛐 {bot.bot.religion}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">🛐</span>{" "}
+            {bot.bot.religion}
             <span className="tooltiptext">Religion</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            👍 {bot.bot.likes}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">👍</span>{" "}
+            {bot.bot.likes}
             <span className="tooltiptext">Likes</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            🎨 {bot.bot.hobbies}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1  ">🎨</span>{" "}
+            {bot.bot.hobbies}
             <span className="tooltiptext">Hobbies</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            👎 {bot.bot.dislikes}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1 ">👎</span>{" "}
+            {bot.bot.dislikes}
             <span className="tooltiptext">Dislikes</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            🛌 {bot.bot.dreams}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className="rounded-full bg-slate-400 p-1 ">🛌</span>{" "}
+            {bot.bot.dreams}
             <span className="tooltiptext">Dreams</span>
           </span>
           <br />
 
-          <span className="tooltip">
-            😱 {bot.bot.fears}
+          <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-1 ">😱</span>{" "}
+            {bot.bot.fears}
             <span className="tooltiptext">Fears</span>
           </span>
           <br />

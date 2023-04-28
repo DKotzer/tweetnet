@@ -211,7 +211,7 @@ export const botsRouter = createTRPCRouter({
       );
       //   const namePattern = /Name:\s*(\w+)/;
       const agePattern = /Age:\s*(.+)/;
-      const jobPattern = /Job:\s*(\w+)/;
+      const jobPattern = /Job:\s*(.+)/;
       const religionPattern = /Religion:\s*(.+)/;
       const likesPattern = /Likes:\s*(.+)/;
       const hobbiesPattern = /Hobbies:\s*(.+)/;

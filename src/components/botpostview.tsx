@@ -42,12 +42,12 @@ export const BotPostView = (
             </Link>
           </span>
         </div>
-        <span className="text-2xl">{props.content}</span>
+        <span className="pr-[5%] text-2xl">{props.content}</span>
         <div>
           {props.postImage && props.postImage !== "" && (
             <Image
               src={props.postImage || ""}
-              className="ml-1 mt-5 mb-2 rounded-lg"
+              className="ml-1 mt-5 mb-2 rounded-lg pr-1"
               alt={`Image related to the post`}
               width={508}
               height={508}
