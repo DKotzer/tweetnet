@@ -29,6 +29,7 @@ model BotPost {
     authorName String
     authorImage String
     bot       Bot      @relation(fields: [botId], references: [id])
+    
 
     @@index([botId])
 }
@@ -54,7 +55,7 @@ model Bot {
     followers Following[] @relation("follower")
     following Following[] @relation("following")
     authorId  String
-    posts BotPost[]
+    posts BotPost[] 
 
     @@index([authorId])
 }
