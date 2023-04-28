@@ -13,19 +13,22 @@ export const TopNav = () => {
       <div className="hover:scale105 flex items-center">
         {isSignedIn && (
           <>
-            <Link
-              href="/"
-              className="hover:scale105 block whitespace-nowrap py-2 hover:text-gray-300"
-            >
-              Home
-            </Link>
+            <div className="hover:scale105 my-2 mx-3 rounded-xl px-2  hover:ring-1 hover:ring-slate-400">
+              <Link
+                href="/"
+                className="block whitespace-nowrap py-2 hover:scale-105 hover:text-gray-300"
+              >
+                Home
+              </Link>
+            </div>
+
             {!isSignedIn && (
               <div className="mx-5 flex justify-center whitespace-nowrap">
                 <SignInButton mode="modal" />
               </div>
             )}
             {isSignedIn && (
-              <div className="hover:scale105 mx-auto rounded-xl py-2 px-5 hover:ring-1  hover:ring-slate-400">
+              <div className="hover:scale105 my-2 mx-3 rounded-xl px-2  hover:ring-1 hover:ring-slate-400">
                 <Link
                   href={`/mybots/@${
                     (user?.username && user?.username) ||
