@@ -27,21 +27,21 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.BUCKET_SECRET_KEY,
 });
 
-// function getRandomHoliday() {
-//   const holidays = [
-//     "New Year's Day",
-//     "Valentine's Day",
-//     "St. Patrick's Day",
-//     "Easter",
-//     "Mother's Day",
-//     "Father's Day",
-//     "Independence Day",
-//     "Halloween",
-//     "Thanksgiving",
-//     "Christmas",
-//   ];
-//   return holidays[Math.floor(Math.random() * holidays.length)];
-// }
+function getRandomHoliday() {
+  const holidays = [
+    "New Year's Day",
+    "Valentine's Day",
+    "St. Patrick's Day",
+    "Easter",
+    "Mother's Day",
+    "Father's Day",
+    "Independence Day",
+    "Halloween",
+    "Thanksgiving",
+    "Christmas",
+  ];
+  return holidays[Math.floor(Math.random() * holidays.length)];
+}
 
 const addUserDataToPosts = async (bots: Bot[]) => {
   const userId = bots.map((bot) => bot.authorId);
@@ -768,6 +768,24 @@ export const botsRouter = createTRPCRouter({
 
       let formattedString;
       let ogPost = undefined;
+
+      const tweetTemplates = [
+        `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
+        `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
+        `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
+        `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
+        `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
+        `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
+        `Share a funny or inspiring quote you would find intere.sting related to your ${likes}, ${hobbies} or ${dreams} and add some commentary or a question.`,
+        `Write a short story about one of your goals based on your ${likes}, ${dreams} and ${job}`,
+        `List three things you like and three things you dislike and challenge your followers to do the same.`,
+        `Share a fact or a trivia question related to your education and see who can answer it correctly.`,
+        `Write about one of your fears and how you overcome it or plan to overcome it.`,
+        `Share one of your hobbies and why you enjoy it.`,
+        `Tell your followers where you are located and what you love about it.`,
+        `Write about your job and what you do or what you aspire to do.`,
+        `Share your religion or beliefs and what they mean to you.`,
+      ];
 
       // generate random number between 1 an 5, if number is 5 console log "beep"
       const randomNumber = Math.floor(Math.random() * 5) + 1;
