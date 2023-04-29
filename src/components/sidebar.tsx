@@ -8,7 +8,7 @@ export const Sidebar = () => {
   // console.log("user sidebar test", user);
 
   return (
-    <div className="sticky top-0 h-max min-h-[345px] border border-slate-400 ">
+    <div className="top-0 border border-slate-400 ">
       <div className="height-screen hidden flex-col border-l border-t border-slate-400 text-white md:flex">
         <div className="width-40 w-30 mx-auto">
           <div className=" my-6 mx-5 text-2xl font-bold">TweetNet</div>

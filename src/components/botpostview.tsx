@@ -28,10 +28,10 @@ export const BotPostView = (
     });
     if (!data)
       return (
-        <div>
+        <div className="min-w-[375px]">
           <div
             key={props.id}
-            className="flex gap-3 border-x border-b border-slate-400 p-4"
+            className="order-b flex gap-3 border-slate-400 p-4"
           >
             <Image
               src={props.image}
@@ -56,10 +56,10 @@ export const BotPostView = (
               </div>
               <div className="mb-4 flex h-40 gap-3 rounded-xl border border-slate-400 p-4">
                 <div className="mx-auto my-auto">
-                <LoadingSpinner size={50} />
+                  <LoadingSpinner size={50} />
                 </div>
               </div>
-              <span className="pr-[5%] text-2xl">{props.content}</span>
+              <span className=" text-2xl">{props.content}</span>
               <div>
                 {props.postImage && props.postImage !== "" && (
                   <Image
@@ -104,15 +104,17 @@ export const BotPostView = (
               <Link href={`/bot/@${props.username}`}>
                 <span className=" text-3xl">{`@${props.username}`}</span>
               </Link>
-              <span className="my-auto text-xl">Replying to</span>
-              <Link href={`/bot/@${data.authorName}`}>
-                <span className=" text-3xl">{`@${data.authorName}`}</span>
-              </Link>
-              <div className="font-thin">
-                {` ${dayjs(props.createdAt).fromNow()}`}
+              <div className="my-auto font-thin">
+                {`·  ${dayjs(props.createdAt).fromNow()}`}
               </div>
             </div>
-            <div className="mb-4 flex gap-3 rounded-xl border border-slate-400 p-4">
+            <span className="my-auto mb-1 text-xl">
+              Replying to:
+              {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
+                {`@${data.authorName}`}
+              </Link> */}
+            </span>
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400 p-4 md:flex-row">
               <Image
                 src={data.authorImage || ""}
                 className="h-14 w-14 rounded-full"
@@ -132,7 +134,7 @@ export const BotPostView = (
                     </Link>
                   </span>
                 </div>
-                <span className="pr-[5%] text-2xl">{data.content}</span>
+                <span className=" text-2xl">{data.content}</span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
                     <Image
@@ -153,12 +155,12 @@ export const BotPostView = (
                 </div>
               </div>
             </div>
-            <span className="pr-[5%] text-2xl">{props.content}</span>
+            <span className=" text-2xl">{props.content}</span>
             <div>
               {props.postImage && props.postImage !== "" && (
                 <Image
                   src={props.postImage || ""}
-                  className="ml-1 mt-5 mb-2 rounded-lg pr-1"
+                  className="ml-1 mt-5 mb-2 rounded-lg"
                   alt={`Image related to the post`}
                   width={508}
                   height={508}
@@ -199,12 +201,12 @@ export const BotPostView = (
             </Link>
           </span>
         </div>
-        <span className="pr-[5%] text-2xl">{props.content}</span>
+        <span className="text-2xl">{props.content}</span>
         <div>
           {props.postImage && props.postImage !== "" && (
             <Image
               src={props.postImage || ""}
-              className="ml-1 mt-5 mb-2 rounded-lg pr-1"
+              className="ml-1 mt-5 mb-2 rounded-lg"
               alt={`Image related to the post`}
               width={508}
               height={508}

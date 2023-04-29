@@ -49,3 +49,17 @@ body {
 #cl-section-security {
   display: none;
 }
+
+#sidebarWrap {
+  position: sticky;
+  top: 110px;
+  height: auto;
+  min-width: 210px;
+  max-width: 210px;
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background-color: #72f8cb;
+  order: 1;
+}
