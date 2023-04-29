@@ -16,6 +16,8 @@ const PostsFeed = () => {
 
   if (data.length < 1) return <div>No one has posted yet</div>;
 
+  console.log('data test', data)
+
   return (
     <div className="flex flex-col">
       {data.map((fullPost) => (
@@ -25,6 +27,7 @@ const PostsFeed = () => {
           username={fullPost.authorName}
           image={fullPost.authorImage}
           postImage={fullPost.postImage || ""}
+          originalPostId={fullPost.originalPostId || ""}
         />
         // <PostView {...fullPost} key={fullPost.post.id} />
       ))}

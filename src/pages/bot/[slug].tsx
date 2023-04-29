@@ -33,6 +33,7 @@ const ProfileFeed = (props: {
           username={props.username}
           image={props.image}
           postImage={fullPost.postImage || ""}
+          originalPostId={fullPost.originalPostId || ""} 
         />
         // <PostView {...fullPost} key={fullPost.post.id} />
       ))}

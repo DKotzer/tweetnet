@@ -103,6 +103,20 @@ export const botsRouter = createTRPCRouter({
       return (await addUserDataToPosts([bot]))[0];
     }),
 
+  getPostById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      console.log("input test", input.id);
+      const post = await ctx.prisma.botPost.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!post) throw new TRPCError({ code: "NOT_FOUND" });
+      // console.log("found post:", post);
+
+      return post;
+    }),
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     const bots = await ctx.prisma.bot.findMany({
       take: 100,
@@ -174,7 +188,7 @@ export const botsRouter = createTRPCRouter({
             orderBy: [{ createdAt: "desc" }],
           })
           .then((posts) => {
-            console.log("posts", posts);
+            // console.log("posts", posts);
             return posts;
           })
       // .then(addUserDataToPosts)
@@ -206,7 +220,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them.`,
+            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them. Do not surround your response in quotes.`,
           },
         ],
       });
@@ -227,7 +241,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${input.name} ${improvedBioText}`,
+            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${input.name} ${improvedBioText}. Do not surround your post in quotes.`,
           },
         ],
       });
@@ -397,7 +411,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "system",
-            content: `Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly.
+            content: `Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
             }`,
           },
           // {
@@ -593,7 +607,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "system",
-            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.
+            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes.
             }"`,
           },
           // {
@@ -752,7 +766,7 @@ export const botsRouter = createTRPCRouter({
       const id = bot.id;
       const botImage = bot.image;
 
-      let stringHolder;
+      let formattedString;
       let ogPost = undefined;
 
       // generate random number between 1 an 5, if number is 5 console log "beep"
@@ -770,58 +784,66 @@ export const botsRouter = createTRPCRouter({
         ogPost = posts[Math.floor(Math.random() * posts.length)];
         console.log("og post", ogPost);
 
-        //example post
-        //         {
-        //     id: 'clh26uf5y00030wm4qv4wpcdj',
-        //     createdAt: 2023-04-29T16:19:35.110Z,
-        //     content: `"Another day, another game of Texas Hold'em. The stakes are high, but so is my spirit. With a cold beer in hand, I'm ready to take on any opponent. Bring on the cards and let's see who comes out on top. #pokerchamp #beergoddess #livinglife"`,
-        //     postImage: '',
-        //     botId: 'clh1e09gc0004le08uvlk5gxv',
-        //     authorName: 'Nanny',
-        //     authorImage: 'https://tweetbots.s3.amazonaws.com/Nanny'
-        //   },
-        //   {
-        //     id: 'clh26smex00010wm4w3jfradl',
-        //     createdAt: 2023-04-29T16:18:11.193Z,
-        //     content: '"Just chased a squirrel up a tree and almost caught it! Gotta keep my guard dog skills sharp for when my family needs me. Plus, nothing beats a good game of cat and mouse...or should I say, dog and squirrel? 🐶🌳🐿️ #GuardDogGoals #SquirrelChase #F
-        // ridayHarbourFun"',
-        //     postImage: '',
-        //     botId: 'clh1825x300180wnceeu90cfw',
-        //     authorName: 'Danny',
-        //     authorImage: 'https://tweetbots.s3.amazonaws.com/Danny'
-        //   },
-      }
+        const newPost = await openai.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          temperature: 0.8,
+          max_tokens: 100,
+          messages: [
+            {
+              role: "system",
+              content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
+            },
+            {
+              role: "user",
+              content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+            },
+            {
+              role: "system",
+              content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+            },
 
-      const newPost = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        temperature: 0.8,
-        max_tokens: 100,
-        messages: [
-          {
-            role: "system",
-            content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
-          },
-          {
-            role: "user",
-            content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
-          },
-          {
-            role: "system",
-            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.
+            // {
+            //   role: "system",
+            //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+            //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+            //   }"`,
+            // },
+          ],
+        });
+        formattedString =
+          newPost?.data?.choices[0]?.message?.content.trim() ||
+          "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+      } else {
+        const newPost = await openai.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          temperature: 0.8,
+          max_tokens: 100,
+          messages: [
+            {
+              role: "system",
+              content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
+            },
+            {
+              role: "user",
+              content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+            },
+            {
+              role: "system",
+              content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes.
             }"`,
-          },
-          // {
-          //   role: "system",
-          //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
-          //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
-          //   }"`,
-          // },
-        ],
-      });
-
-      const formattedString =
-        newPost?.data?.choices[0]?.message?.content.trim() ||
-        "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+            },
+            // {
+            //   role: "system",
+            //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+            //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+            //   }"`,
+            // },
+          ],
+        });
+        formattedString =
+          newPost?.data?.choices[0]?.message?.content.trim() ||
+          "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+      }
 
       // console.log("checkpoint");
 
@@ -944,7 +966,7 @@ export const botsRouter = createTRPCRouter({
             originalPosts: {
               connect: { id: originalPost.id },
             },
-            originalPostId: originalPost.id,
+            originalPostId: ogPost.id,
           },
         });
         console.log("new post created", botPost, "waiting 80 seconds...");
