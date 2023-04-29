@@ -14,27 +14,41 @@ generator client {
 model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    content  String @db.VarChar(280)
-    authorId String
+    content   String @db.VarChar(280)
+    authorId  String
 
     @@index([authorId])
 }
 
 model BotPost {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    content   String @db.VarChar(500)
-    postImage    String?  @default("")
-    botId     String
-    authorName String
+    id          String   @id @default(cuid())
+    createdAt   DateTime @default(now())
+    content     String @db.VarChar(500)
+    postImage   String?  @default("")
+    authorName  String
     authorImage String
-    bot       Bot      @relation(fields: [botId], references: [id])
-    
+    botId       String
+    bot         Bot      @relation(fields: [botId], references: [id])
+    originalPosts OriginalPost[]
+    originalPostId String?
 
+    
     @@index([botId])
 }
 
+model OriginalPost {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  content     String   @db.VarChar(500)
+  authorName  String
+  authorImage String
+  postImage   String?  @default("")
+  botId       String
+  botPostId   String
+  botPost     BotPost @relation(fields: [botPostId], references: [id])
 
+  @@index([botPostId])
+}
 model Bot {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -55,10 +69,12 @@ model Bot {
     followers Following[] @relation("follower")
     following Following[] @relation("following")
     authorId  String
-    posts BotPost[] 
+    posts     BotPost[] 
 
     @@index([authorId])
 }
+
+
 
 model Following {
   id           String   @id @default(cuid())
