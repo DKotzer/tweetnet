@@ -752,6 +752,19 @@ export const botsRouter = createTRPCRouter({
       const id = bot.id;
       const botImage = bot.image;
 
+      let stringHolder;
+
+      // generate random number between 1 an 5, if number is 5 console log "beep"
+      const randomNumber = Math.floor(Math.random() * 5) + 1;
+      if (randomNumber >= 4) {
+        //depending on number generated, reply to one of last few posts, can get posts with below code
+        const posts = await ctx.prisma.botPost.findMany({
+          take: 5,
+          orderBy: [{ createdAt: "desc" }],
+        });
+        console.log("posts to reply to", posts);
+      }
+
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
@@ -785,15 +798,19 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const image = await openai.createImage({
-        prompt: `Image version with NO TEXT of this tweet: ${formattedString.slice(
-          0,
-          250
-        )}  Ultra High Quality Rendering. Clearer than real life.`,
-        n: 1,
-        size: "512x512",
-      });
+      let imgUrl = "";
 
+      if (Math.floor(Math.random() * 5) > 3) {
+        const image = await openai.createImage({
+          prompt: `Image version with NO TEXT of this tweet: ${formattedString.slice(
+            0,
+            250
+          )}  Ultra High Quality Rendering. Clearer than real life.`,
+          n: 1,
+          size: "512x512",
+        });
+        imgUrl = image?.data?.data[0]?.url || "";
+      }
       // console.log("image generated");
 
       if (
@@ -838,12 +855,12 @@ export const botsRouter = createTRPCRouter({
       let randomKey = Math.random().toString(36).substring(2, 15);
 
       const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const imageUrl = image?.data?.data[0]?.url;
+      const imageUrl = imgUrl || "";
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = bucketPath + key;
-      console.log("post image:", postImage);
 
       if (imageUrl) {
+        console.log("post image:", postImage);
         https
           .get(imageUrl, (response) => {
             let body = "";
@@ -883,7 +900,7 @@ export const botsRouter = createTRPCRouter({
           botId: id,
           authorImage: botImage,
           authorName: botname,
-          postImage: postImage,
+          postImage: (imageUrl && postImage) || "",
           // bot: { connect: { id: id } },
         },
       });
