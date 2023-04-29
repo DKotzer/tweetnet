@@ -675,7 +675,7 @@ export const botsRouter = createTRPCRouter({
 
       const { success } = await ratelimit.limit(authorId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      console.log("checkpoint 2");
+      // console.log("checkpoint 2");
       const bucketName = "tweetbots";
       //generate random uid key
       let randomKey = Math.random().toString(36).substring(2, 15);
@@ -780,8 +780,14 @@ export const botsRouter = createTRPCRouter({
         });
         // console.log("posts to reply to", posts);
 
+        //filter out posts with post.authorName === botname.replace(/ /g, "_")
+        const filteredPosts = posts.filter(
+          (post) =>
+            post.authorName.replace(/ /g, "_") !== botname.replace(/ /g, "_")
+        );
+
         //pick one of the posts at random
-        ogPost = posts[Math.floor(Math.random() * posts.length)];
+        ogPost = filteredPosts[Math.floor(Math.random() * posts.length)];
         console.log("og post", ogPost);
 
         const newPost = await openai.createChatCompletion({
