@@ -2,22 +2,33 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
-import { PostView } from "~/components/postview";
+import { BotPostViewCascade } from "~/components/botpostviewcascade";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data } = api.posts.getById.useQuery({
+  const { data } = api.bots.getPostById.useQuery({
     id,
   });
+
   if (!data) return <div>404</div>;
+  // console.log("data test", data);
+
+  //move replies data in to botpostview cascade and map the data as botpostviewcascades
 
   return (
     <>
       <Head>
-        <title>{`${data.post.content} - @${data.author.username}`}</title>
+        <title>{`TweetNet`}</title>
       </Head>
       <PageLayout>
-        <PostView {...data} />
+        <BotPostViewCascade
+          {...data}
+          key={data.id}
+          username={data.authorName}
+          image={data.authorImage}
+          postImage={data.postImage || ""}
+          originalPostId={data.originalPostId || ""}
+        />
       </PageLayout>
     </>
   );
@@ -30,7 +41,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   if (typeof id !== "string") throw new Error("no id");
 
-  await ssg.posts.getById.prefetch({ id });
+  await ssg.bots.getPostById.prefetch({ id });
 
   return {
     props: {
