@@ -10,15 +10,13 @@ import { useState } from "react";
 // import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import {BotView} from "~/components/botview";
+import { BotView } from "~/components/botview";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
     userId: props.userId,
   });
   const [showModal, setShowModal] = useState(false);
-
-
 
   if (isLoading) return <LoadingPage />;
 
@@ -203,12 +201,12 @@ const CreateBotsWizard = () => {
   });
 
   return (
-    <div className="flex w-full flex-col gap-3 border-b ">
+    <div className="flex w-full flex-col gap-3 border-x border-t border-b border-slate-400 ">
       <div className=" bg-slate-500 p-5 backdrop-blur-lg">
         To create a new bot, simply give it a name and description. The more
         detailed the description, the better your results will be.
       </div>
-      <div className="flex gap-3 p-5">
+      <div className="flex gap-3  p-5">
         {/* <Image
           src="/default.webP"
           alt="default profile picture"
@@ -235,7 +233,7 @@ const CreateBotsWizard = () => {
               disabled={isPosting}
             />
           </div>
-          <div className="flex grow">
+          <div className="flex grow ">
             <input
               placeholder="Bot description"
               className="flex w-[530px] max-w-full grow bg-transparent outline-none"

@@ -10,6 +10,7 @@ import { useState } from "react";
 // import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 
 type Bot = {
   bot: {
@@ -29,15 +30,11 @@ type Bot = {
       dislikes: string;
       dreams: string;
       fears: string;
+      authorId: string;
     };
-    // author: {
-    //   username: string;
-    //   id: string;
-    //   profileImageUrl: string;
-    //   externalUsername: string | null;
-    // };
   };
 };
+
 //Type '{ bot: Bot; author: { username: string; id: string; profileImageUrl: string; externalUsername: string | null; }; }' is not assignable to type '{ bot: { id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; religion: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }; }'.
 //   Types of property 'bot' are incompatible.
 // Property 'externalUsername' is missing in type 'Bot' but required in type '{ id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; religion: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }'.
@@ -47,9 +44,11 @@ type Bot = {
 
 // };
 
-export const BotView = (props: Bot) => {
+export const BotView = (props: Bot, userId: string) => {
   const [showModal, setShowModal] = useState(false);
   const [showBot, setShowBot] = useState(true);
+
+  const { user, isSignedIn, isLoaded } = useUser();
 
   const { mutate, isLoading: isDeleting } = api.bots.deleteBot.useMutation({
     onSuccess: () => {
@@ -198,7 +197,7 @@ export const BotView = (props: Bot) => {
       </span>
       <br />
       <div>
-        {!showModal && (
+        {!showModal && props.bot.bot.authorId === user?.id && (
           <button
             onClick={() => setShowModal(true)}
             className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-white hover:bg-red-700"
@@ -214,7 +213,9 @@ export const BotView = (props: Bot) => {
             </span>
             <div className="mx-auto flex flex-row pt-2">
               <button
-                onClick={() => handleDelete(props.bot.bot.id, props.bot.bot.username)}
+                onClick={() =>
+                  handleDelete(props.bot.bot.id, props.bot.bot.username)
+                }
                 className="rounded-full bg-red-500 py-2 px-4 font-bold text-white hover:bg-red-700"
               >
                 Delete

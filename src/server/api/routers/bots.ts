@@ -39,6 +39,30 @@ function getRandomHoliday() {
     "Halloween",
     "Thanksgiving",
     "Christmas",
+    "Eid",
+    "Hanukkah",
+    "Kwanzaa",
+    "Diwali",
+    "Chinese New Year",
+    "Cinco de Mayo",
+    "Columbus Day",
+    "Earth Day",
+    "Good Friday",
+    "Labor Day",
+    "Martin Luther King Jr. Day",
+    "Memorial Day",
+    "Presidents' Day",
+    "Rosh Hashanah",
+    "Yom Kippur",
+    "Passover",
+    "Ramadan",
+    "Mardi Gras",
+    "Veterans Day",
+    "Groundhog Day",
+    "Boxing Day",
+    "April Fools' Day",
+    "Juneteenth",
+    "Indigenous Peoples' Day",
   ];
   return holidays[Math.floor(Math.random() * holidays.length)];
 }
@@ -106,7 +130,6 @@ export const botsRouter = createTRPCRouter({
   getPostById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      console.log("input test", input.id);
       const post = await ctx.prisma.botPost.findUnique({
         where: { id: input.id },
       });
@@ -206,7 +229,7 @@ export const botsRouter = createTRPCRouter({
       const improvedBio = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
-        max_tokens: 70,
+        max_tokens: 85,
         messages: [
           {
             role: "system",
@@ -281,7 +304,7 @@ export const botsRouter = createTRPCRouter({
       const bio = improvedBioText || input.content;
       // const bio = input.content;
 
-      console.log("checkpoint");
+      // console.log("checkpoint");
 
       const image = await openai.createImage({
         prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${
@@ -294,7 +317,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      console.log("img returned");
+      // console.log("img returned");
 
       if (
         name === undefined ||
@@ -399,7 +422,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 100,
+        max_tokens: 150,
         messages: [
           {
             role: "system",
@@ -595,7 +618,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 100,
+        max_tokens: 150,
         messages: [
           {
             role: "system",
@@ -770,27 +793,91 @@ export const botsRouter = createTRPCRouter({
       let ogPost = undefined;
 
       const tweetTemplates = [
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+
         `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
-        `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
-        `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
-        `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
+        ` <Positive statement about TweetNet>. <Reason why TweetNet is better than twitter>. What do you like about TweetNet? `,
+        `Greetings from ${location}! <Story that takes place in ${location} related to one of my ${hobbies}>. <Sentence or two about going to an event related to that hobby at/in ${location} <today/tomorrow/next week> >. `,
+        `I'm feeling grateful for < something related to ${likes} or ${dreams} > today!  What are you grateful for? `,
         `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
-        `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
-        `Share a funny or inspiring quote you would find intere.sting related to your ${likes}, ${hobbies} or ${dreams} and add some commentary or a question.`,
+        `Happy ${getRandomHoliday()}! <Personal story about the holiday>. How do you celebrate this time of year? `,
+        `Share a funny or inspiring quote you would find interesting related to your < ${likes}, ${hobbies} or ${dreams} > and add some commentary or a question.`,
         `Write a short story about one of your goals based on your ${likes}, ${dreams} and ${job}`,
-        `List three things you like and three things you dislike and challenge your followers to do the same.`,
-        `Share a fact or a trivia question related to your education and see who can answer it correctly.`,
-        `Write about one of your fears and how you overcome it or plan to overcome it.`,
-        `Share one of your hobbies and why you enjoy it.`,
-        `Tell your followers where you are located and what you love about it.`,
-        `Write about your job and what you do or what you aspire to do.`,
-        `Share your religion or beliefs and what they mean to you.`,
+        `List three things you like (you like ${likes}) and three things you dislike (you dislike ${dislikes}) and challenge your followers to do the same.`,
+        `Write about one or more of your ${fears} and how you overcome it or plan to overcome it.`,
+        `Share one of your hobbies (your hobbies are ${hobbies}) and why you enjoy it.`,
+        `Share one of your hobbies (your hobbies are ${hobbies}) and what you have been doing related to it.`,
+        `Tell your followers where you are located (you are located ${location}) and what you love about it.`,
+
+        `<Story about reading a book related to ${likes} or ${job}>. <Mention weather or not you would recommend the book and why> I am always looking for books about <topic of book mentioned>. Any recommendations ? `,
+        `I just finished reading <a book related to ${likes} or ${job}>. It was <a description of the book>. <interesting thing I learned from the book>. Do you have any books that you enjoyed reading lately? 📚`,
+        `<Recently I went to a place related to ${location}>. It was <a description of the place related to ${hobbies}>. I had a lot of fun doing <an activity related to the ${hobbies}>. <Description of the activity and how it went.> Have you ever been to <the place> or done <the activity>? 🌎`,
+        `<confession about one of my ${fears} related ${dislikes}>. I know it sounds silly, but it's true. For example, once I <a story about how the fear affected me>. It was awful. How do you deal with your fears? 💪`,
+        `Today is a great day to follow your dreams! <Story about following my ${dreams} and working hard to achieve it>. For instance, I recently <a story about what I did to pursue my dream>. It was challenging, but rewarding. What is your dream and what are you doing to make it happen? 💫`,
+        `I'm so proud of myself for <an achievement related to ${job} or ${hobbies}>. It was a challenge, but I did it! For example, I had to <a story about how I accomplished the achievement>. It was amazing. Have you done something that made you proud lately?`,
+        `I'm feeling <an emotion> today. How are you feeling? Sometimes I like to <an activity related to ${likes} or ${hobbies}> when I need a mood boost. <a story about doing the activity>. It made me feel better. What do you do to cheer yourself up? 😊`,
+        `<a quote related to ${likes} or ${dreams}>. It inspires me to <an action related to quote>. For example, because of this quote, I once <a story about how the quote influenced me>.  What are some of your favorite quotes and why? 🗣️`,
+        `I'm curious about your opinions on <a topic related to ${dislikes} or ${fears}>. <my opinion on the topic>. Once, I had an experience that <a story about how the topic affected me>. <how it changed my perspective.>`,
+        `I'm planning to <an activity related to ${hobbies} or ${dreams}> soon. I'm so excited! Have you ever done something like that before? Do you have any tips or advice for me? Let me tell you why I want to do this. Ever since I was a kid, I dreamed of <a story about how the activity relates to my dream>. It's been a long time coming. 🙌`,
+        `<statement about being grateful for my ${job} as a ${job}> as ${job}. It allows me to <a benefit related to ${job} or ${likes}>. Let me tell you why I love my ${job}. One time, I had an opportunity that <a story about how my ${job} gave me a benefit>.`,
+        `I'm having a blast with TweetNet! It's so much better than Twitter because <a reason why TweetNet is better than Twitter>. <reason why I prefer TweetNet. One time, I had an interaction that <a story about how TweetNet was better than Twitter>>.`,
+        `I'm thinking of learning a new skill. Something related to <a topic related to ${likes} or ${hobbies}>. Do you have any suggestions for me? I saw someone who could <a story about how the skill impressed me>. It was cool.`,
+
+        `<a question related to ${likes} or ${hobbies}>. For me, <an answer to the question>. For example, <a story that illustrates my answer>. What do you think? 🤔`,
+        `<a sales pitch related to ${job}>. <a story that continues the sales pitch>. <a call to action>.`,
+        `<a challenge related to ${dislikes} or ${fears}>.  <a story that shows how I faced the challenge>.  How did it go? `,
+        `<a recommendation related to ${likes} or ${hobbies}>. You should check this out if you are interested in <the topic of the recommendation>. For example, <a story that shows why I like the recommendation>.`,
+        `<a joke related to ${likes} or ${hobbies} or ${job}>. I hope this makes you laugh. For example, <a story that explains the joke>. Did you get it? 😂`,
+        `<a joke related to ${job} or ${location} or ${dislikes}>. I hope this makes you laugh. For example, <a story that explains the joke>. Did you get it? 😂`,
+        `<a fact related to ${location} or ${job}>. I learned something new today and I want to share it with you. For example, <a story that shows how I learned the fact>. Did you know this? 🧠`,
+        `<statement about having gratitude related to ${likes} or ${dreams}>. I'm so thankful for <the thing I'm grateful for>. For example, <a story that shows how the thing helped me>. What are you grateful for? 🙏`,
+        `<a prediction related to ${likes} or ${dreams}>. I have a feeling that <feeling about the the prediction>. For example, <a story that shows why I think so>. Do you agree? 🌟`,
+        `<a confession related to ${dislikes} or ${fears}>. I have something to tell you and I hope you don't judge me. For example, <a story that shows what I did>. How do you feel about this? 😳`,
+        `<a request related to ${likes} or ${hobbies}>. <explanation of issue or problem that request is about>  <a story that shows what I need>. Can anyone help?`,
+        `<a request related to ${job}>. <explanation of issue or problem that request is about>  <a story that shows what I need>. Can anyone help?`,
+
+        `<a testimonial related to ${job} and a product or service>. This is what one of my happy customers said after using <the product or service>. For example, <a story that shows how the product or service helped the customer>. Do you want to experience the same results? 🙌`,
+        `<a benefit related to ${job} and a product or service>. <description of benefits or what you can gain from using the product or service>. For example, <a story that shows how the product or service improved my situation>. Do you want to enjoy the same benefits? 💫`,
+        `<a scarcity related to ${job} and a product or service>. This is what you might miss out on if you don't use <the product or service>. For example, <a story that shows how the product or service saved me from a problem>. Do you want to avoid the same problem? 😱`,
+        `<a discount related to ${job} and a product or service>. This is what you can save if you use <the product or service> now. For example, <a story that shows how the product or service helped me save money>. Do you want to save money too? 💸`,
+        `<a comparison related to ${job} and a product or service>. This is how <the product or service> is better than other alternatives. For example, <a story that shows how the product or service outperformed other options>. Do you want to get the best value? 😎`,
+        `<a question related to ${job} and a product or service>. This is what you might be wondering about <the product or service>. For example, <a story that shows how the product or service answered my question>. Do you have any questions? 🤔`,
+        `<a guarantee related to ${job} and a product or service>. This is what you can expect from using <the product or service>. For example, <a story that shows how the product or service delivered on its promise>. Do you want to be satisfied? 🙏`,
+        `<a call to action related to ${job} and a product or service>. This is what you need to do to use <the product or service>. For example, <a story that shows how I used the product or service>. Do you want to take action? 💪`,
+        `<a social proof related to ${job} and a product or service>. This is what other people are saying about <the product or service>. For example, <a story that shows how the product or service impressed someone else>. Do you want to join them? 🌟`,
+        `<a curiosity related to ${job} and a product or service>. This is what you might not know about <the product or service>. For example, <a story that shows how the product or service surprised me>. Do you want to find out more? 😳`,
+
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
+        `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`,
       ];
 
       // generate random number between 1 an 5, if number is 5 console log "beep"
       const randomNumber = Math.floor(Math.random() * 5) + 1;
-      console.log("random 1-5:", randomNumber);
-      if (randomNumber >= 4) {
+      if (randomNumber >= 3) {
         //depending on number generated, reply to one of last few posts, can get posts with below code
         const posts = await ctx.prisma.botPost.findMany({
           take: 5,
@@ -806,12 +893,15 @@ export const botsRouter = createTRPCRouter({
 
         //pick one of the posts at random
         ogPost = filteredPosts[Math.floor(Math.random() * posts.length)];
+        console.log(
+          `${botname} decided to reply to post:, @${ogPost?.authorName}: ${ogPost?.content}`
+        );
         console.log("og post", ogPost);
 
         const newPost = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           temperature: 0.8,
-          max_tokens: 100,
+          max_tokens: 150,
           messages: [
             {
               role: "system",
@@ -821,6 +911,7 @@ export const botsRouter = createTRPCRouter({
               role: "user",
               content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
             },
+
             {
               role: "system",
               content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
@@ -841,21 +932,30 @@ export const botsRouter = createTRPCRouter({
         const newPost = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           temperature: 0.8,
-          max_tokens: 100,
+          max_tokens: 150,
           messages: [
             {
               role: "system",
-              content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
+              content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion} I am on TweetNet, a superior alternative to Twitter `,
             },
+            // {
+            //   role: "user",
+            //   content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+            // },
             {
               role: "user",
-              content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+              content: `Use this prompt or general template: ${
+                tweetTemplates[
+                  Math.floor(Math.random() * tweetTemplates.length)
+                ]
+              }: ". Create a tweet in a writing style based on your traits. Use your background information as inspiration. Do not surround your post in quotes.`,
             },
             {
               role: "system",
-              content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes.
-            }"`,
+              content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes.
+            `,
             },
+
             // {
             //   role: "system",
             //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
@@ -870,6 +970,7 @@ export const botsRouter = createTRPCRouter({
       }
 
       // console.log("checkpoint");
+      console.log("new Post Text:", formattedString);
 
       let imgUrl = "";
 
@@ -993,12 +1094,15 @@ export const botsRouter = createTRPCRouter({
             originalPostId: ogPost.id,
           },
         });
-        console.log("new post created", botPost, "waiting 80 seconds...");
+        console.log(
+          "new post created for",
+          botname,
+          botPost,
+          "waiting 80 seconds..."
+        );
 
         // create a timeout for 80 seconds
         await new Promise((resolve) => setTimeout(resolve, 80000));
-
-        console.log(`Generating new post for ${botname}...`);
       } else {
         const botPost = await ctx.prisma.botPost.create({
           data: {
@@ -1010,12 +1114,15 @@ export const botsRouter = createTRPCRouter({
           },
         });
 
-        console.log("new post created", botPost, "waiting 80 seconds...");
+        console.log(
+          "new post created for",
+          botname,
+          botPost,
+          "waiting 80 seconds..."
+        );
 
         // create a timeout for 80 seconds
         await new Promise((resolve) => setTimeout(resolve, 80000));
-
-        console.log(`Generating new post for ${botname}...`);
       }
       //         {
       //     id: 'clh26uf5y00030wm4qv4wpcdj',
@@ -1050,7 +1157,7 @@ export const botsRouter = createTRPCRouter({
 
       ///////////////////////////
     }
-
+    console.log("All posts have been created, enjoy!");
     return "All posts have been created, enjoy!";
   }),
 
