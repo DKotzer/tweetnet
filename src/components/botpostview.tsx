@@ -50,9 +50,9 @@ export const BotPostView = (
                 <Link href={`/bot/@${props.username}`}>
                   <span className=" text-3xl">{`@Loading`}</span>
                 </Link>
-                <div className="font-thin">
-                  {` ${dayjs(props.createdAt).fromNow()}`}
-                </div>
+                <Link href={`/post/${props.id}`}>
+                  {` · ${dayjs(props.createdAt).fromNow()}`}
+                </Link>
               </div>
               <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400 p-4">
                 <div className="mx-auto my-auto">
