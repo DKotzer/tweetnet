@@ -17,15 +17,20 @@ type Post = {
   originalPostId?: string;
 };
 
-export const BotPostView = (
+export const BotPostViewCascade = (
   props: { username: string; image: string } & Post
 ) => {
+  const { data: repliesData } = api.bots.getRepliesByPostId.useQuery({
+    ogPostId: props.id,
+  });
+  if (repliesData) console.log("replies data", repliesData);
+
   // console.log("props test", props);
   if (props.originalPostId !== undefined && props.originalPostId) {
+    console.log(props.originalPostId);
     const { data } = api.bots.getPostById.useQuery({
       id: props.originalPostId,
     });
-
     if (!data)
       return (
         <div className="min-w-[375px]">
@@ -54,12 +59,13 @@ export const BotPostView = (
                   {` ${dayjs(props.createdAt).fromNow()}`}
                 </div>
               </div>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400 p-4">
+              <div className="mb-4 flex h-40 gap-3 rounded-xl border border-slate-400 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
               <span className=" text-2xl">{props.content}</span>
+
               <div>
                 {props.postImage && props.postImage !== "" && (
                   <Image
@@ -83,11 +89,13 @@ export const BotPostView = (
         </div>
       );
 
+    console.log("data test", data);
+
     return (
       <div>
         <div
           key={props.id}
-          className="flex gap-3 border-x border-b border-slate-400 p-4"
+          className="flex gap-3 border-x border-y  border-slate-400 p-4"
         >
           <Image
             src={props.image}
@@ -102,9 +110,9 @@ export const BotPostView = (
               <Link href={`/bot/@${props.username}`}>
                 <span className=" text-3xl">{`@${props.username}`}</span>
               </Link>
-              <Link href={`/post/${props.id}`}>
-                {` · ${dayjs(props.createdAt).fromNow()}`}
-              </Link>
+              <div className="my-auto font-thin">
+                {`·  ${dayjs(props.createdAt).fromNow()}`}
+              </div>
             </div>
             <span className="my-auto mb-1 text-xl">
               Replying to:
@@ -127,7 +135,7 @@ export const BotPostView = (
                     <span className=" text-3xl">{`@${data.authorName} `}</span>
                   </Link>
                   <span className="my-auto font-thin">
-                    <Link href={`/post/${data.id}`}>
+                    <Link href={`/bot/${data.authorName}`}>
                       {` · ${dayjs(data.createdAt).fromNow()}`}
                     </Link>
                   </span>
@@ -172,51 +180,85 @@ export const BotPostView = (
             <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
           </div>
         </div>
+        {repliesData && repliesData?.length > 0 && (
+          <div>
+            {/* <h1 className="py-2 text-2xl font-extrabold text-white">
+              Replies:
+            </h1> */}
+            {repliesData.map((reply) => (
+              <BotPostViewCascade
+                {...reply}
+                key={reply.id}
+                username={reply.authorName}
+                image={reply.authorImage}
+                postImage={reply.postImage || ""}
+                originalPostId={reply.originalPostId || ""}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   }
   return (
-    <div
-      key={props.id}
-      className="flex gap-3 border-x border-b border-slate-400 p-4"
-    >
-      <Image
-        src={props.image}
-        className="h-14 w-14 rounded-full"
-        alt={`@${props.username}'s profile picture`}
-        width={56}
-        height={56}
-        quality={80}
-      />
-      <div className="flex flex-col">
-        <div className="mb-3 flex gap-1 text-slate-400">
-          <Link href={`/bot/@${props.username}`}>
-            <span className=" text-3xl">{`@${props.username} `}</span>
-          </Link>
-          <span className="my-auto font-thin">
-            <Link href={`/post/${props.id}`}>
-              {` · ${dayjs(props.createdAt).fromNow()}`}
+    <div>
+      <div
+        key={props.id}
+        className="flex gap-3 border-x border-y border-slate-400 p-4"
+      >
+        <Image
+          src={props.image}
+          className="h-14 w-14 rounded-full"
+          alt={`@${props.username}'s profile picture`}
+          width={56}
+          height={56}
+          quality={80}
+        />
+        <div className="flex flex-col">
+          <div className="mb-3 flex gap-1 text-slate-400">
+            <Link href={`/bot/@${props.username}`}>
+              <span className=" text-3xl">{`@${props.username} `}</span>
             </Link>
-          </span>
+            <span className="my-auto font-thin">
+              <Link href={`/bot/${props.username}`}>
+                {` · ${dayjs(props.createdAt).fromNow()}`}
+              </Link>
+            </span>
+          </div>
+          <span className="text-2xl">{props.content}</span>
+          <div>
+            {props.postImage && props.postImage !== "" && (
+              <Image
+                src={props.postImage || ""}
+                className="ml-1 mt-5 mb-2 rounded-lg"
+                alt={`Image related to the post`}
+                width={508}
+                height={508}
+                object-fit="cover"
+                placeholder="blur"
+                blurDataURL="https://via.placeholder.com/150"
+                quality={99}
+              />
+            )}
+          </div>
+          <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
         </div>
-        <span className="text-2xl">{props.content}</span>
-        <div>
-          {props.postImage && props.postImage !== "" && (
-            <Image
-              src={props.postImage || ""}
-              className="ml-1 mt-5 mb-2 rounded-lg"
-              alt={`Image related to the post`}
-              width={508}
-              height={508}
-              object-fit="cover"
-              placeholder="blur"
-              blurDataURL="https://via.placeholder.com/150"
-              quality={99}
-            />
-          )}
-        </div>
-        <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
       </div>
+      {repliesData && repliesData?.length > 0 && (
+        <div>
+          {/* <h1 className="py-2 text-2xl font-extrabold text-white">Replies:</h1> */}
+          {repliesData.map((reply) => (
+            <BotPostViewCascade
+              {...reply}
+              key={reply.id}
+              username={reply.authorName}
+              image={reply.authorImage}
+              postImage={reply.postImage || ""}
+              originalPostId={reply.originalPostId || ""}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
