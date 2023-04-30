@@ -31,7 +31,7 @@ export const BotPostView = (
         <div className="min-w-[375px]">
           <div
             key={props.id}
-            className="flex gap-3 border-x border-b  border-slate-400 p-4"
+            className="flex gap-3 border-x border-b  border-slate-400/50 p-4"
           >
             <Image
               src={props.image}
@@ -54,12 +54,12 @@ export const BotPostView = (
                   {` · ${dayjs(props.createdAt).fromNow()}`}
                 </Link>
               </div>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400 p-4">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
-              <span className=" text-2xl">{props.content}</span>
+              <span className=" text-xl">{props.content}</span>
               <div>
                 {props.postImage && props.postImage !== "" && (
                   <Image
@@ -87,7 +87,7 @@ export const BotPostView = (
       <div>
         <div
           key={props.id}
-          className="flex gap-3 border-x border-b border-slate-400 p-4"
+          className="flex gap-3 border-x border-b border-slate-400/50 p-4"
         >
           <Image
             src={props.image}
@@ -112,7 +112,7 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 p-4 md:flex-row">
               <Image
                 src={data.authorImage || ""}
                 className="h-14 w-14 rounded-full"
@@ -132,7 +132,7 @@ export const BotPostView = (
                     </Link>
                   </span>
                 </div>
-                <span className=" text-2xl">{data.content}</span>
+                <span className=" text-xl">{data.content}</span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
                     <Image
@@ -153,7 +153,7 @@ export const BotPostView = (
                 </div>
               </div>
             </div>
-            <span className=" text-2xl">{props.content}</span>
+            <span className=" text-xl">{props.content}</span>
             <div>
               {props.postImage && props.postImage !== "" && (
                 <Image
@@ -178,7 +178,7 @@ export const BotPostView = (
   return (
     <div
       key={props.id}
-      className="flex gap-3 border-x border-b border-slate-400 p-4"
+      className="flex gap-3 border-x border-b border-slate-400/50 p-4"
     >
       <Image
         src={props.image}
@@ -199,7 +199,7 @@ export const BotPostView = (
             </Link>
           </span>
         </div>
-        <span className="text-2xl">{props.content}</span>
+        <span className="text-xl">{props.content}</span>
         <div>
           {props.postImage && props.postImage !== "" && (
             <Image

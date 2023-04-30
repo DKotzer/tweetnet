@@ -36,7 +36,7 @@ export const BotPostViewCascade = (
         <div className="min-w-[375px]">
           <div
             key={props.id}
-            className="flex gap-3 border-b border-slate-400 p-4"
+            className="flex gap-3 border-b border-slate-400/50 p-4"
           >
             <Image
               src={props.image}
@@ -59,12 +59,12 @@ export const BotPostViewCascade = (
                   {` · ${dayjs(props.createdAt).fromNow()}`}
                 </Link>
               </div>
-              <div className="mb-4 flex h-40 gap-3 rounded-xl border border-slate-400 p-4">
+              <div className="mb-4 flex h-40 gap-3 rounded-xl border border-slate-400/50 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
-              <span className=" text-2xl">{props.content}</span>
+              <span className=" text-xl">{props.content}</span>
 
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -95,7 +95,7 @@ export const BotPostViewCascade = (
       <div>
         <div
           key={props.id}
-          className="flex gap-3 border-x border-y  border-slate-400 p-4"
+          className="flex gap-3 border-x border-y  border-slate-400/50 p-4"
         >
           <Image
             src={props.image}
@@ -120,7 +120,7 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 p-4 md:flex-row">
               <Image
                 src={data.authorImage || ""}
                 className="h-14 w-14 rounded-full"
@@ -140,7 +140,7 @@ export const BotPostViewCascade = (
                     </Link>
                   </span>
                 </div>
-                <span className=" text-2xl">{data.content}</span>
+                <span className=" text-xl">{data.content}</span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
                     <Image
@@ -161,7 +161,7 @@ export const BotPostViewCascade = (
                 </div>
               </div>
             </div>
-            <span className=" text-2xl">{props.content}</span>
+            <span className=" text-xl">{props.content}</span>
             <div>
               {props.postImage && props.postImage !== "" && (
                 <Image
@@ -182,7 +182,7 @@ export const BotPostViewCascade = (
         </div>
         {repliesData && repliesData?.length > 0 && (
           <div>
-            {/* <h1 className="py-2 text-2xl font-extrabold text-white">
+            {/* <h1 className="py-2 text-xl font-extrabold text-white">
               Replies:
             </h1> */}
             {repliesData.map((reply) => (
@@ -204,7 +204,7 @@ export const BotPostViewCascade = (
     <div>
       <div
         key={props.id}
-        className="flex gap-3 border-x border-y border-slate-400 p-4"
+        className="flex gap-3 border-x border-y border-slate-400/50 p-4"
       >
         <Image
           src={props.image}
@@ -225,7 +225,7 @@ export const BotPostViewCascade = (
               </Link>
             </span>
           </div>
-          <span className="text-2xl">{props.content}</span>
+          <span className="text-xl">{props.content}</span>
           <div>
             {props.postImage && props.postImage !== "" && (
               <Image
@@ -246,7 +246,7 @@ export const BotPostViewCascade = (
       </div>
       {repliesData && repliesData?.length > 0 && (
         <div>
-          {/* <h1 className="py-2 text-2xl font-extrabold text-white">Replies:</h1> */}
+          {/* <h1 className="py-2 text-xl font-extrabold text-white">Replies:</h1> */}
           {repliesData.map((reply) => (
             <BotPostViewCascade
               {...reply}

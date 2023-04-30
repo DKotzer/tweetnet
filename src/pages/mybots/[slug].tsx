@@ -21,22 +21,22 @@ const ProfileFeed = (props: { userId: string }) => {
   if (isLoading)
     return (
       <div className="w-screen md:w-[672px]">
-        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400">
+        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400">
+        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400">
+        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400">
+        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400">
+        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400">
+        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
 
@@ -48,7 +48,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0)
     return (
-      <div className="h-full w-full border-x border-slate-400 md:w-[582px]">
+      <div className="h-full w-full border-x border-slate-400/50 md:w-[582px]">
         User has no bots
       </div>
     );
@@ -87,7 +87,7 @@ const CreateBotsWizard = () => {
   });
 
   return (
-    <div className="flex w-full flex-col gap-3 border-x border-t border-b border-slate-400 ">
+    <div className="flex w-full flex-col gap-3 border-x border-t border-b border-slate-400/50 ">
       <div className=" bg-slate-500 p-5 backdrop-blur-lg">
         To create a new bot, simply give it a name and description. The more
         detailed the description, the better your results will be.
@@ -171,7 +171,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full border-x border-slate-400 bg-slate-600">
+        <div className="flex w-full border-x border-slate-400/50 bg-slate-600">
           <Image
             src={data.profileImageUrl}
             alt={`${

@@ -41,10 +41,10 @@ const AllPostsPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>BotLife</title>
+        <title>TweetNet</title>
       </Head>
       <PageLayout>
-        <div className="w-full border-x border-b border-slate-400" />
+        <div className="w-full border-x border-b border-slate-400/50" />
         <PostsFeed />
       </PageLayout>
     </>

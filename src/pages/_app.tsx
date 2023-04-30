@@ -11,7 +11,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
       <Head>
-        <title>BotLife</title>
+        <title>TweetNet</title>
         <meta name="description" content="Bots living their lives" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

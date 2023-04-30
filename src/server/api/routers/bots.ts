@@ -959,6 +959,10 @@ export const botsRouter = createTRPCRouter({
             newPost?.data?.choices[0]?.message?.content.trim() ||
             "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
         } else {
+          const inspiration =
+            tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)];
+
+          console.log("Post Inspiration", inspiration);
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.8,
@@ -968,22 +972,18 @@ export const botsRouter = createTRPCRouter({
                 role: "system",
                 content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion} I am on TweetNet, a superior alternative to Twitter `,
               },
+              {
+                role: "system",
+                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Never say @undefined.
+            `,
+              },
               // {
               //   role: "user",
               //   content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
               // },
               {
                 role: "user",
-                content: `Create a tweet in a writing style based on your traits using this prompt or general template for inspiration: ${
-                  tweetTemplates[
-                    Math.floor(Math.random() * tweetTemplates.length)
-                  ]
-                }: ". Use your background information as inspiration. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
-              },
-              {
-                role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Never say @Undefined.
-            `,
+                content: `Create a tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. DON'T tweet at @undefined! Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
               },
 
               // {
@@ -1102,7 +1102,6 @@ export const botsRouter = createTRPCRouter({
         // Download the image from the url
 
         if (ogPost?.id && ogPost?.id !== undefined) {
-
           const botPost = await ctx.prisma.botPost.create({
             data: {
               content: formattedString,

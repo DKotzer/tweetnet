@@ -13,7 +13,7 @@ export const PostView = (props: PostWithUser) => {
   return (
     <div
       key={post.id}
-      className="flex gap-3 border-x border-b border-slate-400 p-4"
+      className="flex gap-3 border-x border-b border-slate-400/50 p-4"
     >
       <Image
         src={author.profileImageUrl}

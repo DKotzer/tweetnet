@@ -1,6 +1,7 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { dark } from "@clerk/themes";
+import Image from "next/image";
 
 export const Sidebar = () => {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -8,10 +9,23 @@ export const Sidebar = () => {
   // console.log("user sidebar test", user);
 
   return (
-    <div className="top-0 ">
-      <div className="height-screen hidden flex-col border-t border-slate-400 text-white md:flex">
+    <div className="top-0">
+      <div className="height-screen hidden flex-col border-t border-slate-400/50 text-white md:flex">
         <div className="width-40 w-30 mx-auto">
-          <div className=" my-6 mx-5 text-2xl font-bold">TweetNet</div>
+          <div className=" my-6 mx-5 text-2xl font-bold">
+            <Link
+              href="/"
+              className="block whitespace-nowrap py-2  hover:text-gray-300 "
+            >
+              <Image
+                src="/tweetnet.png"
+                width={50}
+                height={50}
+                alt={"TweetNet"}
+                className=""
+              />
+            </Link>
+          </div>
         </div>
 
         <div className="flex-grow">
@@ -60,7 +74,7 @@ export const Sidebar = () => {
                 )}
               </div>
               {isSignedIn && (
-                <div className="mx-auto border-y border-slate-400">
+                <div className="mx-auto  border-y border-slate-400/50">
                   <div className="m-3">
                     Welcome back,
                     <div className="text-center text-2xl">

@@ -7,7 +7,7 @@ export const TopNav = () => {
   const { user, isSignedIn } = useUser();
 
   return (
-    <nav className=" visible fixed top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-400 bg-black px-5 md:hidden">
+    <nav className=" visible fixed top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-400/50 bg-black px-5 md:hidden">
       <div className="text-2xl font-bold text-white">TweetNet</div>
 
       <div className="hover:scale105 flex items-center">

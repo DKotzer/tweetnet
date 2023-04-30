@@ -21,23 +21,23 @@ const ProfileFeed = (props: {
 
   if (isLoading)
     return (
-      <div className="w-screen border-x border-slate-400 md:w-[582px]">
-        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+      <div className="w-screen border-x border-slate-400/50 md:w-[582px]">
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
 
@@ -96,7 +96,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           }`}</div>
         </div>
 
-        <div className="w-full border-x border-b border-slate-400" />
+        <div className="w-full border-x border-b border-slate-400/50" />
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}
           image={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
