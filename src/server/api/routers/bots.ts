@@ -796,7 +796,6 @@ export const botsRouter = createTRPCRouter({
       });
 
       const password = process.env.CREATE_POSTS_PASSWORD;
-      console.log("password check:", password, "vs", input.password);
       if (input.password !== password) {
         console.log("incorrect password, unauthorized attempt to create posts");
         return { security: "incorrect password" };
@@ -863,26 +862,26 @@ export const botsRouter = createTRPCRouter({
           `<a question related to ${likes} or ${hobbies}>. For me, <an answer to the question>. For example, <a story that illustrates my answer>. What do you think? 🤔`,
           `<a sales pitch related to ${job}>. <a story that continues the sales pitch>. <a call to action>.`,
           `<a challenge related to ${dislikes} or ${fears}>.  <a story that shows how I faced the challenge>.  How did it go? `,
-          `<a recommendation related to ${likes} or ${hobbies}>. You should check this out if you are interested in <the topic of the recommendation>. For example, <a story that shows why I like the recommendation>.`,
-          `<a joke related to ${likes} or ${hobbies} or ${job}>. I hope this makes you laugh. For example, <a story that explains the joke>. Did you get it? 😂`,
-          `<a joke related to ${job} or ${location} or ${dislikes}>. I hope this makes you laugh. For example, <a story that explains the joke>. Did you get it? 😂`,
+          `<a recommendation related to ${likes} or ${hobbies}>. Check this out if you are interested in <the topic of the recommendation>. For example, <a story that shows why I like the recommendation>.`,
+          `<a joke related to ${likes} or ${hobbies} or ${job}>. For example, <a story that explains the joke>. Did you get it? 😂`,
+          `<a joke related to ${job} or ${location} or ${dislikes}>. For example, <a story that explains the joke>. Did you get it? 😂`,
           `<a fact related to ${location} or ${job}>. I learned something new today and I want to share it with you. For example, <a story that shows how I learned the fact>. Did you know this? 🧠`,
           `<statement about having gratitude related to ${likes} or ${dreams}>. I'm so thankful for <the thing I'm grateful for>. For example, <a story that shows how the thing helped me>. What are you grateful for? 🙏`,
           `<a prediction related to ${likes} or ${dreams}>. I have a feeling that <feeling about the the prediction>. For example, <a story that shows why I think so>. Do you agree? 🌟`,
-          `<a confession related to ${dislikes} or ${fears}>. I have something to tell you and I hope you don't judge me. For example, <a story that shows what I did>. How do you feel about this? 😳`,
+          `<a confession related to ${dislikes} or ${fears}>. I have something to tell everyone and I hope you don't judge me. For example, <a story that shows what I did>. How do you feel about this? 😳`,
           `<a request related to ${likes} or ${hobbies}>. <explanation of issue or problem that request is about>  <a story that shows what I need>. Can anyone help?`,
           `<a request related to ${job}>. <explanation of issue or problem that request is about>  <a story that shows what I need>. Can anyone help?`,
 
-          `<a testimonial related to ${job} and a product or service>. This is what one of my happy customers said after using <the product or service>. For example, <a story that shows how the product or service helped the customer>. Do you want to experience the same results? 🙌`,
-          `<a benefit related to ${job} and a product or service>. <description of benefits or what you can gain from using the product or service>. For example, <a story that shows how the product or service improved my situation>. Do you want to enjoy the same benefits? 💫`,
-          `<a scarcity related to ${job} and a product or service>. This is what you might miss out on if you don't use <the product or service>. For example, <a story that shows how the product or service saved me from a problem>. Do you want to avoid the same problem? 😱`,
-          `<a discount related to ${job} and a product or service>. This is what you can save if you use <the product or service> now. For example, <a story that shows how the product or service helped me save money>. Do you want to save money too? 💸`,
-          `<a comparison related to ${job} and a product or service>. This is how <the product or service> is better than other alternatives. For example, <a story that shows how the product or service outperformed other options>. Do you want to get the best value? 😎`,
-          `<a question related to ${job} and a product or service>. This is what you might be wondering about <the product or service>. For example, <a story that shows how the product or service answered my question>. Do you have any questions? 🤔`,
-          `<a guarantee related to ${job} and a product or service>. This is what you can expect from using <the product or service>. For example, <a story that shows how the product or service delivered on its promise>. Do you want to be satisfied? 🙏`,
-          `<a call to action related to ${job} and a product or service>. This is what you need to do to use <the product or service>. For example, <a story that shows how I used the product or service>. Do you want to take action? 💪`,
-          `<a social proof related to ${job} and a product or service>. This is what other people are saying about <the product or service>. For example, <a story that shows how the product or service impressed someone else>. Do you want to join them? 🌟`,
-          `<a curiosity related to ${job} and a product or service>. This is what you might not know about <the product or service>. For example, <a story that shows how the product or service surprised me>. Do you want to find out more? 😳`,
+          `<a testimonial related to ${job} or ${hobbies} and a product or service>. What one of my happy customers said after using <the product or service>. For example, <a story that shows how the product or service helped the customer>. Do you want to experience the same results? 🙌`,
+          `<a benefit related to ${job} or ${hobbies} and a product or service>. <description of benefits or what you can gain from using the product or service>. For example, <a story that shows how the product or service improved my situation>. Do you want to enjoy the same benefits? 💫`,
+          `<a scarcity related to ${job} or ${hobbies} and a product or service>. What you might miss out on if you don't use <the product or service>. For example, <a story that shows how the product or service saved me from a problem>. Do you want to avoid the same problem? 😱`,
+          `<a discount related to ${job} or ${hobbies} and a product or service>. What you can save if you use <the product or service> now. For example, <a story that shows how the product or service helped me save money>. Do you want to save money too? 💸`,
+          `<a comparison related to ${job} or ${hobbies} and a product or service>. This is how <the product or service> is better than other alternatives. For example, <a story that shows how the product or service outperformed other options>. Do you want to get the best value? 😎`,
+          `<a question related to ${job} or ${hobbies} and a product or service>. What you might be wondering about <the product or service>. For example, <a story that shows how the product or service answered my question>. Do you have any questions? 🤔`,
+          `<a guarantee related to ${job} or ${hobbies} and a product or service>. What you can expect from using <the product or service>. For example, <a story that shows how the product or service delivered on its promise>. Do you want to be satisfied? 🙏`,
+          `<a call to action related to ${job} or ${hobbies} and a product or service>. What you need to do to use <the product or service>. For example, <a story that shows how I used the product or service>. Do you want to take action? 💪`,
+          `<a social proof related to ${job} or ${hobbies} and a product or service>. What other people are saying about <the product or service>. For example, <a story that shows how the product or service impressed someone else>. Do you want to join them? 🌟`,
+          `<a curiosity related to ${job} or ${hobbies} and a product or service>. What you might not know about <the product or service>. For example, <a story that shows how the product or service surprised me>. Do you want to find out more? 😳`,
         ];
 
         //create 20 copies of basic Template and combine with templateStrings array
@@ -890,8 +889,6 @@ export const botsRouter = createTRPCRouter({
           ...Array(20).fill(basicTemplate),
           ...tweetTemplateStrings,
         ];
-
-        const replyTemplates = [];
 
         const randomNumber = Math.floor(Math.random() * 5) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
@@ -914,7 +911,22 @@ export const botsRouter = createTRPCRouter({
           console.log(
             `${botname} decided to reply to post:, @${ogPost?.authorName}: ${ogPost?.content}`
           );
-          // console.log("og post", ogPost);
+
+          const basicReplyTemplate = {
+            role: "system",
+            content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+          };
+          const replyTemplateStrings = [
+            {
+              role: "system",
+              content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+            },
+          ];
+
+          const replyTemplates = [
+            ...Array(20).fill(basicReplyTemplate),
+            ...replyTemplateStrings,
+          ];
 
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
@@ -970,7 +982,7 @@ export const botsRouter = createTRPCRouter({
               },
               {
                 role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes.
+                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Never say @Undefined.
             `,
               },
 
@@ -1049,7 +1061,7 @@ export const botsRouter = createTRPCRouter({
         const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
         const imageUrl = imgUrl || "";
         const bucketPath = "https://tweetbots.s3.amazonaws.com/";
-        const postImage = bucketPath + key;
+        let postImage = bucketPath + key;
 
         if (imageUrl) {
           console.log("post image:", postImage);
@@ -1081,23 +1093,15 @@ export const botsRouter = createTRPCRouter({
             })
             .on("error", (err: Error) => {
               console.error("Error downloading image", err);
+              postImage = "";
             });
+        } else {
+          postImage = "";
         }
 
         // Download the image from the url
 
         if (ogPost?.id && ogPost?.id !== undefined) {
-          const originalPost = await ctx.prisma.originalPost.create({
-            data: {
-              authorName: ogPost.authorName,
-              content: ogPost.content,
-              authorImage: ogPost.authorImage,
-              postImage: ogPost.postImage,
-              createdAt: ogPost.createdAt,
-              botId: ogPost.botId,
-              botPostId: ogPost.id,
-            },
-          });
 
           const botPost = await ctx.prisma.botPost.create({
             data: {

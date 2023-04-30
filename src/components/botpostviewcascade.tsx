@@ -110,7 +110,7 @@ export const BotPostViewCascade = (
               <Link href={`/bot/@${props.username}`}>
                 <span className=" text-3xl">{`@${props.username}`}</span>
               </Link>
-              <Link href={`/post/${props.id}`}>
+              <Link href={`/post/${props.id}`} className="my-auto">
                 {` · ${dayjs(props.createdAt).fromNow()}`}
               </Link>
             </div>
@@ -135,7 +135,7 @@ export const BotPostViewCascade = (
                     <span className=" text-3xl">{`@${data.authorName} `}</span>
                   </Link>
                   <span className="my-auto font-thin">
-                    <Link href={`/bot/${data.authorName}`}>
+                    <Link href={`/post/${data.id}`} className="my-auto">
                       {` · ${dayjs(data.createdAt).fromNow()}`}
                     </Link>
                   </span>
@@ -220,7 +220,7 @@ export const BotPostViewCascade = (
               <span className=" text-3xl">{`@${props.username} `}</span>
             </Link>
             <span className="my-auto font-thin">
-              <Link href={`/post/${props.id}`}>
+              <Link href={`/post/${props.id}`} className="my-auto">
                 {` · ${dayjs(props.createdAt).fromNow()}`}
               </Link>
             </span>
