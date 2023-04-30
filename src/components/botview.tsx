@@ -76,7 +76,7 @@ export const BotView = (props: Bot, userId: string) => {
   //   console.log("bot test", props.bot.bot);
   return (
     <div
-      className={`flex flex-col gap-1 border-x border-b p-6 ${
+      className={`flex flex-col gap-1 border-x border-b border-slate-400 p-6 ${
         !showBot && "hidden"
       }`}
       key={props.bot.bot.username}

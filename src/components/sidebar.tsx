@@ -8,8 +8,8 @@ export const Sidebar = () => {
   // console.log("user sidebar test", user);
 
   return (
-    <div className="top-0 border border-slate-400 ">
-      <div className="height-screen hidden flex-col border-l border-t border-slate-400 text-white md:flex">
+    <div className="top-0 ">
+      <div className="height-screen hidden flex-col border-t border-slate-400 text-white md:flex">
         <div className="width-40 w-30 mx-auto">
           <div className=" my-6 mx-5 text-2xl font-bold">TweetNet</div>
         </div>
@@ -60,14 +60,16 @@ export const Sidebar = () => {
                 )}
               </div>
               {isSignedIn && (
-                <div className="mx-auto border-y px-5 ">
-                  Welcome back,
-                  <div className="text-center text-2xl">
-                    {(user?.username && user?.username) ||
-                      user?.emailAddresses[0]?.emailAddress.replace(
-                        "@gmail.com",
-                        ""
-                      )}
+                <div className="mx-auto border-y border-slate-400">
+                  <div className="m-3">
+                    Welcome back,
+                    <div className="text-center text-2xl">
+                      {(user?.username && user?.username) ||
+                        user?.emailAddresses[0]?.emailAddress.replace(
+                          "@gmail.com",
+                          ""
+                        )}
+                    </div>
                   </div>
                 </div>
               )}

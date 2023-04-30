@@ -293,7 +293,7 @@ export const botsRouter = createTRPCRouter({
       });
 
       console.log(
-        "modified msg",
+        "profile creation string generated:",
         profileCreation?.data?.choices[0]?.message?.content.trim()
       );
       //   const namePattern = /Name:\s*(\w+)/;
@@ -359,19 +359,18 @@ export const botsRouter = createTRPCRouter({
         return;
       }
 
-      console.log(name);
-      console.log(age);
-      console.log(job);
-      console.log(religion);
-      console.log(likes);
-      console.log(hobbies);
-      console.log(dislikes);
-      console.log(dreams);
-      console.log(fears);
-      console.log(education);
-      console.log(location);
-      console.log(image?.data?.data[0]?.url);
-
+      console.log("name", name);
+      console.log("age", age);
+      console.log("job", job);
+      console.log("religion", religion);
+      console.log("likes", likes);
+      console.log("hobbies", hobbies);
+      console.log("dislikes", dislikes);
+      console.log("dreams", dreams);
+      console.log("fears", fears);
+      console.log("education", education);
+      console.log("location", location);
+      console.log("image URL", image?.data?.data[0]?.url);
       const authorId = ctx.userId;
 
       // const { success } = await ratelimit.limit(authorId);

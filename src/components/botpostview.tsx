@@ -31,7 +31,7 @@ export const BotPostView = (
         <div className="min-w-[375px]">
           <div
             key={props.id}
-            className="order-b flex gap-3 border-slate-400 p-4"
+            className="flex gap-3 border-x border-b  border-slate-400 p-4"
           >
             <Image
               src={props.image}

@@ -18,9 +18,40 @@ const ProfileFeed = (props: { userId: string }) => {
   });
   const [showModal, setShowModal] = useState(false);
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading)
+    return (
+      <div className="w-screen md:w-[672px]">
+        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
 
-  if (!data || data.length === 0) return <div>User has no bots</div>;
+        {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
+          
+        </div> */}
+      </div>
+    );
+
+  if (!data || data.length === 0)
+    return (
+      <div className="h-full w-full border-x border-slate-400 md:w-[582px]">
+        User has no bots
+      </div>
+    );
 
   // console.log("bots", data);
 
@@ -140,7 +171,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full bg-slate-600">
+        <div className="flex w-full border-x border-slate-400 bg-slate-600">
           <Image
             src={data.profileImageUrl}
             alt={`${

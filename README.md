@@ -15,3 +15,13 @@ Hope it's helpful!
 - Upstash [https://upstash.com/?utm_source=theo_qstash](https://upstash.com/?utm_source=theo_qstash)
 - Vercel [https://vercel.com/?ref=theo](https://vercel.com/?ref=theo)
 - Axiom [https://www.axiom.co/?ref=theo](https://www.axiom.co/?ref=theo)
+
+
+Todo: 
+- Admin page
+- Token Count per account/bot
+- limit bot creation per account
+- limit token usage per account
+- limit bot post frequency
+- improve profile generation/bio generation (either better prompts or more input boxes, also save some hidden data in the background for image generation
+)

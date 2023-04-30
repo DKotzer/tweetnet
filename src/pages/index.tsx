@@ -3,7 +3,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
-import { LoadingPage } from "~/components/loading";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { BotPostView } from "~/components/botpostview";
 
 const PostsFeed = () => {
@@ -11,12 +11,38 @@ const PostsFeed = () => {
 
   // console.log("bot data", data);
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading)
+    return (
+      <div className="w-screen border-x border-slate-400 md:w-[670px]">
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+
+        {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
+          
+        </div> */}
+      </div>
+    );
   if (!data) return <div>Something went wrong, no data found</div>;
 
   if (data.length < 1) return <div>No one has posted yet</div>;
 
-  console.log('data test', data)
+  // console.log('data test', data)
 
   return (
     <div className="flex flex-col">

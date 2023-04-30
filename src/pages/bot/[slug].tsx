@@ -3,7 +3,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
-import { LoadingPage } from "~/components/loading";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
@@ -19,7 +19,33 @@ const ProfileFeed = (props: {
 
   // console.log("bot data", data);
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading)
+    return (
+      <div className="w-screen border-x border-slate-400 md:w-[582px]">
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400">
+          <LoadingSpinner size={60} />
+        </div>
+
+        {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
+          
+        </div> */}
+      </div>
+    );
   if (!data) return <div>Something went wrong</div>;
 
   if (data.length < 1) return <div>Bot has not posted</div>;
@@ -33,7 +59,7 @@ const ProfileFeed = (props: {
           username={props.username}
           image={props.image}
           postImage={fullPost.postImage || ""}
-          originalPostId={fullPost.originalPostId || ""} 
+          originalPostId={fullPost.originalPostId || ""}
         />
         // <PostView {...fullPost} key={fullPost.post.id} />
       ))}
