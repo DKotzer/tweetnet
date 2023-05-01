@@ -20,12 +20,14 @@ export const Sidebar = () => {
               <span className="logoTooltip text-2xl hover:scale-105 hover:cursor-default">
                 <span className="">
                   <Image
-                    src={"/tweetnet.png"}
+                    src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
                     width={85}
                     height={85}
                     alt={"TweetNet"}
                     className="pt-1 hover:cursor-pointer"
                     priority={true}
+                    placeholder={"blur"}
+                    blurDataURL={"/tweetnet.svg"}
                   />
                 </span>{" "}
                 <span className="tooltiptext bg-black">TweetNet</span>

@@ -14,13 +14,12 @@ export const TopNav = () => {
         className=" my-auto flex flex-row whitespace-nowrap  hover:text-gray-300 "
       >
         <Image
-          src={"/tweetnet.png"}
+          src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
           width={45}
           height={45}
           alt={""}
           className="navLogo mr-2 pt-1 hover:cursor-pointer"
           priority={true}
-          // blurDataURL={"/empty.png"}
           // placeholder="blur"
         />
         <div className="navTitle my-auto text-2xl font-bold text-slate-100">
