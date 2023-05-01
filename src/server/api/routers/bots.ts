@@ -907,10 +907,16 @@ export const botsRouter = createTRPCRouter({
           );
 
           //pick one of the posts at random
-          ogPost = filteredPosts[Math.floor(Math.random() * posts.length)];
+          ogPost =
+            filteredPosts[Math.floor(Math.random() * filteredPosts.length)];
           console.log(
             `${botname} decided to reply to post:, @${ogPost?.authorName}: ${ogPost?.content}`
           );
+
+          if (!ogPost?.authorName || ogPost?.authorName === undefined) {
+            console.log("problem finding post to reply to, aborting");
+            return { error: "problem finding post to reply to, aborting" };
+          }
 
           const basicReplyTemplate = {
             role: "system",
