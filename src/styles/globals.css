@@ -4,8 +4,14 @@
 
 body {
   @apply bg-black text-slate-100;
-
   overscroll-behavior: none;
+}
+
+body {
+  background-color: black;
+}
+html {
+  background-color: black;
 }
 
 .tooltip {

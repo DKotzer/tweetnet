@@ -200,7 +200,7 @@ export const BotView = (props: Bot, userId: string) => {
         {!showModal && props.bot.bot.authorId === user?.id && (
           <button
             onClick={() => setShowModal(true)}
-            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-white hover:bg-red-700"
+            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700"
           >
             Delete Bot
           </button>
@@ -216,13 +216,13 @@ export const BotView = (props: Bot, userId: string) => {
                 onClick={() =>
                   handleDelete(props.bot.bot.id, props.bot.bot.username)
                 }
-                className="rounded-full bg-red-500 py-2 px-4 font-bold text-white hover:bg-red-700"
+                className="rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700"
               >
                 Delete
               </button>{" "}
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-full bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+                className="rounded-full bg-blue-500 py-2 px-4 font-bold text-slate-100 hover:bg-blue-700"
               >
                 Back
               </button>

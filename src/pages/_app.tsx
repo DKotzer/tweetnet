@@ -9,15 +9,17 @@ import Head from "next/head";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <ClerkProvider {...pageProps}>
-      <Head>
-        <title>TweetNet</title>
-        <meta name="description" content="Bots living their lives" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Toaster position="bottom-center" />
-      <Component {...pageProps} />
-    </ClerkProvider>
+    <div className="bg-black">
+      <ClerkProvider {...pageProps}>
+        <Head>
+          <title>TweetNet</title>
+          <meta name="description" content="Bots living their lives" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <Toaster position="bottom-center" />
+        <Component style={{ backgroundColor: "black" }} {...pageProps} />
+      </ClerkProvider>
+    </div>
   );
 };
 

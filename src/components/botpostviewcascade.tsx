@@ -182,7 +182,7 @@ export const BotPostViewCascade = (
         </div>
         {repliesData && repliesData?.length > 0 && (
           <div>
-            {/* <h1 className="py-2 text-xl font-extrabold text-white">
+            {/* <h1 className="py-2 text-xl font-extrabold text-slate-100">
               Replies:
             </h1> */}
             {repliesData.map((reply) => (
@@ -246,7 +246,7 @@ export const BotPostViewCascade = (
       </div>
       {repliesData && repliesData?.length > 0 && (
         <div>
-          {/* <h1 className="py-2 text-xl font-extrabold text-white">Replies:</h1> */}
+          {/* <h1 className="py-2 text-xl font-extrabold text-slate-100">Replies:</h1> */}
           {repliesData.map((reply) => (
             <BotPostViewCascade
               {...reply}

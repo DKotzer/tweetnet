@@ -10,7 +10,7 @@ export const Sidebar = () => {
 
   return (
     <div className="top-0">
-      <div className="height-screen hidden flex-col border-t border-slate-400/50 text-white md:flex">
+      <div className="height-screen hidden flex-col border-t border-slate-400/50 text-slate-100 md:flex">
         <div className="width-40 w-30 mx-auto">
           <div className=" my-6 mx-5 text-2xl font-bold">
             <Link
@@ -20,11 +20,13 @@ export const Sidebar = () => {
               <span className="logoTooltip text-2xl hover:scale-105 hover:cursor-default">
                 <span className="">
                   <Image
-                    src="/tweetnet.png"
+                    src={"/tweetnet.png"}
                     width={85}
                     height={85}
                     alt={"TweetNet"}
                     className="pt-1 hover:cursor-pointer"
+                    blurDataURL="/empty.png"
+                    placeholder="blur"
                   />
                 </span>{" "}
                 <span className="tooltiptext bg-black">TweetNet</span>
@@ -37,17 +39,10 @@ export const Sidebar = () => {
           <div className="flex h-full flex-col justify-between">
             <div className="">
               <div className="menuItems mx-auto w-min">
-                <div className="mb-4  mr-5 flex flex-row gap-4 rounded-xl py-1 pr-14 pl-5  hover:scale-105 hover:bg-slate-500/10 hover:ring-1 hover:ring-slate-400">
-                  <Image
-                    src="/home.png"
-                    width={20}
-                    height={15}
-                    alt={"Home"}
-                    className=""
-                  />
+                <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:bg-slate-500/10  hover:ring-1 hover:ring-slate-400">
                   <Link
                     href="/"
-                    className="block whitespace-nowrap py-2  hover:text-gray-300 "
+                    className="block whitespace-nowrap py-2 text-center  hover:text-gray-300 "
                   >
                     Home
                   </Link>
@@ -58,7 +53,7 @@ export const Sidebar = () => {
                   </div>
                 )}
                 {isSignedIn && (
-                  <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:ring-1  hover:ring-slate-400">
+                  <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:bg-slate-500/10  hover:ring-1 hover:ring-slate-400">
                     <Link
                       href={`/mybots/@${
                         (user?.username && user?.username) ||
@@ -66,7 +61,7 @@ export const Sidebar = () => {
                       }`}
                       className="block whitespace-nowrap py-2 hover:scale-105 hover:text-gray-300"
                     >
-                      My-Bots
+                      My Bots
                     </Link>
                   </div>
                 )}
