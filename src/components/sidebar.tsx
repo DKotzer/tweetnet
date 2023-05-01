@@ -15,15 +15,20 @@ export const Sidebar = () => {
           <div className=" my-6 mx-5 text-2xl font-bold">
             <Link
               href="/"
-              className="block whitespace-nowrap py-2  hover:text-gray-300 "
+              className="block whitespace-nowrap   hover:text-gray-300 "
             >
-              <Image
-                src="/tweetnet.png"
-                width={50}
-                height={50}
-                alt={"TweetNet"}
-                className=""
-              />
+              <span className="logoTooltip text-2xl hover:scale-105 hover:cursor-default">
+                <span className="">
+                  <Image
+                    src="/tweetnet.png"
+                    width={85}
+                    height={85}
+                    alt={"TweetNet"}
+                    className="pt-1 hover:cursor-pointer"
+                  />
+                </span>{" "}
+                <span className="tooltiptext bg-black">TweetNet</span>
+              </span>
             </Link>
           </div>
         </div>
@@ -32,7 +37,14 @@ export const Sidebar = () => {
           <div className="flex h-full flex-col justify-between">
             <div className="">
               <div className="menuItems mx-auto w-min">
-                <div className="mb-4 w-min rounded-xl px-5 hover:scale-105 hover:ring-1 hover:ring-slate-400">
+                <div className="mb-4  mr-5 flex flex-row gap-4 rounded-xl py-1 pr-14 pl-5  hover:scale-105 hover:bg-slate-500/10 hover:ring-1 hover:ring-slate-400">
+                  <Image
+                    src="/home.png"
+                    width={20}
+                    height={15}
+                    alt={"Home"}
+                    className=""
+                  />
                   <Link
                     href="/"
                     className="block whitespace-nowrap py-2  hover:text-gray-300 "
@@ -75,7 +87,7 @@ export const Sidebar = () => {
               </div>
               {isSignedIn && (
                 <div className="mx-auto  border-y border-slate-400/50">
-                  <div className="m-3">
+                  <div className="m3 text-center ">
                     Welcome back,
                     <div className="text-center text-2xl">
                       {(user?.username && user?.username) ||
