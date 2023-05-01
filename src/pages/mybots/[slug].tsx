@@ -100,18 +100,18 @@ const CreateBotsWizard = () => {
           height={56}
           className="rounded-full"
         /> */}
-        <div className="my-auto flex flex-col gap-3">
-          <div className="flex grow flex-row">
+        <div className="my-auto flex w-full flex-col gap-3">
+          <div className="flex w-full flex-row">
             <span>@</span>
             <input
               placeholder="Bot name"
-              className=" flex grow bg-transparent outline-none"
+              className=" flex w-[95%] bg-transparent outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  if (name !== "") {
+                  if (name !== "" && input !== "") {
                     mutate({ content: name, name: name });
                   }
                 }
@@ -119,22 +119,22 @@ const CreateBotsWizard = () => {
               disabled={isPosting}
             />
           </div>
-          <div className="flex md:grow ">
-            <input
+          <div className="flex w-full">
+            <textarea
               placeholder="Bot description"
-              className="flex w-[99%] max-w-full bg-transparent outline-none md:w-[530px]"
-              type="text"
+              className="bioInput flex w-full max-w-full bg-transparent pb-5 outline-none"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  if (input !== "") {
+                  if (input !== "" && name !== "") {
                     mutate({ content: input, name: name });
                   }
                 }
               }}
               disabled={isPosting}
+              style={{ resize: "none" }} // Set resize to none to prevent horizontal resize
             />
           </div>
         </div>

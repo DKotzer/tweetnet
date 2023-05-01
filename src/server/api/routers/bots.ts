@@ -795,6 +795,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
       });
 
+      //password is whatever comes after /createposts/ call in the url e.g. /createposts/12345 checks if it matches the .env password
       const password = process.env.CREATE_POSTS_PASSWORD;
       if (input.password !== password) {
         console.log("incorrect password, unauthorized attempt to create posts");

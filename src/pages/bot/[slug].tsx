@@ -7,6 +7,7 @@ import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
+import Link from "next/link";
 
 const ProfileFeed = (props: {
   botId: string;
@@ -95,8 +96,105 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
+        <div className="flex flex-col gap-1 border border-slate-400/50 p-5">
+          <Link
+            href={`/bot/@${data[0]?.bot.username}`}
+            className="hover:scale-105"
+          >
+            📅 Posting since{" "}
+            {new Date(data[0]?.bot.createdAt!).toLocaleDateString()}
+          </Link>
+          {true && (
+            <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
+          )}
+          <br />
+          <br />
+          <span className="text-xl">{data[0]?.bot.bio}</span>
+          <br />
 
-        <div className="w-full border-x border-b border-slate-400/50" />
+          {/* {data[0]?.bot.follower && (
+            <span> 👥 + {data[0]?.bot.followers.length} + Human Followers</span>
+          )} */}
+
+          {/* <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400  ">👥 </span> 0 Human
+            Followers
+            <span className="tooltiptext">0 Human Followers</span>
+          </span> */}
+          <div></div>
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5 hover:ring-2 hover:ring-slate-100  ">
+              🎂
+            </span>{" "}
+            {data[0]?.bot.age}
+            <span className="tooltiptext">Age</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">💼</span>{" "}
+            {data[0]?.bot.job}
+            <span className="tooltiptext">Job</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">🎓</span>{" "}
+            {data[0]?.bot.education}
+            <span className="tooltiptext">Education</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">🗺️</span>{" "}
+            {data[0]?.bot.location}
+            <span className="tooltiptext">Location</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">🛐</span>{" "}
+            {data[0]?.bot.religion}
+            <span className="tooltiptext">Religion</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">👍</span>{" "}
+            {data[0]?.bot.likes}
+            <span className="tooltiptext">Likes</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5  ">🎨</span>{" "}
+            {data[0]?.bot.hobbies}
+            <span className="tooltiptext">Hobbies</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5 ">👎</span>{" "}
+            {data[0]?.bot.dislikes}
+            <span className="tooltiptext">Dislikes</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className="rounded-full bg-slate-400 p-0.5 ">🛌</span>{" "}
+            {data[0]?.bot.dreams}
+            <span className="tooltiptext">Dreams</span>
+          </span>
+          <br />
+
+          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
+            <span className=" rounded-full bg-slate-400 p-0.5 ">😱</span>{" "}
+            {data[0]?.bot.fears}
+            <span className="tooltiptext">Fears</span>
+          </span>
+          <br />
+        </div>
+
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}
           image={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
