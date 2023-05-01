@@ -980,7 +980,7 @@ export const botsRouter = createTRPCRouter({
               },
               {
                 role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Never say @undefined.
+                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes.
             `,
               },
               // {
@@ -989,7 +989,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. DON'T tweet at @undefined! Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
+                content: `Create a tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
               },
 
               // {
