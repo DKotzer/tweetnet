@@ -25,10 +25,10 @@ export const PageLayout = (props: PropsWithChildren) => {
   return (
     <main className="overflow-none  mx-auto justify-center md:max-w-2xl">
       <div className="flex  md:ml-[-60px]">
-        <div className="fixed top-0 z-10 h-screen w-[200px] border-l border-slate-400/50">
+        <div className="top-0 z-0 hidden h-screen w-[200px] border-l border-slate-400/50 md:fixed md:block">
           <Sidebar />
         </div>
-        <div className="md:ml-[200px] ml-0">
+        <div className="ml-0 md:ml-[200px]">
           <div className=" h-screen flex-col  border-slate-400 md:max-w-2xl">
             <TopNav />
             <div className="mb-16 md:hidden"></div>
