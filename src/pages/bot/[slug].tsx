@@ -81,7 +81,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data[0]?.bot.username ?? data[0]?.bot.username}</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full bg-slate-600">
+        <div className="flex w-full border border-slate-400/50 ">
           <a
             target="_blank"
             href={`https://tweetbots.s3.amazonaws.com/${data[0]?.bot.username}`}
@@ -94,14 +94,14 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               width={128}
               height={128}
               quality={99}
-              className="my-3 ml-4 rounded-full border-4 border-black bg-black"
+              className="my-3 ml-4 rounded-full ring-4 ring-slate-100/60 hover:scale-105 hover:ring-slate-100"
             />
           </a>
           <div className="my-auto p-4 text-3xl font-bold">{`@${
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
-        <div className="flex flex-col gap-1 border border-slate-400/50 p-5">
+        <div className="flex flex-col  border border-slate-400/50 p-5">
           <Link
             href={`/bot/@${data[0]?.bot.username}`}
             className="hover:scale-105"
@@ -112,8 +112,6 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           {true && (
             <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
           )}
-          <br />
-          <br />
           <span className="text-xl">{data[0]?.bot.bio}</span>
           <br />
 

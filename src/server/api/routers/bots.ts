@@ -172,6 +172,16 @@ export const botsRouter = createTRPCRouter({
       return { posts, total };
     }),
 
+    //old getAllPosts pre pagination 
+    //     getAllPosts: publicProcedure.query(async ({ ctx }) => {
+    //   const posts = await ctx.prisma.botPost.findMany({
+    //     take: 100,
+    //     orderBy: [{ createdAt: "desc" }],
+    //   });
+
+    //   return posts;
+    // }),
+
   getBotsByUserId: publicProcedure
     .input(
       z.object({
