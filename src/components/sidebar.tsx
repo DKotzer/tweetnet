@@ -39,27 +39,27 @@ export const Sidebar = () => {
           <div className="flex h-full flex-col justify-between">
             <div className="">
               <div className="menuItems mx-auto w-min">
-                <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:bg-slate-500/10  hover:ring-1 hover:ring-slate-400">
+                <div className="hover:scale105 hover: mx-auto mb-4 rounded-xl px-5 ring-slate-100/90 hover:bg-slate-500/30  ">
                   <Link
                     href="/"
-                    className="block whitespace-nowrap py-2 text-center  hover:text-gray-300 "
+                    className="block whitespace-nowrap py-2 text-center  hover:text-slate-300 "
                   >
                     Home
                   </Link>
                 </div>
                 {!isSignedIn && (
-                  <div className="mx-5 flex justify-center whitespace-nowrap">
+                  <div className="hover:scale105 hover: mx-auto  mb-4 block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:bg-slate-500/30 ">
                     <SignInButton mode="modal" />
                   </div>
                 )}
                 {isSignedIn && (
-                  <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:bg-slate-500/10  hover:ring-1 hover:ring-slate-400">
+                  <div className="hover:scale105 mx-auto mb-4 rounded-xl px-5 hover:bg-slate-500/30   ">
                     <Link
                       href={`/mybots/@${
                         (user?.username && user?.username) ||
                         user?.emailAddresses[0]?.emailAddress
                       }`}
-                      className="block whitespace-nowrap py-2 hover:scale-105 hover:text-gray-300"
+                      className="block whitespace-nowrap py-2 hover:scale-105 hover:text-slate-300 "
                     >
                       My Bots
                     </Link>
@@ -68,7 +68,7 @@ export const Sidebar = () => {
               </div>
               <div className=" mb-5 flex">
                 {isSignedIn && (
-                  <div className="center mx-auto rounded-full ring-slate-400 hover:scale-105 hover:ring-2">
+                  <div className="center mx-auto rounded-full ring-slate-400/50 hover:scale-105 hover:ring-2">
                     <UserButton
                       appearance={{
                         baseTheme: dark,

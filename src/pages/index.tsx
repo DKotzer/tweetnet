@@ -72,7 +72,7 @@ const Home: NextPage = () => {
         <title>TweetNet</title>
       </Head>
       <PageLayout>
-        <div className="w-full border-x border-b border-slate-400/50" />
+        <div className="flex w-full border-x border-b border-slate-400/50" />
         <PostsFeed />
       </PageLayout>
     </>

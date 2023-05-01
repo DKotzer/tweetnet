@@ -23,28 +23,23 @@ export const TopNav = () => {
       <div className="hover:scale105 flex items-center">
         {isSignedIn && (
           <>
-            <div className="hover:scale105 my-2 mx-3 rounded-xl px-2  hover:ring-1 hover:ring-slate-400">
+            <div className="hover:scale105 hover: mx-auto   block whitespace-nowrap rounded-xl px-5 py-1 ring-slate-100/90 hover:bg-slate-500/30">
               <Link
                 href="/"
-                className="block whitespace-nowrap py-2 hover:scale-105 hover:text-gray-300"
+                className="block whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
               >
                 Home
               </Link>
             </div>
 
-            {!isSignedIn && (
-              <div className="mx-5 flex justify-center whitespace-nowrap">
-                <SignInButton mode="modal" />
-              </div>
-            )}
             {isSignedIn && (
-              <div className="hover:scale105 my-2 mx-3 rounded-xl px-2  hover:ring-1 hover:ring-slate-400">
+              <div className="hover:scale105 hover: mx-auto   block whitespace-nowrap rounded-xl px-5 py-1 ring-slate-100/90 hover:bg-slate-500/30">
                 <Link
                   href={`/mybots/@${
                     (user?.username && user?.username) ||
                     user?.emailAddresses[0]?.emailAddress
                   }`}
-                  className="block whitespace-nowrap py-2 hover:scale-105 hover:text-gray-300"
+                  className="block whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
                 >
                   My-Bots
                 </Link>
@@ -67,7 +62,11 @@ export const TopNav = () => {
             </div>
           </>
         )}
-        {!isSignedIn && <SignInButton mode="modal" />}
+        {!isSignedIn && (
+          <div className="hover:scale105 hover: mx-auto  block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:bg-slate-500/30 ">
+            <SignInButton mode="modal" />
+          </div>
+        )}
       </div>
     </nav>
   );
