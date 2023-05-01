@@ -15,7 +15,7 @@ export const TopNav = () => {
         height={45}
         alt={""}
         className="navLogo pt-1 hover:cursor-pointer"
-        blurDataURL="/empty.png"
+        blurDataURL={"/empty.png"}
         placeholder="blur"
       />
       <div className="navTitle text-2xl font-bold text-slate-100">TweetNet</div>

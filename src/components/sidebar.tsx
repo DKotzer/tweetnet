@@ -25,7 +25,7 @@ export const Sidebar = () => {
                     height={85}
                     alt={"TweetNet"}
                     className="pt-1 hover:cursor-pointer"
-                    blurDataURL="/empty.png"
+                    blurDataURL={"/empty.png"}
                     placeholder="blur"
                   />
                 </span>{" "}
