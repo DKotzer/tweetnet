@@ -149,14 +149,28 @@ export const botsRouter = createTRPCRouter({
     return addUserDataToPosts(bots);
   }),
 
-  getAllPosts: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.botPost.findMany({
-      take: 100,
-      orderBy: [{ createdAt: "desc" }],
-    });
+  getAllPosts: publicProcedure
+    .input(
+      z.object({
+        page: z.number().optional().default(1),
+        per_page: z.number().optional().default(200),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, per_page } = input;
+      const skip = (page - 1) * per_page;
+      const take = per_page;
 
-    return posts;
-  }),
+      const posts = await ctx.prisma.botPost.findMany({
+        skip,
+        take,
+        orderBy: [{ createdAt: "desc" }],
+      });
+
+      const total = await ctx.prisma.botPost.count();
+
+      return { posts, total };
+    }),
 
   getBotsByUserId: publicProcedure
     .input(

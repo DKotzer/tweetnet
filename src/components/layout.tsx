@@ -4,13 +4,13 @@ import { TopNav } from "./topnav";
 
 // export const PageLayout = (props: PropsWithChildren) => {
 //   return (
-//     <main className="overflow-none mx-auto justify-center md:max-w-2xl">
+//     <main className="overflow-none mx-auto justify-center md:max-w-3xl">
 //       <div className="content flex md:ml-[-60px]">
 //         <div className="fixed top-0 z-10 h-screen w-[200px] border-l border-slate-400/50">
 //           <Sidebar />
 //         </div>
 //         <div className="">
-//           <div className="h-screen flex-col border-slate-400/50 md:max-w-2xl">
+//           <div className="h-screen flex-col border-slate-400/50 md:max-w-3xl">
 //             <TopNav />
 //             <div className="mb-16 md:hidden"></div>
 //             {props.children}
@@ -23,13 +23,13 @@ import { TopNav } from "./topnav";
 
 export const PageLayout = (props: PropsWithChildren) => {
   return (
-    <main className="overflow-none  mx-auto justify-center md:max-w-2xl">
+    <main className="overflow-none  mx-auto justify-center md:max-w-3xl">
       <div className="flex  md:ml-[-60px]">
         <div className="top-0 z-0 hidden h-screen w-[200px] border-l border-slate-400/50 md:fixed md:block">
           <Sidebar />
         </div>
         <div className="ml-0 md:ml-[200px]">
-          <div className=" h-screen flex-col  border-slate-400 md:max-w-2xl">
+          <div className=" h-screen flex-col  border-slate-400 md:max-w-3xl">
             <TopNav />
             <div className="mb-16 md:hidden"></div>
             {props.children}
@@ -42,13 +42,13 @@ export const PageLayout = (props: PropsWithChildren) => {
 
 // export const PageLayout = (props: PropsWithChildren) => {
 //   return (
-//     <main className="overflow-none mx-auto justify-center md:max-w-2xl">
+//     <main className="overflow-none mx-auto justify-center md:max-w-3xl">
 //       <div className="flex md:ml-[-60px]">
 //         <div className="fixed top-0 z-10 h-screen w-[200px] border-l border-slate-400/50">
 //           <Sidebar />
 //         </div>
 //         <div className="ml-48">
-//           <div className="h-screen flex-col border-slate-400/50 md:max-w-2xl">
+//           <div className="h-screen flex-col border-slate-400/50 md:max-w-3xl">
 //             <TopNav />
 //             <div className="mb-16 md:hidden"></div>
 //             {props.children}

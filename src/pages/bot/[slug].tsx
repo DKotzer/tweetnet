@@ -82,16 +82,21 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       </Head>
       <PageLayout>
         <div className="flex w-full bg-slate-600">
-          <Image
-            src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
-            alt={`${
-              data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"
-            }'s profile pic`}
-            width={128}
-            height={128}
-            quality={99}
-            className="my-3 ml-4 rounded-full border-4 border-black bg-black"
-          />
+          <a
+            target="_blank"
+            href={`https://tweetbots.s3.amazonaws.com/${data[0]?.bot.username}`}
+          >
+            <Image
+              src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
+              alt={`${
+                data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"
+              }'s profile pic`}
+              width={128}
+              height={128}
+              quality={99}
+              className="my-3 ml-4 rounded-full border-4 border-black bg-black"
+            />
+          </a>
           <div className="my-auto p-4 text-3xl font-bold">{`@${
             data[0]?.bot.username ?? "unknown"
           }`}</div>
