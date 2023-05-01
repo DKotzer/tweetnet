@@ -93,3 +93,10 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
+.navLogo:hover + .navTitle {
+  display: block;
+}
+.navTitle {
+  display: none;
+}

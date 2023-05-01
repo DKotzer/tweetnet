@@ -2,13 +2,22 @@ import React from "react";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Link from "next/link";
+import Image from "next/image";
+
 
 export const TopNav = () => {
   const { user, isSignedIn } = useUser();
 
   return (
     <nav className=" visible fixed top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-400/50 bg-black px-5 md:hidden">
-      <div className="text-2xl font-bold text-white">TweetNet</div>
+      <Image
+        src="/tweetnet.png"
+        width={45}
+        height={45}
+        alt={"TweetNet"}
+        className="pt-1 hover:cursor-pointer navLogo"
+      />
+      <div className="text-2xl font-bold text-white navTitle">TweetNet</div>
 
       <div className="hover:scale105 flex items-center">
         {isSignedIn && (
