@@ -119,10 +119,10 @@ const CreateBotsWizard = () => {
               disabled={isPosting}
             />
           </div>
-          <div className="flex grow ">
+          <div className="flex md:grow ">
             <input
               placeholder="Bot description"
-              className="flex w-[530px] max-w-full grow bg-transparent outline-none"
+              className="flex w-[99%] max-w-full bg-transparent outline-none md:w-[530px]"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
