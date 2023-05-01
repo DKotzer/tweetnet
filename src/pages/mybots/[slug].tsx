@@ -48,7 +48,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0)
     return (
-      <div className="h-full w-full border-x border-slate-400/50 md:w-[582px]">
+      <div className="h-full w-full border-x border-slate-400/50 md:w-[628px]">
         User has no bots
       </div>
     );

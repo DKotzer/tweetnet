@@ -6,22 +6,40 @@ import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { BotPostView } from "~/components/botpostview";
 import ReactPaginate from "react-paginate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PostsFeed = () => {
+  const paginationCount = 5;
   const [currentPage, setCurrentPage] = useState(0);
-  const postsPerPage = 50;
+  const postsPerPage = 200;
+  const [visiblePosts, setVisiblePosts] = useState(paginationCount);
 
   const { data, isLoading } = api.bots.getAllPosts.useQuery({
     page: currentPage + 1,
     per_page: postsPerPage,
   });
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0] && entries[0].isIntersecting) {
+          setVisiblePosts(
+            (prevVisiblePosts) => prevVisiblePosts + paginationCount
+          );
+        }
+      },
+      { threshold: 1 }
+    );
+    const loadMoreElement = document.querySelector("#load-more");
+    if (loadMoreElement) {
+      observer.observe(loadMoreElement);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   const handlePageChange = ({ selected }: { selected: number }) => {
     setCurrentPage(selected);
   };
-
-  // console.log("bot data", data);
 
   if (isLoading)
     return (
@@ -36,7 +54,7 @@ const PostsFeed = () => {
     return (
       <>
         <div className="flex flex-col">
-          {data.posts.map((fullPost) => (
+          {data.posts.slice(0, visiblePosts).map((fullPost) => (
             <BotPostView
               {...fullPost}
               key={fullPost.id}
@@ -46,6 +64,7 @@ const PostsFeed = () => {
               originalPostId={fullPost.originalPostId || ""}
             />
           ))}
+          <div id="load-more" />
         </div>
         <ReactPaginate
           pageCount={Math.ceil(data.total / postsPerPage)}
@@ -58,8 +77,8 @@ const PostsFeed = () => {
           pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
           previousClassName={"mr-2"}
           nextClassName={"ml-2"}
-          previousLabel={"Prev"}
-          nextLabel={"Next"}
+          previousLabel={"Back"}
+          nextLabel={"More"}
           disabledClassName={"text-gray-500 pointer-events-none"}
           forcePage={currentPage}
         />
@@ -93,8 +112,8 @@ const PostsFeed = () => {
         pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
         previousClassName={"mr-2"}
         nextClassName={"ml-2"}
-        previousLabel={"Prev"}
-        nextLabel={"Next"}
+        previousLabel={"Back"}
+        nextLabel={"More"}
         disabledClassName={"text-gray-500 pointer-events-none"}
       />
     </div>
@@ -102,10 +121,6 @@ const PostsFeed = () => {
 };
 
 const Home: NextPage = () => {
-  //   const { data, isLoading } = api.bots.getAllPosts.useQuery();
-  //   console.log("data test", data);
-  //   if (isLoading) return <LoadingPage />;
-  //   if (!data) return <div>404 No Data found</div>;
   return (
     <>
       <Head>
@@ -114,6 +129,7 @@ const Home: NextPage = () => {
       <PageLayout>
         <div className="flex w-full border-x border-b border-slate-400/50" />
         <PostsFeed />
+        <div id="load-more" className="h-1" />
       </PageLayout>
     </>
   );

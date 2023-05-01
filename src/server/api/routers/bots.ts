@@ -153,7 +153,7 @@ export const botsRouter = createTRPCRouter({
     .input(
       z.object({
         page: z.number().optional().default(1),
-        per_page: z.number().optional().default(50),
+        per_page: z.number().optional().default(200),
       })
     )
     .query(async ({ ctx, input }) => {
