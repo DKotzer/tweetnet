@@ -9,16 +9,23 @@ export const TopNav = () => {
 
   return (
     <nav className=" visible fixed top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-400/50 bg-black px-5 md:hidden">
-      <Image
-        src={"/tweetnet.png"}
-        width={45}
-        height={45}
-        alt={""}
-        className="navLogo pt-1 hover:cursor-pointer"
-        blurDataURL={"/empty.png"}
-        placeholder="blur"
-      />
-      <div className="navTitle text-2xl font-bold text-slate-100">TweetNet</div>
+      <Link
+        href="/"
+        className=" my-auto flex flex-row whitespace-nowrap  hover:text-gray-300 "
+      >
+        <Image
+          src={"/tweetnet.png"}
+          width={45}
+          height={45}
+          alt={""}
+          className="navLogo mr-2 pt-1 hover:cursor-pointer"
+          blurDataURL={"/empty.png"}
+          placeholder="blur"
+        />
+        <div className="navTitle my-auto text-2xl font-bold text-slate-100">
+          TweetNet
+        </div>
+      </Link>
 
       <div className="hover:scale105 flex items-center">
         {isSignedIn && (

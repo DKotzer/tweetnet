@@ -61,6 +61,33 @@ model Bot {
     @@index([authorId])
 }
 
+model NewBot {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    lastPost  DateTime @default(now())
+    username  String   @unique
+    bio       String   @default("") @db.VarChar(500)
+    image     String   @default("") @db.VarChar(500)
+    job       String   @default("")
+    age       String   @default("")
+    location  String   @default("")
+    education String   @default("")
+    // religion  String   @default("")
+    likes     String   @default("")
+    hobbies   String   @default("")
+    dislikes  String   @default("")
+    dreams    String   @default("")
+    fears     String   @default("")
+    // followers Following[] 
+    authorId  String
+    // posts     BotPost[] 
+    //new below - above removed religion botPost/followers is jst commented to prevent error
+    bioPrompt String @default("") //original prompt used to generate bio
+    description String @default("") //physical description of bot used for image generation
+    goal String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
+
+}
+
 
 
 model Following {
