@@ -172,15 +172,15 @@ export const botsRouter = createTRPCRouter({
       return { posts, total };
     }),
 
-    //old getAllPosts pre pagination 
-    //     getAllPosts: publicProcedure.query(async ({ ctx }) => {
-    //   const posts = await ctx.prisma.botPost.findMany({
-    //     take: 100,
-    //     orderBy: [{ createdAt: "desc" }],
-    //   });
+  //old getAllPosts pre pagination
+  //     getAllPosts: publicProcedure.query(async ({ ctx }) => {
+  //   const posts = await ctx.prisma.botPost.findMany({
+  //     take: 100,
+  //     orderBy: [{ createdAt: "desc" }],
+  //   });
 
-    //   return posts;
-    // }),
+  //   return posts;
+  // }),
 
   getBotsByUserId: publicProcedure
     .input(
@@ -943,10 +943,44 @@ export const botsRouter = createTRPCRouter({
             return { error: "problem finding post to reply to, aborting" };
           }
 
-          const basicReplyTemplate = {
-            role: "system",
-            content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
-          };
+          let replyChain = false;
+          let ogOgPoster = "";
+          let ogOgText = "";
+
+          if (ogPost.originalPostId) {
+            replyChain = true;
+            console.log("Reply chain detected");
+
+            const ogOgPost = await ctx.prisma.botPost.findUnique({
+              where: { id: ogPost.originalPostId },
+            });
+
+            ogOgText = ogOgPost?.content || "";
+            ogOgPoster = ogOgPost?.authorName || "";
+          }
+
+          const basicReplyChainTemplate = [
+            {
+              role: "user",
+              content: `We are replying to this tweet @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in your writing style and perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+            },
+            {
+              role: "system",
+              content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+            },
+          ];
+
+          const basicReplyTemplate = [
+            {
+              role: "user",
+              content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+            },
+
+            {
+              role: "system",
+              content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+            },
+          ];
           const replyTemplateStrings = [
             {
               role: "system",
@@ -954,41 +988,59 @@ export const botsRouter = createTRPCRouter({
             },
           ];
 
-          const replyTemplates = [
+          let replyTemplates = [
             ...Array(20).fill(basicReplyTemplate),
             ...replyTemplateStrings,
           ];
 
-          const newPost = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            temperature: 0.8,
-            max_tokens: 150,
-            messages: [
-              {
-                role: "system",
-                content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
-              },
-              {
-                role: "user",
-                content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
-              },
+          if (replyChain) {
+            const newPost = await openai.createChatCompletion({
+              model: "gpt-3.5-turbo",
+              temperature: 0.8,
+              max_tokens: 175,
+              messages: [
+                {
+                  role: "system",
+                  content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                },
+                {
+                  role: "user",
+                  content: `You are replying to this tweet @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in your writing style and perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+                },
+                {
+                  role: "system",
+                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                },
+              ],
+            });
+            formattedString =
+              newPost?.data?.choices[0]?.message?.content.trim() ||
+              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+          } else {
+            const newPost = await openai.createChatCompletion({
+              model: "gpt-3.5-turbo",
+              temperature: 0.8,
+              max_tokens: 175,
+              messages: [
+                {
+                  role: "system",
+                  content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                },
+                {
+                  role: "user",
+                  content: `We are replying to a tweet by @${ogPost?.authorName} from your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+                },
 
-              {
-                role: "system",
-                content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
-              },
-
-              // {
-              //   role: "system",
-              //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
-              //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
-              //   }"`,
-              // },
-            ],
-          });
-          formattedString =
-            newPost?.data?.choices[0]?.message?.content.trim() ||
-            "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+                {
+                  role: "system",
+                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                },
+              ],
+            });
+            formattedString =
+              newPost?.data?.choices[0]?.message?.content.trim() ||
+              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+          }
         } else {
           const inspiration =
             tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)];
@@ -997,7 +1049,7 @@ export const botsRouter = createTRPCRouter({
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.8,
-            max_tokens: 150,
+            max_tokens: 175,
             messages: [
               {
                 role: "system",
@@ -1014,7 +1066,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
+                content: `Create a very creative tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
               },
 
               // {

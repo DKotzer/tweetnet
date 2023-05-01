@@ -43,7 +43,30 @@ const PostsFeed = () => {
 
   if (isLoading)
     return (
-      <div className="w-screen border-x border-slate-400/50 md:w-[670px]"></div>
+      <div className="w-screen border-x border-slate-400/50 md:w-[670px]">
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[340px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+        <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+
+        {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
+          
+        </div> */}
+      </div>
     );
   if (!data) return <div>Something went wrong, no data found</div>;
 
