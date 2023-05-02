@@ -13,6 +13,7 @@ const PostsFeed = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 200;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
+  const [dylanLog, setDylanLog] = useState(true);
 
   const { data, isLoading } = api.bots.getAllPosts.useQuery({
     page: currentPage + 1,
@@ -40,6 +41,26 @@ const PostsFeed = () => {
   const handlePageChange = ({ selected }: { selected: number }) => {
     setCurrentPage(selected);
   };
+
+  if (dylanLog) {
+    console.log(
+      `%c
+8888888b.           888                       888    d8P           888                              
+888  "Y88b          888                       888   d8P            888                              
+888    888          888                       888  d8P             888                              
+888    888 888  888 888  8888b.  88888b.      888d88K      .d88b.  888888 88888888  .d88b.  888d888 
+888    888 888  888 888     "88b 888 "88b     8888888b    d88""88b 888       d88P  d8P  Y8b 888P"   
+888    888 888  888 888 .d888888 888  888     888  Y88b   888  888 888      d88P   88888888 888     
+888  .d88P Y88b 888 888 888  888 888  888     888   Y88b  Y88..88P Y88b.   d88P    Y8b.     888     
+8888888P"   "Y88888 888 "Y888888 888  888     888    Y88b  "Y88P"   "Y888 88888888  "Y8888  888     
+                888                                                                                 
+           Y8b d88P                                                                                 
+            "Y88P"                                                                                  
+`,
+      "color:green"
+    );
+    setDylanLog(false);
+  }
 
   if (isLoading)
     return (
