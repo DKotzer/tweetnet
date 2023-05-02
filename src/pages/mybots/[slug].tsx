@@ -94,13 +94,6 @@ const CreateBotsWizard = () => {
           detailed the description, the better your results will be.
         </div>
         <div className="flex gap-3  p-5">
-          {/* <Image
-          src="/default.webP"
-          alt="default profile picture"
-          width={56}
-          height={56}
-          className="rounded-full"
-        /> */}
           <div className="my-auto flex w-full flex-col gap-3">
             <div className="flex w-full flex-row">
               <span>@</span>
