@@ -87,62 +87,66 @@ const CreateBotsWizard = () => {
   });
 
   return (
-    <div className="flex w-full flex-col gap-3 border-x border-t border-b border-slate-400/50 ">
-      <div className=" bg-slate-500 p-5 backdrop-blur-lg">
-        To create a new bot, simply give it a name and description. The more
-        detailed the description, the better your results will be.
-      </div>
-      <div className="flex gap-3  p-5">
-        {/* <Image
+    <div className="border-x border-t border-b border-slate-400/50">
+      <div className="flex w-full flex-col gap-3  ">
+        <div className=" bg-slate-500 p-5 backdrop-blur-lg">
+          To create a new bot, simply give it a name and description. The more
+          detailed the description, the better your results will be.
+        </div>
+        <div className="flex gap-3  p-5">
+          {/* <Image
           src="/default.webP"
           alt="default profile picture"
           width={56}
           height={56}
           className="rounded-full"
         /> */}
-        <div className="my-auto flex w-full flex-col gap-3">
-          <div className="flex w-full flex-row">
-            <span>@</span>
-            <input
-              placeholder="Bot name"
-              className=" flex w-[95%] bg-transparent outline-none"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (name !== "" && input !== "") {
-                    mutate({ content: name, name: name });
+          <div className="my-auto flex w-full flex-col gap-3">
+            <div className="flex w-full flex-row">
+              <span>@</span>
+              <input
+                placeholder="Bot name"
+                className=" flex w-[95%] bg-transparent outline-none"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (name !== "" && input !== "") {
+                      mutate({ content: name, name: name });
+                    }
                   }
-                }
-              }}
-              disabled={isPosting}
-            />
-          </div>
-          <div className="flex w-full">
-            <textarea
-              placeholder="Bot description"
-              className="bioInput flex w-full max-w-full bg-transparent pb-5 outline-none"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  if (input !== "" && name !== "") {
-                    mutate({ content: input, name: name });
+                }}
+                disabled={isPosting}
+              />
+            </div>
+            <div className="flex w-full">
+              <textarea
+                placeholder="Bot description"
+                className={`bioInput block w-full max-w-full resize-y bg-transparent outline-none ${
+                  input !== "" && "h-[150px]"
+                }`}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (input !== "" && name !== "") {
+                      mutate({ content: input, name: name });
+                    }
                   }
-                }
-              }}
-              disabled={isPosting}
-              style={{ resize: "none" }} // Set resize to none to prevent horizontal resize
-            />
+                }}
+                disabled={isPosting}
+                style={{ resize: "none" }} // Set resize to none to prevent horizontal resize
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div className="">
+      <div className="pt-10 ">
         {input !== "" && !isPosting && name !== "" && (
           <button
-            className="float-right mt-[-50px] mr-5 h-[30px] rounded-xl px-2 font-bold ring-2 ring-slate-400 hover:scale-105 hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400"
+            className=" hover: float-right mt-[-50px] mr-5 h-[30px] scale-150 rounded-xl px-2 font-bold ring-2 ring-slate-400/50  hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400/50"
             onClick={() => mutate({ content: input, name: name })}
           >
             Create

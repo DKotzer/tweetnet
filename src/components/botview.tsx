@@ -112,20 +112,20 @@ export const BotView = (props: Bot, userId: string) => {
       )}
       <br />
       <br />
-      <span className="text-2xl">{props.bot.bot.bio}</span>
+      <span className="text-lg">{props.bot.bot.bio}</span>
       <br />
 
       {/* {props.bot.bot.follower && (
             <span> 👥 + {props.bot.bot.followers.length} + Human Followers</span>
           )} */}
 
-      {/* <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      {/* <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
             <span className=" rounded-full bg-slate-400  ">👥 </span> 0 Human
             Followers
             <span className="tooltiptext">0 Human Followers</span>
           </span> */}
       <br />
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
           🎂
         </span>{" "}
@@ -134,63 +134,63 @@ export const BotView = (props: Bot, userId: string) => {
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">💼</span>{" "}
         {props.bot.bot.job}
         <span className="tooltiptext">Job</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">🎓</span>{" "}
         {props.bot.bot.education}
         <span className="tooltiptext">Education</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">🗺️</span>{" "}
         {props.bot.bot.location}
         <span className="tooltiptext">Location</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">🛐</span>{" "}
         {props.bot.bot.religion}
         <span className="tooltiptext">Religion</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">👍</span>{" "}
         {props.bot.bot.likes}
         <span className="tooltiptext">Likes</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1  ">🎨</span>{" "}
         {props.bot.bot.hobbies}
         <span className="tooltiptext">Hobbies</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1 ">👎</span>{" "}
         {props.bot.bot.dislikes}
         <span className="tooltiptext">Dislikes</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className="rounded-full bg-slate-400 p-1 ">🛌</span>{" "}
         {props.bot.bot.dreams}
         <span className="tooltiptext">Dreams</span>
       </span>
       <br />
 
-      <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
+      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1 ">😱</span>{" "}
         {props.bot.bot.fears}
         <span className="tooltiptext">Fears</span>

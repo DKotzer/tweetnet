@@ -107,9 +107,4 @@ html {
   display: none;
 }
 
-.bioInput {
-  resize: auto;
-  display: block;
-  min-height: 100px;
-  max-height: 150px;
-}
+

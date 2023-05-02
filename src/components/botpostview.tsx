@@ -22,38 +22,51 @@ export const BotPostView = (
 ) => {
   // console.log("props test", props);
   if (props.originalPostId !== undefined && props.originalPostId) {
-    const { data } = api.bots.getPostById.useQuery({
+    const { data, isLoading } = api.bots.getPostById.useQuery({
       id: props.originalPostId,
     });
 
-    if (!data)
+    if (isLoading)
       return (
-        <div className="min-w-[375px]">
+        <div>
           <div
             key={props.id}
-            className="flex gap-3 border-x border-b  border-slate-400/50 p-4"
+            className="flex gap-3 border-x border-b border-slate-400/50 p-4"
           >
-            <Image
-              src={props.image}
-              className="h-14 w-14 rounded-full"
-              alt={`@${props.username}'s profile picture`}
-              width={56}
-              height={56}
-              quality={80}
-            />
+            <Link href={`/bot/@${props.username}`}>
+              <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+                <Image
+                  src={props.image}
+                  className="rounded-full"
+                  alt={`@${props.username}'s profile picture`}
+                  quality={80}
+                  width={56}
+                  height={56}
+                />
+              </div>
+            </Link>
+
             <div className="flex flex-col">
               <div className="mb-3 flex gap-1 text-slate-400">
-                <Link href={`/bot/@${props.username}`}>
-                  <span className=" text-3xl">{`@${props.username}`}</span>
+                <Link
+                  href={`/bot/@${props.username}`}
+                  className="hover:scale-105"
+                >
+                  <span className=" text-3xl ">{`@${props.username}`}</span>
                 </Link>
-                <span className="my-auto text-xl">Replying to</span>
-                <Link href={`/bot/@${props.username}`}>
-                  <span className=" text-3xl">{`@Loading`}</span>
-                </Link>
-                <Link href={`/post/${props.id}`}>
+                <Link
+                  href={`/post/${props.id}`}
+                  className="my-auto font-thin  hover:scale-105 "
+                >
                   {` · ${dayjs(props.createdAt).fromNow()}`}
                 </Link>
               </div>
+              <span className="my-auto mb-1 text-xl">
+                Replying to:
+                {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
+                {`@${data.authorName}`}
+              </Link> */}
+              </span>
               <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
@@ -64,7 +77,7 @@ export const BotPostView = (
                 {props.postImage && props.postImage !== "" && (
                   <Image
                     src={props.postImage || ""}
-                    className="ml-1 mt-5 mb-2 rounded-lg pr-1"
+                    className="ml-1 mt-5 mb-2 rounded-lg"
                     alt={`Image related to the post`}
                     width={508}
                     height={508}
@@ -82,6 +95,92 @@ export const BotPostView = (
           </div>
         </div>
       );
+
+    if (!data) {
+      return (
+        <div>
+          <div
+            key={props.id}
+            className="flex gap-3 border-x border-b border-slate-400/50 p-4"
+          >
+            <Link href={`/bot/@${props.username}`}>
+              <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+                <Image
+                  src={props.image}
+                  className="rounded-full"
+                  alt={`@${props.username}'s profile picture`}
+                  quality={80}
+                  width={56}
+                  height={56}
+                />
+              </div>
+            </Link>
+
+            <div className="flex flex-col">
+              <div className="mb-3 flex gap-1 text-slate-400">
+                <Link
+                  href={`/bot/@${props.username}`}
+                  className="hover:scale-105"
+                >
+                  <span className=" text-3xl ">{`@${props.username}`}</span>
+                </Link>
+                <Link
+                  href={`/post/${props.id}`}
+                  className="my-auto font-thin  hover:scale-105 "
+                >
+                  {` · ${dayjs(props.createdAt).fromNow()}`}
+                </Link>
+              </div>
+              <span className="my-auto mb-1 text-xl">
+                Replying to:
+                {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
+                {`@${data.authorName}`}
+              </Link> */}
+              </span>
+
+              <div className="mb-4 flex h-26 flex-col gap-3 rounded-xl  border border-slate-400/50 p-4 md:flex-row">
+                <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+                  <Image
+                    src={"/default.webp" || ""}
+                    className="h-14 w-14 rounded-full"
+                    alt={`default profile picture`}
+                    width={56}
+                    height={56}
+                    quality={80}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <div className="mb-3 flex gap-1 text-slate-400">
+                    <span className="  text-2xl">{`@Deleted `}</span>
+                  </div>
+                  <span className=" text-xl">Deleted Post</span>
+                </div>
+              </div>
+
+              <span className=" text-xl">{props.content}</span>
+              <div>
+                {props.postImage && props.postImage !== "" && (
+                  <Image
+                    src={props.postImage || ""}
+                    className="ml-1 mt-5 mb-2 rounded-lg"
+                    alt={`Image related to the post`}
+                    width={508}
+                    height={508}
+                    object-fit="cover"
+                    placeholder="blur"
+                    blurDataURL="https://via.placeholder.com/150"
+                    quality={99}
+                  />
+                )}
+              </div>
+              <div>
+                {props.postImage === "" && <div className="mb-3"></div>}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div>

@@ -276,7 +276,7 @@ export const botsRouter = createTRPCRouter({
       const improvedBio = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
-        max_tokens: 85,
+        max_tokens: 100,
         messages: [
           {
             role: "system",
@@ -667,7 +667,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 150,
+        max_tokens: 200,
         messages: [
           {
             role: "system",
@@ -849,6 +849,18 @@ export const botsRouter = createTRPCRouter({
         const religion = bot.religion;
         const id = bot.id;
         const botImage = bot.image;
+        const lastPost = bot.lastPost;
+        //check if LastPost was in the last hour
+
+        if (lastPost && new Date(lastPost).getTime() > Date.now() - 3600000) {
+          console.log(
+            "already posted in last hour, skipping bot:",
+            botname,
+            "last post:",
+            lastPost
+          );
+          return;
+        }
 
         let formattedString;
         let ogPost = undefined;
@@ -997,7 +1009,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 175,
+              max_tokens: 200,
               messages: [
                 {
                   role: "system",
@@ -1020,7 +1032,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 175,
+              max_tokens: 200,
               messages: [
                 {
                   role: "system",
@@ -1049,7 +1061,7 @@ export const botsRouter = createTRPCRouter({
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.8,
-            max_tokens: 175,
+            max_tokens: 200,
             messages: [
               {
                 role: "system",

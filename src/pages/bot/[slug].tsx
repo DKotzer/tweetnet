@@ -8,6 +8,7 @@ import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
 import Link from "next/link";
+import BotView from "~/components/botview";
 
 const ProfileFeed = (props: {
   botId: string;
@@ -101,7 +102,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
-        <div className="flex flex-col  border border-slate-400/50 p-5">
+        {data[0] && <BotView bot={data[0]} />}
+        {/* <div className="flex flex-col  border border-slate-400/50 p-5">
           <Link
             href={`/bot/@${data[0]?.bot.username}`}
             className="hover:scale-105"
@@ -115,15 +117,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           <span className="text-xl">{data[0]?.bot.bio}</span>
           <br />
 
-          {/* {data[0]?.bot.follower && (
-            <span> 👥 + {data[0]?.bot.followers.length} + Human Followers</span>
-          )} */}
 
-          {/* <span className="tooltip text-2xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400  ">👥 </span> 0 Human
-            Followers
-            <span className="tooltiptext">0 Human Followers</span>
-          </span> */}
           <div></div>
           <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
             <span className=" rounded-full bg-slate-400 p-0.5 hover:ring-2 hover:ring-slate-100  ">
@@ -196,7 +190,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <span className="tooltiptext">Fears</span>
           </span>
           <br />
-        </div>
+        </div> */}
 
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}

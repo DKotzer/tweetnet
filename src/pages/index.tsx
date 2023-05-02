@@ -68,7 +68,7 @@ const PostsFeed = () => {
         </div> */}
       </div>
     );
-  if (!data) return <div>Something went wrong, no data found</div>;
+  if (!data) return <div>Please reload.</div>;
 
   if (!isLoading && data.posts.length < 1)
     return <div>No one has posted yet</div>;
