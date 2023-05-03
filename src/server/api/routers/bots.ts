@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import https from "https";
 import AWS from "aws-sdk";
+import { users } from "@clerk/clerk-sdk-node";
 
 import {
   createTRPCRouter,
@@ -26,6 +27,8 @@ const s3 = new AWS.S3({
   accessKeyId: process.env.BUCKET_ACCESS_KEY,
   secretAccessKey: process.env.BUCKET_SECRET_KEY,
 });
+
+//images cost 9k gpt-3.5-turbo tokens
 
 function getRandomHoliday() {
   const holidays = [
@@ -278,6 +281,70 @@ export const botsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.userId;
+      const name = input.name.trim().replace(/ /g, "_");
+
+      const user = await users.getUser(ctx.userId);
+      if (!user) {
+        console.log("no user found, cancelling bot creation");
+        return;
+      }
+      //if user has no tokens used yet (first bot), set tokens to 0
+      if (!user.publicMetadata.tokensUsed) {
+        console.log("no tokens found on account, setting to 0");
+        await users.updateUser(authorId, {
+          publicMetadata: {
+            ...user.publicMetadata,
+            tokensUsed: 0,
+          },
+        });
+      }
+      if (!user.publicMetadata.tokensLimit) {
+        console.log("no token limit found on account, setting to 0");
+        await users.updateUser(authorId, {
+          publicMetadata: {
+            ...user.publicMetadata,
+            tokensLimit: 200000,
+          },
+        });
+      }
+      // console.log("user test", user);
+      // const privateMetadata = user.privateMetadata;
+      // console.log("metadata", privateMetadata);
+
+      console.log(
+        "token limit:",
+        user.publicMetadata.tokensLimit,
+        "vs tokens used:",
+        user.publicMetadata.tokensUsed
+      );
+
+      let tokenUsage = 0;
+      let botCount = await ctx.prisma.bot.findMany({
+        where: {
+          authorId: authorId,
+        },
+        take: 100,
+        orderBy: [{ createdAt: "desc" }],
+      });
+      console.log("subscribed: ", user.publicMetadata.subscribed);
+      if (!user.publicMetadata.subscribed && botCount.length >= 1) {
+        console.log(
+          "You have reached the maximum number of bots for Free Tier, if you would like to create more bots please buy your first tokens."
+        );
+        return;
+      }
+
+      if (
+        Number(user.publicMetadata.tokensLimit || 10000) <
+        Number(user.publicMetadata.tokensUsed)
+      ) {
+        console.log(
+          "You have used all your tokens, please buy more tokens to continue creating bots."
+        );
+        return;
+      }
+
       const improvedBio = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
@@ -295,7 +362,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a bio based on the following user description in this format: Name ${input.name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them. Do not surround your response in quotes.`,
+            content: `Create me a bio based on the following user description in this format: Name ${name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them. Do not surround your response in quotes.`,
           },
         ],
       });
@@ -305,9 +372,17 @@ export const botsRouter = createTRPCRouter({
       console.log("improved bio", improvedBioText);
       console.log("using improved bio to generate profile");
 
+      tokenUsage += improvedBio?.data?.usage?.total_tokens || 0;
+
+      // console.log(
+      //   "improved bio cost:",
+      //   Number(improvedBio?.data?.usage?.total_tokens) || 0
+      // );
+
       const profileCreation = await openai.createChatCompletion({
         model: "gpt-4",
         temperature: 0.8,
+        max_tokens: 100,
         messages: [
           {
             role: "system",
@@ -316,7 +391,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${input.name} ${improvedBioText}. Do not surround your post in quotes.`,
+            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${name} ${improvedBioText}. Do not surround your post in quotes.`,
           },
         ],
       });
@@ -325,6 +400,14 @@ export const botsRouter = createTRPCRouter({
         "profile creation string generated:",
         profileCreation?.data?.choices[0]?.message?.content.trim()
       );
+
+      tokenUsage +=
+        (profileCreation?.data?.usage?.total_tokens! * 20) || 0;
+      console.log(
+        "profile creation cost:",
+        Number(profileCreation?.data?.usage?.total_tokens) * 20 || 0
+      );
+
       //   const namePattern = /Name:\s*(\w+)/;
       const agePattern = /Age:\s*(.+)/;
       const jobPattern = /Job:\s*(.+)/;
@@ -340,8 +423,6 @@ export const botsRouter = createTRPCRouter({
       const formattedString =
         profileCreation?.data?.choices[0]?.message?.content.trim() ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
-
-      const name = input.name;
 
       const age = formattedString.match(agePattern)?.[1] || "33";
       const job = formattedString.match(jobPattern)?.[1] || "";
@@ -359,9 +440,7 @@ export const botsRouter = createTRPCRouter({
       // console.log("checkpoint");
 
       const image = await openai.createImage({
-        prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${
-          input.name
-        } from ${location}. Bio: ${bio.slice(
+        prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
           0,
           100
         )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
@@ -369,7 +448,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      // console.log("img returned");
+      console.log("img 1 cost: 9000");
 
       if (
         name === undefined ||
@@ -400,13 +479,12 @@ export const botsRouter = createTRPCRouter({
       console.log("education", education);
       console.log("location", location);
       console.log("image URL", image?.data?.data[0]?.url);
-      const authorId = ctx.userId;
 
       // const { success } = await ratelimit.limit(authorId);
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const bucketName = "tweetbots";
-      const key = `${input.name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
+      const key = `${name}`; // This can be the same as the original file name or a custom key
       const imageUrl = image?.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
 
@@ -440,9 +518,17 @@ export const botsRouter = createTRPCRouter({
           .on("error", (err: Error) => {
             console.error("Error downloading image", err);
           });
+        //add token count to bot
       }
 
       // Download the image from the url
+
+      const imageCost = 9000;
+      //convert gpt 4 to gpt 3.5 token usage
+
+      const totalCost = imageCost + Number(tokenUsage);
+
+      console.log("profile creation cost:", totalCost);
 
       const bot = await ctx.prisma.bot.create({
         data: {
@@ -460,9 +546,17 @@ export const botsRouter = createTRPCRouter({
           fears,
           username: name.replace(/ /g, "_").substring(0, 20),
           image: `${bucketPath}${name.replace(/ /g, "_")}`,
+          tokens: totalCost,
         },
       });
       console.log("new bot", bot);
+      const updatedUser = await users.getUser(ctx.userId);
+      await users.updateUser(authorId, {
+        publicMetadata: {
+          ...updatedUser.publicMetadata,
+          tokensUsed: Number(updatedUser.publicMetadata.tokensUsed) + totalCost,
+        },
+      });
 
       //create first post here, can mostly just copy the code for post create
 
@@ -481,7 +575,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter which was corrupted by corporate greed. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+            content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
           },
           {
             role: "system",
@@ -502,11 +596,15 @@ export const botsRouter = createTRPCRouter({
         newPost?.data?.choices[0]?.message?.content.trim()
       );
 
+      const firstTweetCost = Number(newPost?.data?.usage?.total_tokens) || 0;
+
+      console.log("first tweet cost", firstTweetCost);
+
       const formattedRes =
         newPost?.data?.choices[0]?.message?.content.trim() ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
-      console.log("checkpoint");
+      // console.log("checkpoint");
 
       const firstPostImage = await openai.createImage({
         prompt: `Image version of this tweet, with no text: ${formattedRes.slice(
@@ -517,7 +615,7 @@ export const botsRouter = createTRPCRouter({
         size: "512x512",
       });
 
-      console.log("img return");
+      console.log("img 2 cost: 9000");
 
       if (
         botname === undefined ||
@@ -609,7 +707,27 @@ export const botsRouter = createTRPCRouter({
           // bot: { connect: { id: id } },
         },
       });
+      const increment = Number(firstTweetCost) + 9000;
       console.log("first post:", botPost);
+
+      await users.updateUser(authorId, {
+        publicMetadata: {
+          ...updatedUser.publicMetadata,
+          tokensUsed: Number(updatedUser.publicMetadata.tokensUsed) + increment,
+        },
+      });
+
+      await ctx.prisma.bot.update({
+        where: {
+          id: id,
+        },
+        data: {
+          tokens: {
+            increment: increment,
+          },
+        },
+      });
+      //  console.log('first post cost': totalCost)
 
       return bot;
     }),
@@ -672,7 +790,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 200,
+        max_tokens: 150,
         messages: [
           {
             role: "system",
@@ -705,7 +823,7 @@ export const botsRouter = createTRPCRouter({
         newPost?.data?.choices[0]?.message?.content.trim() ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
-      console.log("checkpoint");
+      // console.log("checkpoint");
 
       const image = await openai.createImage({
         prompt: `Image version, with NO TEXT, of this tweet: ${formattedString.slice(
@@ -822,6 +940,11 @@ export const botsRouter = createTRPCRouter({
       const bots = await ctx.prisma.bot.findMany({
         take: 100,
         orderBy: [{ createdAt: "desc" }],
+        where: {
+          lastPost: {
+            lt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours in milliseconds
+          },
+        },
       });
 
       //password is whatever comes after /createposts/ call in the url e.g. /createposts/12345 checks if it matches the .env password
@@ -830,16 +953,17 @@ export const botsRouter = createTRPCRouter({
         console.log("incorrect password, unauthorized attempt to create posts");
         return { security: "incorrect password" };
       }
+      if (bots.length === 0) {
+        console.log(
+          "No bots are elidible for posting at the moment, please try again later."
+        );
+      }
 
       console.log("Starting post generation loop");
 
       const shuffledBots = bots.sort(() => Math.random() - 0.5);
 
       for (const bot of shuffledBots) {
-        // console.log("bot test", bot);
-
-        /////////////////////////////////////////
-
         const botname = bot.username;
         const age = bot.age;
         const bio = bot.bio;
@@ -854,9 +978,18 @@ export const botsRouter = createTRPCRouter({
         const religion = bot.religion;
         const id = bot.id;
         const botImage = bot.image;
-        const lastPost = bot.lastPost;
-        //check if LastPost was in the last hour
+        const lastPost = bot.lastPost || null;
+        const author = bot.authorId;
 
+        let tokenUsage = 0;
+
+        const user = await users.getUser(author);
+        if (!user) {
+          console.log("no user found, cancelling bot creation");
+          return;
+        }
+
+        //check if LastPost was in the last hour
         if (lastPost && new Date(lastPost).getTime() > Date.now() - 3600000) {
           console.log(
             "already posted in last hour, skipping bot:",
@@ -864,7 +997,7 @@ export const botsRouter = createTRPCRouter({
             "last post:",
             lastPost
           );
-          return;
+          continue; //skip to the next bot in shuffledBots
         }
 
         let formattedString;
@@ -932,7 +1065,7 @@ export const botsRouter = createTRPCRouter({
           ...tweetTemplateStrings,
         ];
 
-        const randomNumber = Math.floor(Math.random() * 5) + 1;
+        const randomNumber = Math.floor(Math.random() * 6) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
         if (randomNumber >= 3) {
           //find last 7 posts
@@ -959,6 +1092,9 @@ export const botsRouter = createTRPCRouter({
             console.log("problem finding post to reply to, aborting");
             return { error: "problem finding post to reply to, aborting" };
           }
+
+          // let ogText = ogPost.content
+          // let ogPoster = ogPost.authorName
 
           let replyChain = false;
           let ogOgPoster = "";
@@ -1014,7 +1150,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 200,
+              max_tokens: 150,
               messages: [
                 {
                   role: "system",
@@ -1030,6 +1166,9 @@ export const botsRouter = createTRPCRouter({
                 },
               ],
             });
+
+            tokenUsage += newPost?.data?.usage?.total_tokens || 0;
+
             formattedString =
               newPost?.data?.choices[0]?.message?.content.trim() ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
@@ -1037,7 +1176,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 200,
+              max_tokens: 150,
               messages: [
                 {
                   role: "system",
@@ -1054,6 +1193,8 @@ export const botsRouter = createTRPCRouter({
                 },
               ],
             });
+
+            tokenUsage += newPost?.data?.usage?.total_tokens || 0;
             formattedString =
               newPost?.data?.choices[0]?.message?.content.trim() ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
@@ -1066,7 +1207,7 @@ export const botsRouter = createTRPCRouter({
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.8,
-            max_tokens: 200,
+            max_tokens: 150,
             messages: [
               {
                 role: "system",
@@ -1094,6 +1235,8 @@ export const botsRouter = createTRPCRouter({
               // },
             ],
           });
+
+          tokenUsage += newPost?.data?.usage?.total_tokens || 0;
           formattedString =
             newPost?.data?.choices[0]?.message?.content.trim() ||
             "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
@@ -1114,6 +1257,7 @@ export const botsRouter = createTRPCRouter({
             size: "512x512",
           });
           imgUrl = image?.data?.data[0]?.url || "";
+          tokenUsage += 9000;
         }
         // console.log("image generated");
 
@@ -1212,6 +1356,20 @@ export const botsRouter = createTRPCRouter({
               originalPostId: ogPost.id,
             },
           });
+
+          //updateLastPost value to control max frequency of posting
+          await ctx.prisma.bot.update({
+            where: {
+              id: id,
+            },
+            data: {
+              tokens: {
+                increment: Number(tokenUsage),
+              },
+              lastPost: new Date(),
+            },
+          });
+
           console.log(
             "new post created for",
             botname,
@@ -1229,6 +1387,26 @@ export const botsRouter = createTRPCRouter({
               authorImage: botImage,
               authorName: botname,
               postImage: (imageUrl && postImage) || "",
+            },
+          });
+
+          await ctx.prisma.bot.update({
+            where: {
+              id: id,
+            },
+            data: {
+              tokens: {
+                increment: Number(tokenUsage),
+              },
+              lastPost: new Date(),
+            },
+          });
+
+          await users.updateUser(author, {
+            publicMetadata: {
+              ...user.publicMetadata,
+              tokensUsed:
+                Number(user.publicMetadata.tokensUsed) + Number(tokenUsage),
             },
           });
 

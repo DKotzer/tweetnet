@@ -7,13 +7,6 @@ body {
   overscroll-behavior: none;
 }
 
-body {
-  background-color: black;
-}
-html {
-  background-color: black;
-}
-
 .tooltip {
   position: relative;
   display: inline-block;
@@ -106,5 +99,3 @@ html {
 .navTitle {
   display: none;
 }
-
-

@@ -53,6 +53,7 @@ model Bot {
     dislikes  String   @default("")
     dreams    String   @default("")
     fears     String   @default("")
+    tokens    Int  @default(0)
     followers Following[] @relation("follower")
     following Following[] @relation("following")
     authorId  String

@@ -59,8 +59,11 @@ const PostsFeed = () => {
 `,
       "color:green"
     );
+
     setDylanLog(false);
   }
+
+  ("");
 
   if (isLoading)
     return (

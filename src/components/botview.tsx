@@ -31,6 +31,7 @@ type Bot = {
       dreams: string;
       fears: string;
       authorId: string;
+      tokens: number;
     };
   };
 };
@@ -76,7 +77,7 @@ export const BotView = (props: Bot, userId: string) => {
   //   console.log("bot test", props.bot.bot);
   return (
     <div
-      className={`flex flex-col gap-1 border-x border-b border-slate-400/50 p-6 ${
+      className={`flex flex-col border-x border-b border-slate-400/50 p-6 ${
         !showBot && "hidden"
       }`}
       key={props.bot.bot.username}
@@ -100,6 +101,7 @@ export const BotView = (props: Bot, userId: string) => {
         </Link>
         <span className=" my-auto"></span>
       </div>
+      <div className="h-2"></div>
       <Link
         href={`/bot/@${props.bot.bot.username}`}
         className="hover:scale-105"
@@ -110,10 +112,10 @@ export const BotView = (props: Bot, userId: string) => {
       {true && (
         <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
       )}
-      <br />
-      <br />
+      <span className="mr-16 hover:scale-105"> 🪙 {props.bot.bot.tokens} {`$${props.bot.bot.tokens/1000*0.002}`}</span>
+      <div className="h-1"></div>
+
       <span className="text-lg">{props.bot.bot.bio}</span>
-      <br />
 
       {/* {props.bot.bot.follower && (
             <span> 👥 + {props.bot.bot.followers.length} + Human Followers</span>
@@ -124,7 +126,8 @@ export const BotView = (props: Bot, userId: string) => {
             Followers
             <span className="tooltiptext">0 Human Followers</span>
           </span> */}
-      <br />
+      <div className="h-3"></div>
+
       <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
         <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
           🎂
