@@ -300,7 +300,7 @@ export const botsRouter = createTRPCRouter({
         });
       }
       if (!user.publicMetadata.tokensLimit) {
-        console.log("no token limit found on account, setting to 0");
+        console.log("no token limit found on account, setting to 200000");
         await users.updateUser(authorId, {
           publicMetadata: {
             ...user.publicMetadata,
@@ -402,7 +402,7 @@ export const botsRouter = createTRPCRouter({
       );
 
       tokenUsage +=
-        (Number(profileCreation?.data?.usage?.total_tokens!) * 20) || 0;
+        Number(profileCreation?.data?.usage?.total_tokens!) * 20 || 0;
       console.log(
         "profile creation cost:",
         Number(profileCreation?.data?.usage?.total_tokens) * 20 || 0
@@ -467,18 +467,18 @@ export const botsRouter = createTRPCRouter({
         return;
       }
 
-      console.log("name", name);
-      console.log("age", age);
-      console.log("job", job);
-      console.log("religion", religion);
-      console.log("likes", likes);
-      console.log("hobbies", hobbies);
-      console.log("dislikes", dislikes);
-      console.log("dreams", dreams);
-      console.log("fears", fears);
-      console.log("education", education);
-      console.log("location", location);
-      console.log("image URL", image?.data?.data[0]?.url);
+      // console.log("name", name);
+      // console.log("age", age);
+      // console.log("job", job);
+      // console.log("religion", religion);
+      // console.log("likes", likes);
+      // console.log("hobbies", hobbies);
+      // console.log("dislikes", dislikes);
+      // console.log("dreams", dreams);
+      // console.log("fears", fears);
+      // console.log("education", education);
+      // console.log("location", location);
+      // console.log("image URL", image?.data?.data[0]?.url);
 
       // const { success } = await ratelimit.limit(authorId);
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
@@ -526,9 +526,9 @@ export const botsRouter = createTRPCRouter({
       const imageCost = 9000;
       //convert gpt 4 to gpt 3.5 token usage
 
-      const totalCost = imageCost + Number(tokenUsage);
+      const totalCost = Number(imageCost) + Number(tokenUsage);
 
-      console.log("profile creation cost:", totalCost);
+      console.log("profile creation cost + image:", totalCost);
 
       const bot = await ctx.prisma.bot.create({
         data: {
@@ -546,17 +546,30 @@ export const botsRouter = createTRPCRouter({
           fears,
           username: name.replace(/ /g, "_").substring(0, 20),
           image: `${bucketPath}${name.replace(/ /g, "_")}`,
-          tokens: totalCost,
+          tokens: Number(totalCost),
         },
       });
       console.log("new bot", bot);
       const updatedUser = await users.getUser(ctx.userId);
+      console.log(
+        "created User tokens pre update:",
+        updatedUser.publicMetadata.tokensUsed
+      );
       await users.updateUser(authorId, {
         publicMetadata: {
           ...updatedUser.publicMetadata,
-          tokensUsed: Number(updatedUser.publicMetadata.tokensUsed) + totalCost,
+          tokensUsed:
+            Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
         },
       });
+      console.log(
+        "updated user tokens pre update:",
+        Number(updatedUser.publicMetadata.tokensUsed)
+      );
+      console.log(
+        "updated user tokens post update:",
+        Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost)
+      );
 
       //create first post here, can mostly just copy the code for post create
 
@@ -634,20 +647,20 @@ export const botsRouter = createTRPCRouter({
         return;
       }
 
-      console.log("name:", botname);
-      console.log("bio:", bio || "no bio");
-      console.log("age:", age);
-      console.log("job:", job);
-      console.log("religion:", religion);
-      console.log("likes:", likes);
-      console.log("hobbies:", hobbies);
-      console.log("dislikes:", dislikes);
-      console.log("dreams:", dreams);
-      console.log("fears:", fears);
-      console.log("education:", education);
-      console.log("location:", location);
-      console.log("bot image:", botImage);
-      console.log("new tweet text:", formattedString);
+      // console.log("name:", botname);
+      // console.log("bio:", bio || "no bio");
+      // console.log("age:", age);
+      // console.log("job:", job);
+      // console.log("religion:", religion);
+      // console.log("likes:", likes);
+      // console.log("hobbies:", hobbies);
+      // console.log("dislikes:", dislikes);
+      // console.log("dreams:", dreams);
+      // console.log("fears:", fears);
+      // console.log("education:", education);
+      // console.log("location:", location);
+      // console.log("bot image:", botImage);
+      // console.log("new tweet text:", formattedString);
       // console.log(image?.data?.data[0]?.url);
 
       // const authorId = ctx.userId;
@@ -710,12 +723,31 @@ export const botsRouter = createTRPCRouter({
       const increment = Number(firstTweetCost) + 9000;
       console.log("first post:", botPost);
 
+      console.log(
+        "increment",
+        increment,
+        "total",
+        Number(updatedUser.publicMetadata.tokensUsed) + increment
+      );
+
+      console.log(
+        "increment + tokensUsed",
+        Number(updatedUser.publicMetadata.tokensUsed), "+",
+        increment, "=", Number(updatedUser.publicMetadata.tokensUsed) + increment
+      );
       await users.updateUser(authorId, {
         publicMetadata: {
           ...updatedUser.publicMetadata,
-          tokensUsed: Number(updatedUser.publicMetadata.tokensUsed) + increment,
+          tokensUsed:
+            Number(updatedUser.publicMetadata.tokensUsed) +
+            increment +
+            Number(totalCost),
         },
       });
+      console.log(
+        "created User tokens post update:",
+        updatedUser.publicMetadata.tokensUsed
+      );
 
       await ctx.prisma.bot.update({
         where: {
