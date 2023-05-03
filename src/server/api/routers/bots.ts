@@ -555,13 +555,14 @@ export const botsRouter = createTRPCRouter({
         "created User tokens pre update:",
         updatedUser.publicMetadata.tokensUsed
       );
-      await users.updateUser(authorId, {
-        publicMetadata: {
-          ...updatedUser.publicMetadata,
-          tokensUsed:
-            Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
-        },
-      });
+      //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
+      // await users.updateUser(authorId, {
+      //   publicMetadata: {
+      //     ...updatedUser.publicMetadata,
+      //     tokensUsed:
+      //       Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
+      //   },
+      // });
       console.log(
         "updated user tokens pre update:",
         Number(updatedUser.publicMetadata.tokensUsed)
@@ -993,7 +994,7 @@ export const botsRouter = createTRPCRouter({
 
       console.log("Starting post generation loop");
 
-      const shuffledBots = bots.sort(() => Math.random() - 0.5);
+      const shuffledBots = bots.sort(() => Math.random() - 0.5).slice(0,2);
 
       for (const bot of shuffledBots) {
         const botname = bot.username;
@@ -1410,7 +1411,7 @@ export const botsRouter = createTRPCRouter({
           );
 
           // create a timeout for 80 seconds
-          await new Promise((resolve) => setTimeout(resolve, 80000));
+          await new Promise((resolve) => setTimeout(resolve, 180000));
         } else {
           const botPost = await ctx.prisma.botPost.create({
             data: {
@@ -1450,7 +1451,7 @@ export const botsRouter = createTRPCRouter({
           );
 
           // create a timeout for 80 seconds
-          await new Promise((resolve) => setTimeout(resolve, 80000));
+          await new Promise((resolve) => setTimeout(resolve, 180000));
         }
         //         {
         //     id: 'clh26uf5y00030wm4qv4wpcdj',
