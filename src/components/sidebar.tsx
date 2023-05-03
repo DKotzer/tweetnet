@@ -12,19 +12,19 @@ export const Sidebar = () => {
     <div className="top-0">
       <div className="height-screen hidden flex-col border-t border-slate-400/50 text-slate-100 md:flex">
         <div className="width-40 w-30 mx-auto">
-          <div className=" my-6 mx-5 text-2xl font-bold">
+          <div className=" my-6 mx-5 text-2xl  hover:scale-105 font-bold">
             <Link
               href="/"
-              className="block whitespace-nowrap   hover:text-gray-300 "
+              className="block whitespace-nowrap    hover:text-gray-300 "
             >
-              <span className="logoTooltip text-2xl hover:scale-105 hover:cursor-default">
+              <span className="logoTooltip text-2xl  hover:cursor-default">
                 <span className="">
                   <Image
                     src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
                     width={85}
                     height={85}
                     alt={"TweetNet"}
-                    className="pt-1 hover:cursor-pointer"
+                    className="navLogo pt-1 hover:cursor-pointer"
                     priority={true}
                     placeholder={"blur"}
                     blurDataURL={"/tweetnet.svg"}

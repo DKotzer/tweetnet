@@ -11,8 +11,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { BotView } from "~/components/botview";
-import { users } from "@clerk/clerk-sdk-node";
-
+// import { users } from "@clerk/clerk-sdk-node";
+// import { clerkClient } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
@@ -161,10 +162,22 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
     username,
   });
+  const { user } = useUser();
   if (isLoading) return <LoadingPage />;
-  if (!data) return <LoadingPage />;
+  if (!data || !user) return <LoadingPage />;
 
-  let publicMetadata = users.getUser(data.id);
+  const getPublicMetadata = async () => {
+    const publicMetadata = user?.publicMetadata;
+    return publicMetadata;
+  };
+  const loadPublicMetadata = async () => {
+    const publicMetadata = await getPublicMetadata();
+    // use publicMetadata here
+    console.log(publicMetadata);
+  };
+
+  // Call loadPublicMetadata to load the public metadata.
+  loadPublicMetadata();
 
   return (
     <>

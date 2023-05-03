@@ -80,8 +80,7 @@ body {
   /* Position the text box */
   position: absolute;
   z-index: 999;
-  top: 110px;
-  left: -20px;
+  top: 150px;
 
   /* Fade in the text box */
   opacity: 0;
@@ -98,4 +97,13 @@ body {
 }
 .navTitle {
   display: none;
+}
+
+.logoTooltip:hover + #home {
+  display: none;
+}
+
+.navLogo {
+  height: auto;
+  width: auto;
 }

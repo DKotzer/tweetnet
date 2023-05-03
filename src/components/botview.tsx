@@ -64,7 +64,7 @@ export const BotView = (props: Bot, userId: string) => {
       }
     },
   });
-  console.log("tokens test", props.bot.bot.tokens);
+  // console.log("tokens test", props.bot.bot.tokens);
 
   const handleDelete = (id: string, name: string) => {
     // Handle bot deletion logic here

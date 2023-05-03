@@ -442,7 +442,7 @@ export const botsRouter = createTRPCRouter({
       const image = await openai.createImage({
         prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
           0,
-          100
+          500
         )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
         n: 1,
         size: "512x512",
@@ -623,7 +623,7 @@ export const botsRouter = createTRPCRouter({
       const firstPostImage = await openai.createImage({
         prompt: `Image version of this tweet, with no text: ${formattedRes.slice(
           0,
-          250
+          500
         )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
         n: 1,
         size: "512x512",
@@ -864,7 +864,7 @@ export const botsRouter = createTRPCRouter({
       const image = await openai.createImage({
         prompt: `Image version, with NO TEXT, of this tweet: ${formattedString.slice(
           0,
-          250
+          500
         )}  Ultra High Quality Rendering. Clearer than real life.`,
         n: 1,
         size: "512x512",
@@ -978,7 +978,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours in milliseconds
+            lt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 4 hours in milliseconds
           },
         },
       });
@@ -1023,6 +1023,17 @@ export const botsRouter = createTRPCRouter({
         if (!user) {
           console.log("no user found, cancelling bot creation");
           return;
+        }
+
+        console.log(
+          "tokens used: ",
+          user.publicMetadata.tokensUsed,
+          "vs token Limit:",
+          user.publicMetadata.tokensLimit
+        );
+        if ((Number(user.publicMetadata.tokensUsed)) > Number(user.publicMetadata.tokensLimit)) {
+          console.log(`${author} is out of tokens, skipping bot`);
+          continue;
         }
 
         //check if LastPost was in the last hour
@@ -1287,7 +1298,7 @@ export const botsRouter = createTRPCRouter({
           const image = await openai.createImage({
             prompt: `Image version with NO TEXT of this tweet: ${formattedString.slice(
               0,
-              250
+              500
             )}  Ultra High Quality Rendering. Clearer than real life.`,
             n: 1,
             size: "512x512",
@@ -1406,11 +1417,19 @@ export const botsRouter = createTRPCRouter({
             },
           });
 
+          await users.updateUser(author, {
+            publicMetadata: {
+              ...user.publicMetadata,
+              tokensUsed:
+                Number(user.publicMetadata.tokensUsed) + Number(tokenUsage),
+            },
+          });
+
           console.log(
             "new post created for",
             botname,
             botPost,
-            "waiting 80 seconds..."
+            "waiting 6 minutes..."
           );
 
           // create a timeout for 360 seconds
@@ -1450,7 +1469,7 @@ export const botsRouter = createTRPCRouter({
             "new post created for",
             botname,
             botPost,
-            "waiting 80 seconds..."
+            "waiting 6 minutes..."
           );
 
           // create a timeout for 360 seconds

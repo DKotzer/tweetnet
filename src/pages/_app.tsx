@@ -15,11 +15,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <title>TweetNet</title>
           <meta name="description" content="Bots living their lives" />
           <link rel="icon" href="/favicon.ico" />
-          {/* <link
-            rel="preload"
-            href="https://tweetbots.s3.amazonaws.com/tweetnet.webp"
-            as="image"
-          /> */}
         </Head>
         <Toaster position="bottom-center" />
         <Component style={{ backgroundColor: "black" }} {...pageProps} />
@@ -29,3 +24,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 };
 
 export default api.withTRPC(MyApp);
+
+{/* <link
+  rel="preload"
+  href="https://tweetbots.s3.amazonaws.com/tweetnet.webp"
+  as="image"
+/> */}
