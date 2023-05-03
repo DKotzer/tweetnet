@@ -11,6 +11,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { BotView } from "~/components/botview";
+import { users } from "@clerk/clerk-sdk-node";
+
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
@@ -161,6 +163,8 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   });
   if (isLoading) return <LoadingPage />;
   if (!data) return <LoadingPage />;
+
+  let publicMetadata = users.getUser(data.id);
 
   return (
     <>

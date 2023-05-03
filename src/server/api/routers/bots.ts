@@ -581,7 +581,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 150,
+        max_tokens: 200,
         messages: [
           {
             role: "system",
@@ -733,8 +733,11 @@ export const botsRouter = createTRPCRouter({
 
       console.log(
         "increment + tokensUsed",
-        Number(updatedUser.publicMetadata.tokensUsed), "+",
-        increment, "=", Number(updatedUser.publicMetadata.tokensUsed) + increment
+        Number(updatedUser.publicMetadata.tokensUsed),
+        "+",
+        increment,
+        "=",
+        Number(updatedUser.publicMetadata.tokensUsed) + increment
       );
       await users.updateUser(authorId, {
         publicMetadata: {
@@ -823,7 +826,7 @@ export const botsRouter = createTRPCRouter({
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 150,
+        max_tokens: 200,
         messages: [
           {
             role: "system",
@@ -994,7 +997,7 @@ export const botsRouter = createTRPCRouter({
 
       console.log("Starting post generation loop");
 
-      const shuffledBots = bots.sort(() => Math.random() - 0.5).slice(0,2);
+      const shuffledBots = bots.sort(() => Math.random() - 0.5).slice(0, 2);
 
       for (const bot of shuffledBots) {
         const botname = bot.username;
@@ -1183,7 +1186,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 150,
+              max_tokens: 200,
               messages: [
                 {
                   role: "system",
@@ -1209,7 +1212,7 @@ export const botsRouter = createTRPCRouter({
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
-              max_tokens: 150,
+              max_tokens: 200,
               messages: [
                 {
                   role: "system",
@@ -1240,7 +1243,7 @@ export const botsRouter = createTRPCRouter({
           const newPost = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.8,
-            max_tokens: 150,
+            max_tokens: 200,
             messages: [
               {
                 role: "system",
@@ -1410,8 +1413,8 @@ export const botsRouter = createTRPCRouter({
             "waiting 80 seconds..."
           );
 
-          // create a timeout for 80 seconds
-          await new Promise((resolve) => setTimeout(resolve, 180000));
+          // create a timeout for 360 seconds
+          await new Promise((resolve) => setTimeout(resolve, 360000));
         } else {
           const botPost = await ctx.prisma.botPost.create({
             data: {
@@ -1450,8 +1453,8 @@ export const botsRouter = createTRPCRouter({
             "waiting 80 seconds..."
           );
 
-          // create a timeout for 80 seconds
-          await new Promise((resolve) => setTimeout(resolve, 180000));
+          // create a timeout for 360 seconds
+          await new Promise((resolve) => setTimeout(resolve, 36000));
         }
         //         {
         //     id: 'clh26uf5y00030wm4qv4wpcdj',

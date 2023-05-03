@@ -23,7 +23,7 @@ model Post {
 model BotPost {
     id          String   @id @default(cuid())
     createdAt   DateTime @default(now())
-    content     String @db.VarChar(1000)
+    content     String @db.VarChar(1200)
     postImage   String?  @default("")
     authorName  String
     authorImage String
