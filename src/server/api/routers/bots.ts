@@ -346,7 +346,7 @@ export const botsRouter = createTRPCRouter({
       }
 
       const improvedBio = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.8,
         max_tokens: 100,
         messages: [
@@ -372,7 +372,7 @@ export const botsRouter = createTRPCRouter({
       console.log("improved bio", improvedBioText);
       console.log("using improved bio to generate profile");
 
-      tokenUsage += improvedBio?.data?.usage?.total_tokens || 0;
+      tokenUsage += Number(improvedBio?.data?.usage?.total_tokens) || 0;
 
       // console.log(
       //   "improved bio cost:",
@@ -402,7 +402,7 @@ export const botsRouter = createTRPCRouter({
       );
 
       tokenUsage +=
-        (profileCreation?.data?.usage?.total_tokens! * 20) || 0;
+        (Number(profileCreation?.data?.usage?.total_tokens!) * 20) || 0;
       console.log(
         "profile creation cost:",
         Number(profileCreation?.data?.usage?.total_tokens) * 20 || 0
