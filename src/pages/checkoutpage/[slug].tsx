@@ -3,19 +3,27 @@ import { Elements, useStripe, useElements } from "@stripe/react-stripe-js";
 import type { GetStaticProps, NextPage } from "next";
 import { loadStripe } from "@stripe/stripe-js";
 
+interface PaymentIntent {
+  id: string;
+  status: string;
+  // add other properties you need here
+}
+
 const PaymentForm = (props: { clientSecret: string }) => {
   const stripe = useStripe();
-  const [paymentIntent, setPaymentIntent] = useState(null);
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(
+    null
+  );
 
-useEffect(() => {
-  if (stripe) {
-    stripe.retrievePaymentIntent(props.clientSecret).then((result) => {
-      if (result.paymentIntent) {
-        setPaymentIntent(result.paymentIntent);
-      }
-    });
-  }
-}, [stripe]);
+  useEffect(() => {
+    if (stripe) {
+      stripe.retrievePaymentIntent(props.clientSecret).then((result) => {
+        if (result.paymentIntent) {
+          setPaymentIntent(result.paymentIntent);
+        }
+      });
+    }
+  }, [stripe]);
 
   // render the payment form using Elements and useElements
 

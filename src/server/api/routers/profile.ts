@@ -35,4 +35,17 @@ export const profileRouter = createTRPCRouter({
 
       return filterUserForClient(user);
     }),
+
+  getPaymentById: publicProcedure
+    .input(z.object({ paymentIntentId: z.string() }))
+    .query(async ({ input }) => {
+      console.log(input);
+      const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+      const intents = await stripe.paymentIntents.retrieve(
+        input.paymentIntentId
+      );
+      console.log("intents:", intents);
+
+      return intents;
+    }),
 });
