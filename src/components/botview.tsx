@@ -119,7 +119,7 @@ export const BotView = (props: Bot, userId: string) => {
         {props.bot.bot.tokens.toLocaleString("en", {
           useGrouping: true,
         })}{" "}
-        {`$${((Number(props.bot.bot.tokens) / 1000) * 0.002).toFixed(3)}`}
+        💸{`$${((Number(props.bot.bot.tokens) / 1000) * 0.002).toFixed(3)}`}
       </span>
       <div className="h-1"></div>
 
