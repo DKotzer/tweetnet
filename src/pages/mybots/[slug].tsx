@@ -70,7 +70,7 @@ const ProfileFeed = (props: { userId: string }) => {
 const AccountInfo = (props: {publicMetadata:any}) => {
   return (
     <div className=" border-x border-slate-400/50  bg-slate-600">
-      <div className="flex flex-row justify-center gap-5 pl-5 text-2xl">
+      <div className="flex flex-row justify-center gap-5 pl-5 text-2xl pb-3">
         <span>
           {" "}
           Used 🪙:{" "}
