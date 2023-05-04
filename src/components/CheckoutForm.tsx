@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   PaymentElement,
   LinkAuthenticationElement,
@@ -10,43 +10,32 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [email, setEmail] = React.useState<string>("");
-  const [message, setMessage] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  const [paymentIntent, setPaymentIntent] = useState({});
+  const [paymentIntentId, setPaymentIntentId] = useState("");
+
+  useEffect(() => {
     if (!stripe) {
       return;
     }
-    console.log("stripe use effect", stripe);
-
-    // const clientSecret = new URLSearchParams(window.location.search).get(
-    //   "payment_intent_client_secret"
-    // );
 
     if (!props.clientSecret) {
       console.log("no client secret");
       return;
     }
-    console.log("client secret", props.clientSecret);
+
     stripe
       .retrievePaymentIntent(props.clientSecret)
       .then(({ paymentIntent }) => {
-        console.log("useEffect hook triggered");
-
-        fetch("/api/log", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: "useEffect hook triggered" }),
-        })
-          .then((res) => res.json())
-          .then((data) => console.log(data))
-          .catch((error) => console.error(error));
         if (!paymentIntent) {
           return;
         }
+
+        setPaymentIntent(paymentIntent);
+        setPaymentIntentId(paymentIntent.id);
 
         switch (paymentIntent.status) {
           case "succeeded":
@@ -67,16 +56,6 @@ export default function CheckoutForm(props: { clientSecret: string }) {
             break;
           case "processing":
             console.log("payment intent", paymentIntent);
-            // fetch("/api/log", {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //   },
-            //   body: JSON.stringify({ paymentIntent }),
-            // })
-            //   .then((res) => res.json())
-            //   .then((data) => console.log(data))
-            //   .catch((error) => console.error(error));
 
             setMessage("Your payment is processing.");
             break;
@@ -104,16 +83,16 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     }
 
     setIsLoading(true);
+    console.log('paymentIntentId', paymentIntentId)
 
     const payment = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // Make sure to change this to your payment completion page
-        // Redirect customer to this URL after failed payment
-        return_url: `http://localhost:3000/checkoutpage/${props.clientSecret}`,
+        return_url: `http://localhost:3000/auth/${paymentIntentId}`,
         receipt_email: email,
       },
     });
+
     console.log("payment test 2", payment);
 
     if (
