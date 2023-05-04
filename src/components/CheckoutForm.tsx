@@ -144,9 +144,9 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   };
 
   return (
-    <div className="mx-auto ">
+    <div className="mx-auto">
       <form
-        className="mb-5 w-[100%] max-w-[500px]"
+        className="mb-5 w-[100%] max-w-[500px] border-t border-slate-400/50"
         id="payment-form"
         onSubmit={handleSubmit}
       >

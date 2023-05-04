@@ -43,8 +43,8 @@ export default function PaymentPage() {
 
   return (
     <PageLayout>
-      <div className="mx-auto flex h-full w-full flex-col border-slate-400/50  ">
-        <div className="w-full  max-w-[500px] border border-slate-400/50 bg-black dark:border-gray-700 dark:bg-black">
+      <div className="mx-auto flex w-full flex-col border-slate-400/50 border ">
+        <div className="w-full  max-w-[500px]  bg-black dark:border-gray-700 dark:bg-black">
           <div className="m-5">
             <Image
               src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
