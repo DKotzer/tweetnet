@@ -6,7 +6,7 @@ import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 // import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -67,6 +67,55 @@ const ProfileFeed = (props: { userId: string }) => {
   );
 };
 
+const AccountInfo = (props: {publicMetadata:any}) => {
+  return (
+    <div className=" border-x border-slate-400/50  bg-slate-600">
+      <div className="flex flex-row justify-center gap-5 pl-5 text-2xl">
+        <span>
+          {" "}
+          Used 🪙:{" "}
+          {props.publicMetadata.tokensUsed.toLocaleString("en", {
+            useGrouping: true,
+          })}
+        </span>
+        <span className="mr-16 hover:scale-105">
+          {" "}
+          💸
+          {`$${(
+            (Number(props.publicMetadata.tokensUsed) / 1000) *
+            0.002
+          ).toFixed(3)}`}
+        </span>
+        {/* <span>
+          Max 🪙:{" "}
+          {props.publicMetadata.tokensLimit.toLocaleString("en", {
+            useGrouping: true,
+          })}
+        </span> */}
+      </div>
+      <div className="pl-5 text-2xl"></div>
+      <button
+        className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
+        id="submit"
+      >
+        <span id="button-text">Buy Tokens</span>
+      </button>
+      {/* <div className="pl-5 text-2xl">
+        Remaining 🪙:{" "}
+        {(
+          props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed
+        ).toLocaleString("en", {
+          useGrouping: true,
+        })}
+      </div> */}
+      {/* <div className="pl-5 text-2xl">
+        Account:{" "}
+        {(props?.publicMetadata?.subscribed && "Activated") || "Free Mode"}
+      </div> */}
+    </div>
+  );
+};
+
 const CreateBotsWizard = () => {
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
@@ -92,7 +141,7 @@ const CreateBotsWizard = () => {
   return (
     <div className="border-x border-t border-b border-slate-400/50">
       <div className="flex w-full flex-col gap-3  ">
-        <div className=" bg-slate-500 p-5 backdrop-blur-lg">
+        <div className=" bg-slate-600 p-5 backdrop-blur-lg">
           To create a new bot, simply give it a name and description. The more
           detailed the description, the better your results will be.
         </div>
@@ -119,7 +168,7 @@ const CreateBotsWizard = () => {
             <div className="flex w-full">
               <textarea
                 placeholder="Bot description"
-                className={`bioInput block w-full max-w-full resize-y bg-transparent outline-none ${
+                className={`bioInput block w-full h-5 max-w-full resize-y bg-transparent outline-none ${
                   input !== "" && "h-[150px]"
                 }`}
                 value={input}
@@ -142,7 +191,7 @@ const CreateBotsWizard = () => {
       <div className="pt-10 ">
         {input !== "" && !isPosting && name !== "" && (
           <button
-            className=" hover: float-right mt-[-50px] mr-5 h-[30px] scale-150 rounded-xl px-2 font-bold ring-2 ring-slate-400/50  hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400/50"
+            className=" hover: float-right mt-[-50px] mr-5 h-[25px] scale-150 rounded-xl px-2 font-bold ring-2 ring-slate-400/50  hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400/50"
             onClick={() => mutate({ content: input, name: name })}
           >
             Create
@@ -163,21 +212,24 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
     username,
   });
   const { user } = useUser();
-  if (isLoading) return <LoadingPage />;
+  const [publicMetadata, setPublicMetadata] = useState<any>(null);
+  useEffect(() => {
+    const getPublicMetadata = async () => {
+      const publicMetadata = user?.publicMetadata;
+      return publicMetadata;
+    };
+    const loadPublicMetadata = async () => {
+      const publicMetadata = await getPublicMetadata();
+      setPublicMetadata(publicMetadata);
+      console.log(publicMetadata) // set the state variable with the publicMetadata value
+    };
+    if (user) {
+      loadPublicMetadata();
+    }
+  }, [user]);
+
+  if (isLoading || !publicMetadata) return <LoadingPage />;
   if (!data || !user) return <LoadingPage />;
-
-  const getPublicMetadata = async () => {
-    const publicMetadata = user?.publicMetadata;
-    return publicMetadata;
-  };
-  const loadPublicMetadata = async () => {
-    const publicMetadata = await getPublicMetadata();
-    // use publicMetadata here
-    console.log(publicMetadata);
-  };
-
-  // Call loadPublicMetadata to load the public metadata.
-  loadPublicMetadata();
 
   return (
     <>
@@ -196,12 +248,43 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
             className="my-3 ml-4 rounded-full border-4 border-black bg-black"
             quality={99}
           />
-          <div className="my-auto p-4 text-3xl font-bold">{`${
-            data?.username?.replace("@gmail.com", "") ??
-            data?.externalUsername?.replace("@gmail.com", "") ??
-            "unknown"
-          }'s bots`}</div>
+          <div>
+            <div className="my-auto p-4 text-3xl font-bold">
+              {`${
+                data?.username?.replace("@gmail.com", "") ??
+                data?.externalUsername?.replace("@gmail.com", "") ??
+                "unknown"
+              }'s bots`}
+            </div>
+            <div className="pl-5 text-2xl">
+              🪙Tokens:{" "}
+              {(
+                publicMetadata.tokensLimit - publicMetadata.tokensUsed
+              ).toLocaleString("en", {
+                useGrouping: true,
+              })}
+            </div>
+            <div className="pl-5 text-2xl">
+              Account:{" "}
+              {(publicMetadata?.subscribed && "Activated") ||
+                "Free Mode"}
+            </div>
+
+            {/* <div className="pl-5 text-2xl">
+              Tokens Used:{" "}
+              {publicMetadata.tokensUsed.toLocaleString("en", {
+                useGrouping: true,
+              })}
+            </div>
+            <div className="pl-5 text-2xl">
+              Max Tokens:{" "}
+              {publicMetadata.tokensLimit.toLocaleString("en", {
+                useGrouping: true,
+              })}
+            </div> */}
+          </div>
         </div>
+        <AccountInfo publicMetadata={publicMetadata} />
 
         <CreateBotsWizard />
 

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+
 import {
   PaymentElement,
   LinkAuthenticationElement,
@@ -6,7 +8,31 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
+
 export default function CheckoutForm(props: { clientSecret: string }) {
+  const [clientSecret, setClientSecret] = React.useState<string | undefined>(
+    undefined
+  );
+
+  React.useEffect(() => {
+    fetch("/api/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: [{ id: "prod_NpPcHwWMwHjsct" }] }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("clientSecret:", data); // Log the response data
+        setClientSecret(data.clientSecret);
+      })
+      .catch((error) => {
+        console.error("Error:", error); // Log any errors
+      });
+    console.log("stripePromise", stripePromise);
+  }, []);
   const stripe = useStripe();
   const elements = useElements();
 
@@ -62,7 +88,9 @@ export default function CheckoutForm(props: { clientSecret: string }) {
           case "requires_payment_method":
             console.log("payment intent rpm", paymentIntent);
 
-            setMessage("Your payment was not successful, please try again.");
+            setMessage(
+              "Receipt will be e-mailed after the payment is processed."
+            );
             break;
           default:
             console.log("payment intent", paymentIntent);
@@ -83,7 +111,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     }
 
     setIsLoading(true);
-    console.log('paymentIntentId', paymentIntentId)
+    console.log("paymentIntentId", paymentIntentId);
 
     const payment = await stripe.confirmPayment({
       elements,
@@ -116,24 +144,29 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   };
 
   return (
-    <div className="mx-auto mt-[20%]">
-      <form className="bg-slate-400" id="payment-form" onSubmit={handleSubmit}>
+    <div className="mx-auto ">
+      <form
+        className="mb-5 w-[100%] max-w-[500px]"
+        id="payment-form"
+        onSubmit={handleSubmit}
+      >
         {/* <LinkAuthenticationElement
           id="link-authentication-element"
           onChange={(event) => setEmail(event.value.email)}
         /> */}
-        <span className=" text-slate-700 ">Email</span>
+        <span className=" text-slate-100 ">Email</span>
         <br />
         <input
-          className=" mb-3 mt-1 w-full rounded-lg p-3 text-slate-700"
+          className=" border-5 mb-3 mt-1 w-full rounded-lg border-[#1f2937] bg-[1f2937] bg-[#30313d] p-3 text-slate-100 active:border-slate-200"
           id="email"
           type="text"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
         <PaymentElement id="payment-element" options={paymentElementOptions} />
+
         <button
-          className="checkoutButton"
+          className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
           disabled={isLoading || !stripe || !elements}
           id="submit"
         >
@@ -145,8 +178,14 @@ export default function CheckoutForm(props: { clientSecret: string }) {
             )}
           </span>
         </button>
+        {message && (
+          <div className="my-3" id="payment-message">
+            {message}
+          </div>
+        )}
+
+        <img src="https://paymentsplugin.com/assets/blog-images/stripe-badge-grey.png" />
         {/* Show any error or success messages */}
-        {message && <div id="payment-message">{message}</div>}
       </form>
     </div>
   );
