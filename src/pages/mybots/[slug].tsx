@@ -94,12 +94,14 @@ const AccountInfo = (props: {publicMetadata:any}) => {
         </span> */}
       </div>
       <div className="pl-5 text-2xl"></div>
+      <Link href="/pay">
       <button
         className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
         id="submit"
       >
         <span id="button-text">Buy Tokens</span>
       </button>
+      </Link>
       {/* <div className="pl-5 text-2xl">
         Remaining 🪙:{" "}
         {(
