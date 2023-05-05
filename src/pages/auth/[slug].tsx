@@ -10,7 +10,9 @@ import {
 } from "@stripe/react-stripe-js";
 import type { GetStaticProps, NextPage } from "next";
 import { loadStripe } from "@stripe/stripe-js";
+import { PageLayout } from "~/components/layout";
 import { useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 
 
@@ -22,40 +24,144 @@ const PaymentForm = (props: {
   //   null
   // );
   const { user, isSignedIn, isLoaded } = useUser();
-   const [payment, setPayment] = useState(null);
+
+  type PaymentObject = {
+  status?: string;
+  data?: {
+    amount_received?: number;
+    receipt_email?: string;
+    id?: string;
+    client_secret?: string;
+  }
+}
+  let paymentObj: PaymentObject = {};
+  //  const [payment, setPayment] = useState({}) as any;
+   const [paymentSaved, setPaymentSaved] = useState(false);
 
 
-  
-useEffect(() => {
-  const fetchPayment = async () => {
-    try {
-      const payment = await api.profile.getPaymentById.useQuery({
+    if (Object.keys(paymentObj).length === 0 || paymentObj.status !== 'succeeded'){
+      paymentObj = api.profile.getPaymentById.useQuery({
         paymentIntentId: props.paymentIntent,
       });
-      console.log("payment test", payment);
-      // setPayment(payment);
-    } catch (error) {
-      console.error(error);
+      
+      
+      // console.log(paymentObj, 'p2test')
     }
-  };
-  fetchPayment();
-}, []);
+    const { mutate, isLoading: isPosting } =
+      api.profile.savePayment.useMutation({
+        onSuccess: () => {
+          console.log("payment success, redirect or something");
+        },
+        onError: (e) => {
+          const errorMessage = e.data?.zodError?.fieldErrors.content;
+          if (errorMessage && errorMessage[0]) {
+            toast.error(errorMessage[0]);
+          } else {
+            toast.error(
+              "Failed to save payment, please contact dkotzer@gmail.com"
+            );
+          }
+        },
+      });
+    
 
-    // console.log(async () => await fetchPayment)
   
 
         
-     if (!isLoaded) return <div>Loading...</div>;
+     if (!isLoaded || Object.keys(paymentObj).length === 0) {
+       return <div>Processing payment...</div>;
+     }
+
+     if (
+       !paymentSaved &&
+       paymentObj.status &&
+       paymentObj.data &&
+       typeof paymentObj.data.client_secret === "string" &&
+       typeof paymentObj.data.amount_received === "number"
+     ) {
+       setPaymentSaved(true);
+       const paymentData = {
+         stripeId: paymentObj.data?.id || "",
+         amount: paymentObj.data?.amount_received || 500,
+         status: paymentObj.status || "failed",
+         secret: paymentObj.data?.client_secret || "nosecretfound",
+         receiptEmail: paymentObj.data?.receipt_email || "noemailfound",
+         authorId: user?.id || "noUserFound" ,
+         tokensBought: 1000000,
+         currency: "cad",
+       };
+       console.log(paymentData, "paymentData test");
+       mutate({ ...paymentData });
+     }
+            
+
+      
+      //  console.log('p3 test',paymentObj)
 
     return (
-    <div>{/* Render the PaymentForm using the paymentIntent state */}
-      <div>
+      <div className="border-b pb-5 border-slate-400/50">
+        {/* Render the PaymentForm using the paymentIntent state */}
         <div>
-          {user && user.firstName} {user && user.emailAddresses[0]?.emailAddress} {payment && payment.status}
+          <div className="bg-black p-6  md:mx-auto">
+            <svg
+              viewBox="0 0 24 24"
+              className="mx-auto my-6 h-16 w-16 text-green-600"
+            >
+              <path
+                fill="currentColor"
+                d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
+              ></path>
+            </svg>
+            <div className="text-center">
+              <h3 className="text-center text-base font-semibold text-slate-100 md:text-2xl">
+                Payment Done!
+              </h3>
+              <p className="my-2 text-slate-100">
+                Thank you{" "}
+                <span className="font-bold">
+                  {user?.username ||
+                    user?.emailAddresses[0]?.emailAddress ||
+                    user?.firstName + "-" + user?.lastName ||
+                    user?.firstName}{" "}
+                </span>
+                for completing your secure online payment.
+              </p>
+              <p className="my-2 text-slate-100">
+                {paymentObj?.data?.receipt_email &&
+                  `A receipt was e-mailed to ${paymentObj.data.receipt_email}`}
+              </p>
+              <p className="my-2 text-slate-100">
+                1,000,000 tokens have been added to your account.
+              </p>
+              <p className="my-2 text-slate-100">
+                Your bot limit has been increased to 10.
+              </p>
+              <p className="my-2 text-slate-100"> Have a great day! </p>
+              <div className="py-10 text-center">
+                <a
+                  href="#"
+                  className="bg-indigo-600 px-12 py-3 font-semibold text-white hover:bg-indigo-500"
+                >
+                  GO BACK
+                </a>
+              </div>
+            </div>
+          </div>
+          <div>
+            {user && user.firstName}{" "}
+            {user && user.emailAddresses[0]?.emailAddress}{" "}
+            {paymentObj?.status && paymentObj?.status}{" "}
+            {paymentObj?.data?.amount_received &&
+              `$${paymentObj?.data?.amount_received / 100}.00 CAD`}
+            {paymentObj?.data?.receipt_email &&
+              `Receipt e-mailed to ${paymentObj.data.receipt_email}`}
+            {paymentObj?.data?.id && `Payment ID: ${paymentObj.data.id}`}
+            {paymentObj?.data?.client_secret &&
+              `Client Secret: ${paymentObj.data.client_secret}`}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 const AuthPage: NextPage<{ secret: string }> = ({ secret }) => {
@@ -68,7 +174,7 @@ const AuthPage: NextPage<{ secret: string }> = ({ secret }) => {
 
   const { redirect_status, payment_intent } = router.query;
 
-  console.log("secret string test", secret);
+  // console.log("secret string test", secret);
 
   useEffect(() => {
     if (router.isReady) {
@@ -76,25 +182,30 @@ const AuthPage: NextPage<{ secret: string }> = ({ secret }) => {
       setStatus(redirect_status as string);
       setPaymentIntent(payment_intent as string);
       setIsLoading(false);
-      console.log("router test", router);
+      // console.log("router test", router);
     }
+    console.log("status:", status, "payment_intent:", paymentIntent);
   }, [router.isReady, router.query]);
 
   if (isLoading) {
     return <div>Processing..</div>;
   }
 
-  console.log("status:", status, "payment_intent:", paymentIntent);
 
   const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
   );
 
   return (
-    <Elements stripe={stripePromise}>
-      {redirect_status && redirect_status} {payment_intent && payment_intent}
-      <PaymentForm clientSecret={secret} paymentIntent={paymentIntent} />
-    </Elements>
+    <PageLayout>
+      <div className="border h-screen border-slate-400/50">
+        <Elements stripe={stripePromise}>
+          {/* {redirect_status && redirect_status}{" "}
+          {payment_intent && payment_intent} */}
+          <PaymentForm clientSecret={secret} paymentIntent={paymentIntent} />
+        </Elements>
+      </div>
+    </PageLayout>
   );
 };
 

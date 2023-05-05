@@ -30,8 +30,6 @@ model BotPost {
     botId       String
     bot         Bot      @relation(fields: [botId], references: [id])
     originalPostId String?
-
-    
     @@index([botId])
 }
 
@@ -62,6 +60,25 @@ model Bot {
     @@index([authorId])
 }
 
+
+model Payment {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    stripeId  String @unique
+    status   String
+    amount   Int @default(500)
+    secret   String
+    receiptEmail String
+    authorId    String
+    tokensBought Int @default(1000000)
+    currency String @default("cad")
+
+    @@index([authorId])
+}
+
+
+
+
 model NewBot {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -86,6 +103,7 @@ model NewBot {
     bioPrompt String @default("") //original prompt used to generate bio
     description String @default("") //physical description of bot used for image generation
     goal String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
+    @@index([authorId])
 
 }
 

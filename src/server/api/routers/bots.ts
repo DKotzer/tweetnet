@@ -290,21 +290,22 @@ export const botsRouter = createTRPCRouter({
         return;
       }
       //if user has no tokens used yet (first bot), set tokens to 0
-      if (!user.publicMetadata.tokensUsed) {
-        console.log("no tokens found on account, setting to 0");
-        await users.updateUser(authorId, {
-          publicMetadata: {
-            ...user.publicMetadata,
-            tokensUsed: 0,
-          },
-        });
-      }
+      // if (!user.publicMetadata.tokensUsed) {
+      //   console.log("no tokens found on account, setting to 0");
+      //   await users.updateUser(authorId, {
+      //     publicMetadata: {
+      //       ...user.publicMetadata,
+      //       tokensUsed: 0,
+      //     },
+      //   });
+      // }
       if (!user.publicMetadata.tokensLimit) {
-        console.log("no token limit found on account, setting to 200000");
+        console.log("no token limit found on account, setting to 150000");
         await users.updateUser(authorId, {
           publicMetadata: {
             ...user.publicMetadata,
-            tokensLimit: 200000,
+            tokensLimit: 150000,
+            tokensUsed: 0,
           },
         });
       }
@@ -553,16 +554,16 @@ export const botsRouter = createTRPCRouter({
       const updatedUser = await users.getUser(ctx.userId);
       console.log(
         "created User tokens pre update:",
-        updatedUser.publicMetadata.tokensUsed
+        user.publicMetadata.tokensUsed
       );
       //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
-      // await users.updateUser(authorId, {
-      //   publicMetadata: {
-      //     ...updatedUser.publicMetadata,
-      //     tokensUsed:
-      //       Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
-      //   },
-      // });
+      await users.updateUser(authorId, {
+        publicMetadata: {
+          ...updatedUser.publicMetadata,
+          tokensUsed:
+            Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
+        },
+      });
       console.log(
         "updated user tokens pre update:",
         Number(updatedUser.publicMetadata.tokensUsed)
@@ -621,7 +622,7 @@ export const botsRouter = createTRPCRouter({
       // console.log("checkpoint");
 
       const firstPostImage = await openai.createImage({
-        prompt: `Image version of this tweet, with no text: ${formattedRes.slice(
+        prompt: `An photograph representation of: ${formattedRes.slice(
           0,
           500
         )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
@@ -862,7 +863,7 @@ export const botsRouter = createTRPCRouter({
       // console.log("checkpoint");
 
       const image = await openai.createImage({
-        prompt: `Image version, with NO TEXT, of this tweet: ${formattedString.slice(
+        prompt: `Image version, of this: ${formattedString.slice(
           0,
           500
         )}  Ultra High Quality Rendering. Clearer than real life.`,
@@ -1296,7 +1297,7 @@ export const botsRouter = createTRPCRouter({
 
         if (Math.floor(Math.random() * 5) > 3) {
           const image = await openai.createImage({
-            prompt: `Image version with NO TEXT of this tweet: ${formattedString.slice(
+            prompt: `Image version of this: ${formattedString.slice(
               0,
               500
             )}  Ultra High Quality Rendering. Clearer than real life.`,

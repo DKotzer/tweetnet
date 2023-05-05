@@ -70,21 +70,23 @@ const ProfileFeed = (props: { userId: string }) => {
 const AccountInfo = (props: {publicMetadata:any}) => {
   return (
     <div className=" border-x border-slate-400/50  bg-slate-600">
-      <div className="flex flex-row justify-center gap-5 pl-5 text-2xl pb-3">
+      <div className="flex flex-row justify-center gap-5 pl-5 pb-3 text-2xl">
         <span>
           {" "}
           Used 🪙:{" "}
-          {props.publicMetadata.tokensUsed.toLocaleString("en", {
-            useGrouping: true,
-          })}
+          {props.publicMetadata.tokensUsed
+            ? props.publicMetadata.tokensUsed.toLocaleString("en", {
+                useGrouping: true,
+              })
+            : 0}
         </span>
         <span className="mr-16 hover:scale-105">
           {" "}
-          💸
-          {`$${(
+          { props.publicMetadata.tokensUsed && "💸"}
+          {props.publicMetadata.tokensUsed && `$${(
             (Number(props.publicMetadata.tokensUsed) / 1000) *
             0.002
-          ).toFixed(3)}`}
+          ).toFixed(3)}` }
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -95,12 +97,12 @@ const AccountInfo = (props: {publicMetadata:any}) => {
       </div>
       <div className="pl-5 text-2xl"></div>
       <Link href="/pay">
-      <button
-        className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
-        id="submit"
-      >
-        <span id="button-text">Buy Tokens</span>
-      </button>
+        <button
+          className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
+          id="submit"
+        >
+          <span id="button-text">Buy Tokens</span>
+        </button>
       </Link>
       {/* <div className="pl-5 text-2xl">
         Remaining 🪙:{" "}
@@ -118,9 +120,14 @@ const AccountInfo = (props: {publicMetadata:any}) => {
   );
 };
 
-const CreateBotsWizard = () => {
+const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
+  const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
+    userId: props.userId,
+  });
+
+  const botCount = data?.length || 0;
 
   const ctx = api.useContext();
 
@@ -140,10 +147,47 @@ const CreateBotsWizard = () => {
     },
   });
 
+  if (botCount > 0 && !props.publicMetadata?.subscribed) {
+    return (
+      <div>
+        <div className="flex w-full flex-col gap-3  ">
+          <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+            You have reached the free tier bot limit. Purchase tokens to permanently increase your limit.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if(botCount > 9 && props.publicMetadata?.subscribed){
+    return (
+      <div>
+        <div className="flex w-full flex-col gap-3  ">
+          <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+            You have reached the bot limit, you can delete a bot to create a new one.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+   if ((props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed) < 1) {
+     return (
+       <div>
+         <div className="flex w-full flex-col gap-3  ">
+           <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+             You are out of tokens, please purchase more to continue tweeting and creating bots.
+           </div>
+         </div>
+       </div>
+     );
+   }
+
   return (
     <div className="border-x border-t border-b border-slate-400/50">
       <div className="flex w-full flex-col gap-3  ">
         <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+          
           To create a new bot, simply give it a name and description. The more
           detailed the description, the better your results will be.
         </div>
@@ -170,9 +214,9 @@ const CreateBotsWizard = () => {
             <div className="flex w-full">
               <textarea
                 placeholder="Bot description"
-                className={`bioInput block w-full h-5 max-w-full resize-y bg-transparent outline-none ${
-                  input !== "" && "h-[150px]"
-                }`}
+                className={`bioInput block h-5 w-full max-w-full resize-y bg-transparent outline-none ${
+                  input === "" && "overflow-y-hidden"
+                }  ${input !== "" && "h-[150px]"}`}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -213,11 +257,16 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
     username,
   });
+  
   const { user } = useUser();
   const [publicMetadata, setPublicMetadata] = useState<any>(null);
+
+  
   useEffect(() => {
     const getPublicMetadata = async () => {
       const publicMetadata = user?.publicMetadata;
+
+
       return publicMetadata;
     };
     const loadPublicMetadata = async () => {
@@ -232,6 +281,8 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
 
   if (isLoading || !publicMetadata) return <LoadingPage />;
   if (!data || !user) return <LoadingPage />;
+
+  
 
   return (
     <>
@@ -260,16 +311,17 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
             </div>
             <div className="pl-5 text-2xl">
               🪙Tokens:{" "}
-              {(
-                publicMetadata.tokensLimit - publicMetadata.tokensUsed
-              ).toLocaleString("en", {
-                useGrouping: true,
-              })}
+              {publicMetadata.tokensUsed
+                ? (
+                    publicMetadata.tokensLimit - publicMetadata.tokensUsed
+                  ).toLocaleString("en", {
+                    useGrouping: true,
+                  })
+                : "150,000"}
             </div>
             <div className="pl-5 text-2xl">
               Account:{" "}
-              {(publicMetadata?.subscribed && "Activated") ||
-                "Free Mode"}
+              {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
             </div>
 
             {/* <div className="pl-5 text-2xl">
@@ -288,7 +340,9 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         </div>
         <AccountInfo publicMetadata={publicMetadata} />
 
-        <CreateBotsWizard />
+        {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
+          <CreateBotsWizard publicMetadata={publicMetadata}  userId={data.id} />
+        )}
 
         <ProfileFeed userId={data.id} />
       </PageLayout>
