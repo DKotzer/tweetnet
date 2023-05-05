@@ -10,6 +10,9 @@ import {
 } from "@stripe/react-stripe-js";
 import type { GetStaticProps, NextPage } from "next";
 import { loadStripe } from "@stripe/stripe-js";
+import { useUser } from "@clerk/nextjs";
+
+
 
 const PaymentForm = (props: {
   clientSecret: string;
@@ -18,30 +21,40 @@ const PaymentForm = (props: {
   // const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(
   //   null
   // );
+  const { user, isSignedIn, isLoaded } = useUser();
+   const [payment, setPayment] = useState(null);
 
-  const fetchPaymentIntent = async () => {
-    let payment = await api.profile.getPaymentById.useQuery({
-      paymentIntentId: props.paymentIntent,
-    });
-    console.log("payment test", payment);
+
+  
+useEffect(() => {
+  const fetchPayment = async () => {
+    try {
+      const payment = await api.profile.getPaymentById.useQuery({
+        paymentIntentId: props.paymentIntent,
+      });
+      console.log("payment test", payment);
+      // setPayment(payment);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  fetchPayment();
+}, []);
 
-  if(props.paymentIntent && props.paymentIntent !== undefined){
-    fetchPaymentIntent();
-  }
+    // console.log(async () => await fetchPayment)
+  
 
-  // useEffect(() => {
-  //   const fetchPaymentIntent = async () => {
-  //     if (stripe) {
-  //       const intents = await stripe.retrievePaymentIntent(props.clientSecret);
-  //       setPaymentIntent(intents.paymentIntent);
-  //     }
-  //   };
-  //   fetchPaymentIntent();
-  // }, [stripe, props.clientSecret]);
+        
+     if (!isLoaded) return <div>Loading...</div>;
 
-  return (
-    <div>{/* Render the PaymentForm using the paymentIntent state */}</div>
+    return (
+    <div>{/* Render the PaymentForm using the paymentIntent state */}
+      <div>
+        <div>
+          {user && user.firstName} {user && user.emailAddresses[0]?.emailAddress} {payment && payment.status}
+        </div>
+      </div>
+    </div>
   );
 };
 
