@@ -14,6 +14,7 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
+
 interface CustomPaymentElementOptions {
   layout?: {
     type: Layout;
@@ -27,6 +28,9 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   const [clientSecret, setClientSecret] = React.useState<string | undefined>(
     undefined
   );
+  
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
+
 
   const [selectedCurrency, setSelectedCurrency] = useState("CAD");
 
@@ -156,7 +160,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     const payment = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `http://localhost:3000/auth/${paymentIntentId}`,
+        return_url: `${baseURL}auth/${paymentIntentId}`,
         receipt_email: email,
       },
     });
