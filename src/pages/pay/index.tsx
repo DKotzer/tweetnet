@@ -1,7 +1,8 @@
 import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
+import { Elements, ElementProps } from "@stripe/react-stripe-js";
 import Image from "next/image";
+import type { Layout } from "@stripe/stripe-js";
 import { PageLayout } from "~/components/layout";
 
 import CheckoutForm from "../../components/CheckoutForm";
@@ -9,6 +10,14 @@ import CheckoutForm from "../../components/CheckoutForm";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
+
+// interface CustomPaymentElementOptions {
+//   layout?: {
+//     type: Layout;
+//     defaultCollapsed?: boolean;
+//   };
+//   // other properties of the options object
+// }
 
 export default function PaymentPage() {
   const [clientSecret, setClientSecret] = React.useState<string | undefined>(
@@ -23,7 +32,7 @@ export default function PaymentPage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("clientSecret:", data); // Log the response data
+        // console.log("clientSecret:", data); // Log the response data
         setClientSecret(data.clientSecret);
       })
       .catch((error) => {
@@ -31,10 +40,21 @@ export default function PaymentPage() {
       });
   }, []);
 
-  const appearance = {
+  type Appearance = {
+    theme: "light" | "dark" | "night";
+    [key: string]: any;
+  };
+
+  type PaymentOptions = {
+    clientSecret: string;
+    appearance: Appearance;
+    [key: string]: any;
+  };
+
+  const appearance: Appearance = {
     theme: "night",
   };
-  const options = clientSecret
+  const options: PaymentOptions | undefined = clientSecret
     ? {
         clientSecret,
         appearance,
@@ -43,27 +63,53 @@ export default function PaymentPage() {
 
   return (
     <PageLayout>
-      <div className="mx-auto flex w-full flex-col border-slate-400/50 border ">
-        <div className="w-full  max-w-[500px]  bg-black dark:border-gray-700 dark:bg-black">
-          <div className="m-5">
+      <div className="mx-auto flex w-full flex-col items-center justify-center border border-slate-400/50">
+        <div className="flex w-full flex-col justify-center bg-black py-5 dark:bg-black md:max-w-[500px]">
+          <div className="mx-auto max-w-[90%] rounded-xl bg-slate-400/50 p-5 ring ring-slate-400 md:max-w-full">
             <Image
               src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
-              width={358}
-              height={358}
+              width={258}
+              height={258}
               alt={"TweetNet"}
-              className="mx-auto pt-1 hover:cursor-pointer"
+              className="mx-auto pt-1  hover:scale-105"
               priority={true}
               placeholder={"blur"}
               blurDataURL={"/tweetnet.svg"}
             />
+            <div className="mx-auto">
+              <a href="#">
+                <h5 className="justify-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                  <span className=" text-lg">1,000,000</span> TweetNet Tokens
+                </h5>
+              </a>
+
+              <div className="flex items-center justify-between">
+                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                  $5.00 (CAD) ✅
+                </span>
+                {/* <a
+              href="#"
+              className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Add to cart
+            </a> */}
+              </div>
+            </div>
           </div>
-          <div className="px-5 pb-5">
-            <a href="#">
-              <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                1,250,000 TweetNet Tokens
-              </h5>
-            </a>
-            <div className="mt-2.5 mb-5 flex items-center">
+        </div>
+        {options && (
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm clientSecret={clientSecret || ""} />
+          </Elements>
+        )}
+      </div>
+    </PageLayout>
+  );
+}
+
+
+     {
+       /* <div className="mt-2.5 mb-5 flex items-center">
               <svg
                 aria-hidden="true"
                 className="h-5 w-5 text-yellow-300"
@@ -117,26 +163,5 @@ export default function PaymentPage() {
               <span className="mr-2 ml-3 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800 dark:bg-blue-200 dark:text-blue-800">
                 5.0
               </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                $5.00
-              </span>
-              {/* <a
-              href="#"
-              className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Add to cart
-            </a> */}
-            </div>
-          </div>
-        </div>
-        {options && (
-          <Elements options={options} stripe={stripePromise}>
-            <CheckoutForm clientSecret={clientSecret || ""} />
-          </Elements>
-        )}
-      </div>
-    </PageLayout>
-  );
-}
+            </div> */
+     }

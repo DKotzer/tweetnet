@@ -28,10 +28,10 @@ export const PageLayout = (props: PropsWithChildren) => {
         <div className="top-0 z-0 hidden h-screen w-[200px] border-l border-slate-400/50 md:fixed md:block">
           <Sidebar />
         </div>
-        <div className="ml-0 md:ml-[200px]">
-          <div className=" h-screen flex-col  border-slate-400 md:max-w-3xl">
+        <div className="ml-0 w-full md:ml-[200px]">
+          <div className=" h-screen flex-col   border-slate-400 md:max-w-3xl">
             <TopNav />
-            <div className="mb-16 md:hidden"></div>
+            <div className="mb-16 w-full md:w-auto md:hidden"></div>
             {props.children}
           </div>
         </div>

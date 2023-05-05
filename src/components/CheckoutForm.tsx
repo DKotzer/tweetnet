@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, Layout } from "@stripe/stripe-js";
+import { useUser } from "@clerk/nextjs";
+
 
 import {
   PaymentElement,
@@ -12,10 +14,48 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
+interface CustomPaymentElementOptions {
+  layout?: {
+    type: Layout;
+    defaultCollapsed?: boolean;
+  };
+  // other properties of the options object
+}
+
 export default function CheckoutForm(props: { clientSecret: string }) {
+  const { user, isSignedIn, isLoaded } = useUser();
   const [clientSecret, setClientSecret] = React.useState<string | undefined>(
     undefined
   );
+
+  const [selectedCurrency, setSelectedCurrency] = useState("CAD");
+
+  
+  if(!isLoaded ){
+    return <div>Loading...</div>
+  }
+  if(!user){
+    return <div>Unable to detect User, please sign in.</div>
+  }
+  
+  const handleCurrencyChange = (event: any) => {
+    setSelectedCurrency(event.target.value);
+  };
+
+  type PricePerToken = {
+    [key: string]: { price: number; symbol: string };
+  };
+
+  const pricePerToken: PricePerToken = {
+    CAD: { price: 5, symbol: "$" },
+    USD: { price: 3.7, symbol: "~$" },
+    EUR: { price: 3.36, symbol: "~€" },
+    GBP: { price: 2.93, symbol: "~£" },
+    JPY: { price: 496.54, symbol: "~¥" },
+    // add more currencies and their prices here
+  };
+
+  const selectedCurrencyData = pricePerToken[selectedCurrency];
 
   React.useEffect(() => {
     fetch("/api/create-payment-intent", {
@@ -146,7 +186,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   return (
     <div className="mx-auto">
       <form
-        className="mb-5 w-[100%] max-w-[500px] border-t border-slate-400/50"
+        className="mb-5 w-[100%] border border-slate-400/50 md:max-w-[500px]"
         id="payment-form"
         onSubmit={handleSubmit}
       >
@@ -154,6 +194,30 @@ export default function CheckoutForm(props: { clientSecret: string }) {
           id="link-authentication-element"
           onChange={(event) => setEmail(event.value.email)}
         /> */}
+        <p className="rounded-xl bg-slate-500 py-1 text-center text-xl">
+          <span>1,000,000 TweetNet </span>
+          <span>
+            {" "}
+            tokens for {selectedCurrencyData?.symbol}
+            {selectedCurrencyData?.price.toFixed(2)}.
+          </span>
+        </p>
+        <div>
+          <label htmlFor="currency-picker">Select currency:</label>
+          <select
+            id="currency-picker"
+            value={selectedCurrency}
+            onChange={handleCurrencyChange}
+            className="border-5 mb-3 mt-1 w-full rounded-lg border-[#1f2937] bg-[1f2937] bg-[#30313d] p-3 text-slate-100 active:border-slate-200"
+          >
+            <option value="CAD">CAD</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+            {/* add more currency options here */}
+          </select>
+        </div>
         <span className=" text-slate-100 ">Email</span>
         <br />
         <input
@@ -163,7 +227,10 @@ export default function CheckoutForm(props: { clientSecret: string }) {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
-        <PaymentElement id="payment-element" options={paymentElementOptions} />
+        <PaymentElement
+          id="payment-element"
+          options={paymentElementOptions as CustomPaymentElementOptions}
+        />
 
         <button
           className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
@@ -184,7 +251,10 @@ export default function CheckoutForm(props: { clientSecret: string }) {
           </div>
         )}
 
-        <img src="https://paymentsplugin.com/assets/blog-images/stripe-badge-grey.png" />
+        <img
+          className="mx-auto max-w-[90%] md:max-w-full"
+          src="https://paymentsplugin.com/assets/blog-images/stripe-badge-grey.png"
+        />
         {/* Show any error or success messages */}
       </form>
     </div>
