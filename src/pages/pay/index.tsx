@@ -65,11 +65,11 @@ export default function PaymentPage() {
     <PageLayout>
       <div className="mx-auto flex w-full flex-col items-center justify-center border border-slate-400/50">
         <div className="flex w-full flex-col justify-center bg-black py-5 dark:bg-black md:max-w-[500px]">
-          <div className="mx-auto max-w-[90%] rounded-xl bg-slate-400/50 p-5 ring ring-slate-400 md:max-w-full">
+          <div className="mx-auto max-w-[90%] rounded-xl bg-slate-400/50 p-2 ring ring-slate-400 md:max-w-full">
             <Image
               src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
-              width={258}
-              height={258}
+              width={158}
+              height={158}
               alt={"TweetNet"}
               className="mx-auto pt-1  hover:scale-105"
               priority={true}
@@ -78,13 +78,13 @@ export default function PaymentPage() {
             />
             <div className="mx-auto">
               <a href="#">
-                <h5 className="justify-center text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                <h5 className="justify-center text-xl font-semibold tracking-tight text-slate-100">
                   <span className=" text-lg">1,000,000</span> TweetNet Tokens
                 </h5>
               </a>
 
               <div className="flex items-center justify-between">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                <span className="text-3xl font-bold text-slate-100">
                   $5.00 (CAD) ✅
                 </span>
                 {/* <a

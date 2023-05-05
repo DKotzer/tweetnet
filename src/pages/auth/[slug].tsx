@@ -13,6 +13,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { PageLayout } from "~/components/layout";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 
 
@@ -99,10 +100,20 @@ const PaymentForm = (props: {
       //  console.log('p3 test',paymentObj)
 
     return (
-      <div className="border-b pb-5 border-slate-400/50">
+      <div className="border-b border-slate-400/50 pb-5">
         {/* Render the PaymentForm using the paymentIntent state */}
         <div>
           <div className="bg-black p-6  md:mx-auto">
+            <Image
+              src={"https://tweetbots.s3.amazonaws.com/tweetnet.webp"}
+              width={258}
+              height={258}
+              alt={"TweetNet"}
+              className="mx-auto pt-1  hover:scale-105"
+              priority={true}
+              placeholder={"blur"}
+              blurDataURL={"/tweetnet.svg"}
+            />
             <svg
               viewBox="0 0 24 24"
               className="mx-auto my-6 h-16 w-16 text-green-600"
@@ -114,7 +125,7 @@ const PaymentForm = (props: {
             </svg>
             <div className="text-center">
               <h3 className="text-center text-base font-semibold text-slate-100 md:text-2xl">
-                Payment Done!
+                Purchase Complete!
               </h3>
               <p className="my-2 text-slate-100">
                 Thank you{" "}
@@ -147,7 +158,7 @@ const PaymentForm = (props: {
               </div>
             </div>
           </div>
-          <div>
+          {/* <div>
             {user && user.firstName}{" "}
             {user && user.emailAddresses[0]?.emailAddress}{" "}
             {paymentObj?.status && paymentObj?.status}{" "}
@@ -158,7 +169,7 @@ const PaymentForm = (props: {
             {paymentObj?.data?.id && `Payment ID: ${paymentObj.data.id}`}
             {paymentObj?.data?.client_secret &&
               `Client Secret: ${paymentObj.data.client_secret}`}
-          </div>
+          </div> */}
         </div>
       </div>
     );

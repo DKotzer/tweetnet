@@ -71,9 +71,18 @@ const AccountInfo = (props: {publicMetadata:any}) => {
   return (
     <div className=" border-x border-slate-400/50  bg-slate-600">
       <div className="flex flex-row justify-center gap-5 pl-5 pb-3 text-2xl">
-        <span>
+        <span className="whitespace-nowrap">
           {" "}
-          Used 🪙:{" "}
+          Spent:{" "}
+          {(
+            <Image
+              src="/token.ico"
+              width={35}
+              height={35}
+              alt={"tokens"}
+              className="mr-1 inline hover:scale-110"
+            />
+          ) || "🪙"}{" "}
           {props.publicMetadata.tokensUsed
             ? props.publicMetadata.tokensUsed.toLocaleString("en", {
                 useGrouping: true,
@@ -82,11 +91,12 @@ const AccountInfo = (props: {publicMetadata:any}) => {
         </span>
         <span className="mr-16 hover:scale-105">
           {" "}
-          { props.publicMetadata.tokensUsed && "💸"}
-          {props.publicMetadata.tokensUsed && `$${(
-            (Number(props.publicMetadata.tokensUsed) / 1000) *
-            0.002
-          ).toFixed(3)}` }
+          {props.publicMetadata.tokensUsed && "💸"}
+          {props.publicMetadata.tokensUsed &&
+            `$${(
+              (Number(props.publicMetadata.tokensUsed) / 1000) *
+              0.002
+            ).toFixed(3)}`}
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -307,10 +317,19 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                 data?.username?.replace("@gmail.com", "") ??
                 data?.externalUsername?.replace("@gmail.com", "") ??
                 "unknown"
-              }'s bots`}
+              }`}
             </div>
-            <div className="pl-5 text-2xl">
-              🪙Tokens:{" "}
+            <div className="pl-3 text-2xl">
+              {(
+                <Image
+                  src="/token.ico"
+                  width={35}
+                  height={35}
+                  alt={"tokens"}
+                  className="mr-1 inline hover:scale-110"
+                />
+              ) || "🪙"}
+              {" "}
               {publicMetadata.tokensUsed
                 ? (
                     publicMetadata.tokensLimit - publicMetadata.tokensUsed
@@ -319,7 +338,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   })
                 : "150,000"}
             </div>
-            <div className="pl-5 text-2xl">
+            <div className="hidden pl-5 text-2xl md:flex">
               Account:{" "}
               {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
             </div>
@@ -341,7 +360,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         <AccountInfo publicMetadata={publicMetadata} />
 
         {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
-          <CreateBotsWizard publicMetadata={publicMetadata}  userId={data.id} />
+          <CreateBotsWizard publicMetadata={publicMetadata} userId={data.id} />
         )}
 
         <ProfileFeed userId={data.id} />

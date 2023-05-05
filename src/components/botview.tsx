@@ -113,12 +113,20 @@ export const BotView = (props: Bot, userId: string) => {
       {true && (
         <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
       )}
-      <span className="mr-16 hover:scale-105">
+      <span className="mr-3 hover:scale-105">
         {" "}
-        🪙{" "}
+        {(
+          <Image
+            src="/token.ico"
+            width={21}
+            height={21}
+            alt={"tokens"}
+            className="mr-1 inline hover:scale-105"
+          />
+        ) || "🪙"}
         {props.bot.bot.tokens.toLocaleString("en", {
           useGrouping: true,
-        })}{" "}
+        })}
         💸{`$${((Number(props.bot.bot.tokens) / 1000) * 0.002).toFixed(3)}`}
       </span>
       <div className="h-1"></div>
@@ -136,82 +144,100 @@ export const BotView = (props: Bot, userId: string) => {
           </span> */}
       <div className="h-3"></div>
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
-          🎂
-        </span>{" "}
-        {props.bot.bot.age}
-        <span className="tooltiptext">Age</span>
-      </span>
-      <br />
+      <div className="flex flex-col gap-1">
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
+            🎂
+          </span>{" "}
+          {props.bot.bot.age}
+          <span className="tooltiptext">Age</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">💼</span>{" "}
-        {props.bot.bot.job}
-        <span className="tooltiptext">Job</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            💼
+          </span>{" "}
+          {props.bot.bot.job}
+          <span className="tooltiptext">Job</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">🎓</span>{" "}
-        {props.bot.bot.education}
-        <span className="tooltiptext">Education</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            🎓
+          </span>{" "}
+          {props.bot.bot.education}
+          <span className="tooltiptext">Education</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">🗺️</span>{" "}
-        {props.bot.bot.location}
-        <span className="tooltiptext">Location</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            🗺️
+          </span>{" "}
+          {props.bot.bot.location}
+          <span className="tooltiptext">Location</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">🛐</span>{" "}
-        {props.bot.bot.religion}
-        <span className="tooltiptext">Religion</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            🛐
+          </span>{" "}
+          {props.bot.bot.religion}
+          <span className="tooltiptext">Religion</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">👍</span>{" "}
-        {props.bot.bot.likes}
-        <span className="tooltiptext">Likes</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            👍
+          </span>{" "}
+          {props.bot.bot.likes}
+          <span className="tooltiptext">Likes</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1  ">🎨</span>{" "}
-        {props.bot.bot.hobbies}
-        <span className="tooltiptext">Hobbies</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
+            🎨
+          </span>{" "}
+          {props.bot.bot.hobbies}
+          <span className="tooltiptext">Hobbies</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1 ">👎</span>{" "}
-        {props.bot.bot.dislikes}
-        <span className="tooltiptext">Dislikes</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
+          <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100 ">
+            👎
+          </span>{" "}
+          {props.bot.bot.dislikes}
+          <span className="tooltiptext">Dislikes</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className="rounded-full bg-slate-400 p-1 ">🛌</span>{" "}
-        {props.bot.bot.dreams}
-        <span className="tooltiptext">Dreams</span>
-      </span>
-      <br />
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default ">
+          <span className="rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
+            🛌
+          </span>{" "}
+          {props.bot.bot.dreams}
+          <span className="tooltiptext">Dreams</span>
+        </span>
+        <br />
 
-      <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-        <span className=" rounded-full bg-slate-400 p-1 ">😱</span>{" "}
-        {props.bot.bot.fears}
-        <span className="tooltiptext">Fears</span>
-      </span>
-      <br />
-      <div>
+        <span className="tooltip text-lg hover:scale-105 hover:cursor-default ">
+          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100  ">
+            😱
+          </span>{" "}
+          {props.bot.bot.fears}
+          <span className="tooltiptext">Fears</span>
+        </span>
+        <br />
         {!showModal && props.bot.bot.authorId === user?.id && (
           <button
             onClick={() => setShowModal(true)}
-            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700"
+            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700 hover:scale-95 hover:ring-1 hover:ring-red-400"
           >
             Delete Bot
           </button>
