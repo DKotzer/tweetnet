@@ -368,7 +368,6 @@ const UserPage: NextPage = () => {
       <PageLayout>
         <div className="flex w-full flex-row border-x border-slate-400/50 bg-slate-800 pb-5">
           <div className="flex flex-col justify-center">
-            
             <Image
               src={data.profileImageUrl}
               alt={`${
@@ -468,9 +467,19 @@ const UserPage: NextPage = () => {
             </div>
           </div>
         </div>
+        <div className="border-x border-slate-400/50">
+          <Link href="/pay">
+            <button
+              className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
+              id="submit"
+            >
+              <span id="button-text">Buy Tokens</span>
+            </button>
+          </Link>
+        </div>
 
         <div className="border-x border-slate-400/50 p-5">
-          <span className=" font-bold text-xl">Transaction History</span>
+          <span className=" text-xl font-bold">Transaction History</span>
         </div>
 
         <AccountInfo publicMetadata={publicMetadata} userId={data.id} />
