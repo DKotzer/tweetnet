@@ -93,10 +93,7 @@ const AccountInfo = (props: {publicMetadata:any}) => {
           {" "}
           {props.publicMetadata.tokensUsed && "💸"}
           {props.publicMetadata.tokensUsed &&
-            `$${(
-              (Number(props.publicMetadata.tokensUsed) / 1000) *
-              0.002
-            ).toFixed(3)}`}
+            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 ).toFixed(3)}`}
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -244,7 +241,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
           </div>
         </div>
       </div>
-      <div className="pt-10 ">
+      <div className="pt-10 mr-5 ">
         {input !== "" && !isPosting && name !== "" && (
           <button
             className=" hover: float-right mt-[-50px] mr-5 h-[25px] scale-150 rounded-xl px-2 font-bold ring-2 ring-slate-400/50  hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400/50"
@@ -301,16 +298,25 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
       </Head>
       <PageLayout>
         <div className="flex w-full border-x border-slate-400/50 bg-slate-600">
-          <Image
-            src={data.profileImageUrl}
-            alt={`${
-              data.username ?? data.externalUsername ?? "unknown"
-            }'s profile pic`}
-            width={120}
-            height={120}
-            className="my-3 ml-4 rounded-full border-4 border-black bg-black"
-            quality={99}
-          />
+          <div className="flex flex-col justify-center">
+            <Link
+              href={`/user/@${
+                data?.username?.replace("@gmail.com", "") ??
+                data?.externalUsername?.replace("@gmail.com", "")
+              }`}
+            >
+              <Image
+                src={data.profileImageUrl}
+                alt={`${
+                  data.username ?? data.externalUsername ?? "unknown"
+                }'s profile pic`}
+                width={120}
+                height={120}
+                className="my-3 ml-4 justify-center rounded-full border-4 border-black bg-black hover:scale-105 hover:border-slate-100/50"
+                quality={99}
+              />
+            </Link>
+          </div>
           <div>
             <div className="my-auto p-4 text-3xl font-bold">
               {`${
@@ -328,8 +334,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   alt={"tokens"}
                   className="mr-1 inline hover:scale-110"
                 />
-              ) || "🪙"}
-              {" "}
+              ) || "🪙"}{" "}
               {publicMetadata.tokensUsed
                 ? (
                     publicMetadata.tokensLimit - publicMetadata.tokensUsed
@@ -338,26 +343,69 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   })
                 : "150,000"}
             </div>
-            <div className="hidden pl-5 text-2xl md:flex">
-              Account:{" "}
-              {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
-            </div>
-
             {/* <div className="pl-5 text-2xl">
               Tokens Used:{" "}
               {publicMetadata.tokensUsed.toLocaleString("en", {
                 useGrouping: true,
               })}
-            </div>
-            <div className="pl-5 text-2xl">
+            </div> */}
+            {/* <div className="pl-5 text-2xl">
               Max Tokens:{" "}
               {publicMetadata.tokensLimit.toLocaleString("en", {
                 useGrouping: true,
               })}
             </div> */}
+            <div className="flex flex-row gap-5 pl-3  text-2xl">
+              <span className="whitespace-nowrap text-red-600">
+                {" "}
+                {(
+                  <Image
+                    src="/token.ico"
+                    width={35}
+                    height={35}
+                    alt={"tokens"}
+                    className="mr-1 inline hover:scale-110"
+                  />
+                ) || "🪙"}{" "}
+                {publicMetadata.tokensUsed
+                  ? publicMetadata.tokensUsed.toLocaleString("en", {
+                      useGrouping: true,
+                    })
+                  : 0}{" "}
+              </span>
+            </div>
+            <div className="flex flex-row gap-5 pl-3  text-2xl">
+              {" "}
+              <span className="whitespace-nowrap text-red-600">
+                {(
+                  <Image
+                    src="/loonie.png"
+                    width={35}
+                    height={35}
+                    alt={"tokens"}
+                    className="mr-1 inline hover:scale-110"
+                  />
+                ) || "🪙"}
+                {publicMetadata.tokensUsed &&
+                  `($${(
+                    (Number(publicMetadata.tokensUsed) / 1000) *
+                    0.002
+                  ).toFixed(3)})`}
+              </span>
+              {/* <span>
+          Max 🪙:{" "}
+          {props.publicMetadata.tokensLimit.toLocaleString("en", {
+            useGrouping: true,
+          })}
+        </span> */}
+            </div>{" "}
+            <div className="hidden h-[37px]  pl-5 text-2xl md:flex">
+              Account:{" "}
+              {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
+            </div>
           </div>
         </div>
-        <AccountInfo publicMetadata={publicMetadata} />
+        {/* <AccountInfo publicMetadata={publicMetadata} /> */}
 
         {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
           <CreateBotsWizard publicMetadata={publicMetadata} userId={data.id} />

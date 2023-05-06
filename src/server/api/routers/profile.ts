@@ -117,6 +117,7 @@ export const profileRouter = createTRPCRouter({
               publicMetadata: {
                 ...user.publicMetadata,
                 tokensLimit: 1150000,
+                subscribed: true,
                 tokensUsed: 0,
               },
             });
