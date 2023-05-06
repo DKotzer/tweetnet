@@ -33,7 +33,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN || "",
 });
 
-const imageCost = 4500;
+const imageCost = 9000;
 
 //images cost 9k gpt-3.5-turbo tokens
 
@@ -336,7 +336,7 @@ export const botsRouter = createTRPCRouter({
         take: 100,
         orderBy: [{ createdAt: "desc" }],
       });
-      console.log("subscribed: ", user.publicMetadata.subscribed);
+      console.log("user type: ", user.publicMetadata.subscribed ? "paid user" : "free user");
       if (!user.publicMetadata.subscribed && botCount.length >= 1) {
         console.log(
           "You have reached the maximum number of bots for Free Tier, if you would like to create more bots please buy your first tokens."
@@ -447,29 +447,29 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const imageOutput: any = await replicate.run(
-        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-        {
-          input: {
-            prompt: `This is a  High Quality Portrait of ${name} from ${location}. They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-            image_dimensions: "512x512",
-            negative_prompt: "No unentered portraits. No cut off foreheads.",
-          },
-        }
-      );
+      // const imageOutput: any = await replicate.run(
+      //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+      //   {
+      //     input: {
+      //       prompt: `This is a  High Quality Portrait of ${name} from ${location}. They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+      //       image_dimensions: "512x512",
+      //       negative_prompt: "No unentered portraits. No cut off foreheads.",
+      //     },
+      //   }
+      // );
 
       // console.log("image output test", imageOutput);
 
-      // const image = await openai.createImage({
-      //   prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
-      //     0,
-      //     500
-      //   )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-      //   n: 1,
-      //   size: "512x512",
-      // });
+      const image = await openai.createImage({
+        prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
+          0,
+          500
+        )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+        n: 1,
+        size: "512x512",
+      });
 
-      console.log(`img 1 cost: ${imageCost} : ${imageOutput[0]}`);
+      console.log(`img 1 cost: ${imageCost}}`);
 
       if (
         name === undefined ||
@@ -506,7 +506,8 @@ export const botsRouter = createTRPCRouter({
 
       const bucketName = "tweetbots";
       const key = `${name}`; // This can be the same as the original file name or a custom key
-      const imageUrl = imageOutput[0] as string;
+      // const imageUrl = imageOutput[0] as string;
+      const imageUrl = image?.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
 
       if (imageUrl) {
@@ -550,6 +551,26 @@ export const botsRouter = createTRPCRouter({
 
       console.log("profile creation cost + image:", totalCost);
 
+      const dataTest = {
+          age: String(age).trim(),
+          bio,
+          job,
+          authorId,
+          religion,
+          location,
+          education,
+          likes,
+          hobbies,
+          dislikes,
+          dreams,
+          fears,
+          username: name.replace(/ /g, "_").substring(0, 20),
+          image: `${bucketPath}${name.replace(/ /g, "_")}`,
+          tokens: Number(totalCost),
+        }
+
+        console.log(dataTest, "data test")
+
       const bot = await ctx.prisma.bot.create({
         data: {
           age: String(age).trim(),
@@ -571,18 +592,19 @@ export const botsRouter = createTRPCRouter({
       });
 
 
-        let test =  await fetch("http:127.0.0.1:3000/api/firstPost", {
+         fetch("http:127.0.0.1:3000/api/firstPost", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             bot,
-            totalCost
+            totalCost,
+            
           }),
         })
 
-        console.log('test create post api',test)
+        
 
         console.log("new bot", bot);
       ////////////////////
@@ -911,30 +933,30 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const image: any = await replicate.run(
-        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-        {
-          input: {
-            prompt: `Image version, of this: ${formattedString.slice(
-              0,
-              500
-            )}  Ultra High Quality Rendering. Clearer than real life.`,
-            image_dimensions: "512x512",
-            negative_prompt:
-              "No unentered portraits. No cut off foreheads.",
-          },
-        }
-      );
+      // const image: any = await replicate.run(
+      //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+      //   {
+      //     input: {
+      //       prompt: `Image version, of this: ${formattedString.slice(
+      //         0,
+      //         500
+      //       )}  Ultra High Quality Rendering. Clearer than real life.`,
+      //       image_dimensions: "512x512",
+      //       negative_prompt:
+      //         "No unentered portraits. No cut off foreheads.",
+      //     },
+      //   }
+      // );
 
 
-      // const imageold = await openai.createImage({
-      //   prompt: `Image version, of this: ${formattedString.slice(
-      //     0,
-      //     500
-      //   )}  Ultra High Quality Rendering. Clearer than real life.`,
-      //   n: 1,
-      //   size: "512x512",
-      // });
+      const image = await openai.createImage({
+        prompt: `Image version, of this: ${formattedString.slice(
+          0,
+          500
+        )}  Ultra High Quality Rendering. Clearer than real life.`,
+        n: 1,
+        size: "512x512",
+      });
 
       console.log("img return");
 
@@ -981,7 +1003,7 @@ export const botsRouter = createTRPCRouter({
       let randomKey = Math.random().toString(36).substring(2, 15);
 
       const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const imageUrl = image[0]
+      const imageUrl = image.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = bucketPath + key;
 
@@ -1599,35 +1621,35 @@ export const botsRouter = createTRPCRouter({
             )}  Ultra High Quality Rendering. Extremely clear and detailed.`,
           ];
 
-          const image: any = await replicate.run(
-            "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-            {
-              input: {
-                prompt: `Image version of this: ${formattedString.slice(
-                  0,
-                  500
-                )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-                image_dimensions: "512x512",
-                negative_prompt:
-                  "No unentered portraits. No cut off foreheads.",
-              },
-            }
-          );
+          // const image: any = await replicate.run(
+          //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+          //   {
+          //     input: {
+          //       prompt: `Image version of this: ${formattedString.slice(
+          //         0,
+          //         500
+          //       )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+          //       image_dimensions: "512x512",
+          //       negative_prompt:
+          //         "No unentered portraits. No cut off foreheads.",
+          //     },
+          //   }
+          // );
 
-          imgUrl = image[0]
-          tokenUsage += imageCost;
-
-
-        //   const oldimage = await openai.createImage({
-        //     prompt: `Image version of this: ${formattedString.slice(
-        //       0,
-        //       500
-        //     )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-        //     n: 1,
-        //     size: "512x512",
-        //   });
-        //   imgUrl = image?.data?.data[0]?.url || "";
-
+          // imgUrl = image[0]
+          
+          
+          const image = await openai.createImage({
+            prompt: `Image version of this: ${formattedString.slice(
+              0,
+              500
+              )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+              n: 1,
+              size: "512x512",
+            });
+            imgUrl = image?.data?.data[0]?.url || "";
+            
+            tokenUsage += imageCost;
         
 
         }

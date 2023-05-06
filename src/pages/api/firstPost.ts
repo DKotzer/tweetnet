@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { clerkClient } from "@clerk/nextjs/server";
 import https from "https";
 import AWS from "aws-sdk";
 import { users } from "@clerk/clerk-sdk-node";
-import type { Bot } from "@prisma/client";
 import Replicate from "replicate";
 import { Configuration, OpenAIApi } from "openai";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
@@ -22,7 +23,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN || "",
 });
 
-const imageCost = 4500;
+const imageCost = 9000;
 const bucketName = "tweetbots";
 
 type Data = {
@@ -38,9 +39,11 @@ export default async function handler(
 
     const { bot, totalCost } = req.body;
 
-    const { authorId, name, age, bio, dreams, likes, dislikes, education, fears, hobbies, location, religion, job} = bot;
+    const { authorId, username, age, bio, dreams, likes, dislikes, education, fears, hobbies, location, religion, job} = bot;
 
-    console.log('bot api test', bot)
+    
+
+    // console.log('bot api test', bot)
     const updatedUser = await users.getUser(authorId);
 
     //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
@@ -62,7 +65,7 @@ export default async function handler(
 
     //create first post here, can mostly just copy the code for post create
 
-    const botname = name;
+    const botname = username;
     const id = bot.id;
     const botImage = bot.image;
 
@@ -105,31 +108,33 @@ export default async function handler(
 
     // console.log("checkpoint");
 
-    const firstPostImage: any = await replicate.run(
-      "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-      {
-        input: {
-          prompt: `An photograph representation of: ${formattedRes.slice(
-            0,
-            500
-          )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-          image_dimensions: "512x512",
-          negative_prompt: "No unentered portraits. No cut off foreheads.",
-        },
-      }
-    );
+    // const firstPostImage: any = await replicate.run(
+    //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+    //   {
+    //     input: {
+    //       prompt: `An photograph representation of: ${formattedRes.slice(
+    //         0,
+    //         500
+    //       )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+    //       image_dimensions: "512x512",
+    //       negative_prompt: "No unentered portraits. No cut off foreheads.",
+    //     },
+    //   }
+    // );
 
-    // const firstPostImageold = await openai.createImage({
-    //   prompt: `An photograph representation of: ${formattedRes.slice(
-    //     0,
-    //     500
-    //   )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-    //   n: 1,
-    //   size: "512x512",
-    // });
+    const firstPostImage = await openai.createImage({
+      prompt: `An photograph representation of: ${formattedRes.slice(
+        0,
+        500
+      )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+      n: 1,
+      size: "512x512",
+    });
 
     console.log(`img 2 cost: ${imageCost}`);
 
+
+    console.log('test 66',botname, age, job, religion, likes, hobbies, dislikes, dreams, fears, education, location)
     if (
       botname === undefined ||
       age === undefined ||
@@ -171,7 +176,7 @@ export default async function handler(
     let randomKey = Math.random().toString(36).substring(2, 15);
 
     const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-    const postImageUrl = firstPostImage[0];
+    const postImageUrl = firstPostImage?.data?.data[0]?.url; 
     const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
     const postImage = postImageBucketPath + postImageKey;
 
@@ -196,7 +201,7 @@ export default async function handler(
                 if (err) {
                   console.error("Error saving image to S3", err);
                 } else {
-                  console.log("Image saved to S3", data);
+                  console.log("first post Image saved to S3", data);
                 }
               }
             );
@@ -209,7 +214,18 @@ export default async function handler(
 
     // Download the image from the url
 
-    const botPost = await ctx.prisma.botPost.create({
+    const dataTest =  {
+        content: formattedRes,
+        botId: id,
+        authorImage: botImage,
+        authorName: botname,
+        postImage: postImage,
+        // bot: { connect: { id: id } },
+    }
+
+    console.log("first post data test:", dataTest);
+
+    const botPost = await prisma.botPost.create({
       data: {
         content: formattedRes,
         botId: id,
@@ -219,6 +235,8 @@ export default async function handler(
         // bot: { connect: { id: id } },
       },
     });
+
+    console.log("first bot post test:", botPost);
     const increment = Number(firstTweetCost) + imageCost;
     console.log("first post:", botPost);
 
@@ -251,7 +269,7 @@ export default async function handler(
       updatedUser.publicMetadata.tokensUsed
     );
 
-    await ctx.prisma.bot.update({
+    await prisma.bot.update({
       where: {
         id: id,
       },
