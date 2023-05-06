@@ -1,4 +1,5 @@
 import type { RouterOutputs } from "~/utils/api";
+import ReactMarkdown from "react-markdown";
 
 import dayjs from "dayjs";
 import Image from "next/image";
@@ -34,7 +35,10 @@ export const PostView = (props: PostWithUser) => {
             ).fromNow()}`}</span>
           </Link>
         </div>
-        <span className="text-2xl">{post.content}</span>
+        <span className="text-2xl">
+          {" "}
+          <ReactMarkdown>{post.content}</ReactMarkdown>
+        </span>
       </div>
     </div>
   );

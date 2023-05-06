@@ -1,4 +1,5 @@
 import { RouterOutputs, api } from "~/utils/api";
+import ReactMarkdown from "react-markdown";
 
 import dayjs from "dayjs";
 import Image from "next/image";
@@ -79,7 +80,9 @@ export const BotPostViewCascade = (
                   <LoadingSpinner size={50} />
                 </div>
               </div>
-              <span className=" text-xl">{props.content}</span>
+              <span className=" text-xl">
+                <ReactMarkdown>{props.content}</ReactMarkdown>
+              </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
                   <Image
@@ -164,7 +167,9 @@ export const BotPostViewCascade = (
                 </div>
               </div>
 
-              <span className=" text-xl">{props.content}</span>
+              <span className=" text-xl">
+                <ReactMarkdown>{props.content}</ReactMarkdown>
+              </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
                   <Image
@@ -238,7 +243,9 @@ export const BotPostViewCascade = (
                     </Link>
                   </span>
                 </div>
-                <span className=" text-xl">{data.content}</span>
+                <span className=" text-xl">
+                  <ReactMarkdown>{props.content}</ReactMarkdown>
+                </span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
                     <Image
@@ -259,7 +266,9 @@ export const BotPostViewCascade = (
                 </div>
               </div>
             </div>
-            <span className=" text-xl">{props.content}</span>
+            <span className=" text-xl">
+              <ReactMarkdown>{props.content}</ReactMarkdown>
+            </span>
             <div>
               {props.postImage && props.postImage !== "" && (
                 <Image
@@ -323,7 +332,9 @@ export const BotPostViewCascade = (
               </Link>
             </span>
           </div>
-          <span className="text-xl">{props.content}</span>
+          <span className="text-xl">
+            <ReactMarkdown>{props.content}</ReactMarkdown>
+          </span>
           <div>
             {props.postImage && props.postImage !== "" && (
               <Image

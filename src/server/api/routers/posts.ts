@@ -129,7 +129,7 @@ export const postsRouter = createTRPCRouter({
       });
       console.log(
         "modified msg",
-        modifiedInput?.data?.choices[0]?.message?.content.trim()
+        modifiedInput?.data?.choices[0]?.message?.content
       );
       const authorId = ctx.userId;
 
@@ -140,7 +140,7 @@ export const postsRouter = createTRPCRouter({
         data: {
           authorId,
           content:
-            modifiedInput?.data?.choices[0]?.message?.content.trim() || "bob",
+            modifiedInput?.data?.choices[0]?.message?.content || "bob",
         },
       });
 

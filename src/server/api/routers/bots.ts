@@ -32,7 +32,7 @@ const s3 = new AWS.S3({
 
 function getRandomHoliday() {
   const holidays = [
-    "New Year's Day",
+    "New Year's Eve",
     "Valentine's Day",
     "St. Patrick's Day",
     "Easter",
@@ -46,17 +46,14 @@ function getRandomHoliday() {
     "Hanukkah",
     "Kwanzaa",
     "Diwali",
-    "Chinese New Year",
+    "Lunar New Year",
     "Cinco de Mayo",
-    "Columbus Day",
     "Earth Day",
     "Good Friday",
     "Labor Day",
     "Martin Luther King Jr. Day",
     "Memorial Day",
     "Presidents' Day",
-    "Rosh Hashanah",
-    "Yom Kippur",
     "Passover",
     "Ramadan",
     "Mardi Gras",
@@ -66,6 +63,10 @@ function getRandomHoliday() {
     "April Fools' Day",
     "Juneteenth",
     "Indigenous Peoples' Day",
+    "420",
+    "Pride",
+    "Black Friday",
+    "Cyber Monday",
   ];
   return holidays[Math.floor(Math.random() * holidays.length)];
 }
@@ -369,7 +370,7 @@ export const botsRouter = createTRPCRouter({
       });
 
       const improvedBioText =
-        improvedBio?.data?.choices[0]?.message?.content.trim();
+        improvedBio?.data?.choices[0]?.message?.content;
       console.log("improved bio", improvedBioText);
       console.log("using improved bio to generate profile");
 
@@ -399,7 +400,7 @@ export const botsRouter = createTRPCRouter({
 
       console.log(
         "profile creation string generated:",
-        profileCreation?.data?.choices[0]?.message?.content.trim()
+        profileCreation?.data?.choices[0]?.message?.content
       );
 
       tokenUsage +=
@@ -422,7 +423,7 @@ export const botsRouter = createTRPCRouter({
       const locationPattern = /Location:\s*(.+)/;
 
       const formattedString =
-        profileCreation?.data?.choices[0]?.message?.content.trim() ||
+        profileCreation?.data?.choices[0]?.message?.content ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
       const age = formattedString.match(agePattern)?.[1] || "33";
@@ -608,7 +609,7 @@ export const botsRouter = createTRPCRouter({
 
       console.log(
         "new tweet text",
-        newPost?.data?.choices[0]?.message?.content.trim()
+        newPost?.data?.choices[0]?.message?.content
       );
 
       const firstTweetCost = Number(newPost?.data?.usage?.total_tokens) || 0;
@@ -616,7 +617,7 @@ export const botsRouter = createTRPCRouter({
       console.log("first tweet cost", firstTweetCost);
 
       const formattedRes =
-        newPost?.data?.choices[0]?.message?.content.trim() ||
+        newPost?.data?.choices[0]?.message?.content ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
       // console.log("checkpoint");
@@ -853,11 +854,11 @@ export const botsRouter = createTRPCRouter({
 
       console.log(
         "new tweet text",
-        newPost?.data?.choices[0]?.message?.content.trim()
+        newPost?.data?.choices[0]?.message?.content
       );
 
       const formattedString =
-        newPost?.data?.choices[0]?.message?.content.trim() ||
+        newPost?.data?.choices[0]?.message?.content ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
       // console.log("checkpoint");
@@ -1301,21 +1302,87 @@ export const botsRouter = createTRPCRouter({
             ogOgPoster = ogOgPost?.authorName || "";
           }
 
-          const basicReplyChainTemplate = [
-            {
-              role: "user",
-              content: `We are replying to this tweet @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in your writing style and perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
-            },
-            {
-              role: "system",
-              content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
-            },
+          const basicReplyChainTemplate = {role: "system", content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun or creative way of your choosing. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`}
+          
+          
+          
+          const replyChainTemplateBase = `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply:  `;
+          
+          const replyTemplateStrings = [
+            `<response to ${ogPost?.authorName}>'s tweet in the form of an ironic or comedic poem>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a joke>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a story>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a quote>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a song>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a written meme>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a poem>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a riddle>`,
+            `<response to ${ogPost?.authorName}>'s tweet in the form of a philosophical question using the socratic method>`,
+            `<response to ${ogPost?.authorName}>'s tweet that starts off serious but turns out to be a joke>`,
+
+            `<a witty rhyme that mocks ${ogPost?.authorName}>'s tweet with irony or sarcasm>`,
+            `<a clever punchline that relates to ${ogPost?.authorName}>'s tweet and makes fun of it>`,
+            `<a short anecdote that illustrates how ${ogPost?.authorName}>'s tweet is wrong or ridiculous>`,
+            `<a famous or fictional quote that contradicts or challenges ${ogPost?.authorName}>'s tweet>`,
+            `<a catchy chorus that parodies ${ogPost?.authorName}>'s tweet with humor or satire>`,
+            `<a popular meme format that uses ${ogPost?.authorName}>'s tweet as the caption or the image>`,
+            `<a creative verse that expresses your opinion or emotion about ${ogPost?.authorName}>'s tweet>`,
+            `<a tricky question that hints at the flaw or absurdity of ${ogPost?.authorName}>'s tweet>`,
+            `<a probing question that exposes the logical fallacy or ethical dilemma of ${ogPost?.authorName}>'s tweet>`,
+            `<a misleading statement that seems to agree with ${ogPost?.authorName}>'s tweet but reveals a twist or a pun at the end>`,
+
+            `<a sarcastic remark that pretends to praise ${ogPost?.authorName}>'s tweet but actually insults it>. <a follow-up comment that adds more mockery or irony>`,
+            `<a humorous analogy that compares ${ogPost?.authorName}>'s tweet to something absurd or ridiculous>. <a follow-up comment that explains the analogy or makes it more funny>`,
+            `<a fictional scenario that imagines what would happen if ${ogPost?.authorName}>'s tweet was true or followed>. <a follow-up comment that shows the negative or absurd consequences of the scenario>`,
+            `<a rhetorical question that challenges the validity or credibility of ${ogPost?.authorName}>'s tweet>. <a follow-up comment that answers the question or provides evidence to refute the tweet>`,
+            `<a catchy slogan that summarizes ${ogPost?.authorName}>'s tweet in a negative or humorous way>. <a follow-up comment that expands on the slogan or adds a hashtag or emoji>`,
+            `<a popular reference that relates to ${ogPost?.authorName}>'s tweet and makes fun of it>. <a follow-up comment that explains the reference or quotes a line from it>`,
+            `<a clever wordplay that uses ${ogPost?.authorName}>'s tweet as a source of inspiration or pun>. <a follow-up comment that clarifies the wordplay or makes it more witty>`,
+            `<a surprising fact or statistic that contradicts or disproves ${ogPost?.authorName}>'s tweet>. <a follow-up comment that cites the source of the fact or statistic or adds a remark about it>`,
+
+            `<a hypothetical question that invites ${ogPost?.authorName} to reconsider their tweet from a different perspective or situation>. <a follow-up comment that suggests an answer or a solution to the question>`,
+            `<a compliment that seems to agree with ${ogPost?.authorName}>'s tweet but actually implies something negative or insulting>. <a follow-up comment that reveals the hidden meaning or intention of the compliment>`,
+            `<a personal experience that relates to ${ogPost?.authorName}>'s tweet and supports or opposes it>. <a follow-up comment that shares a lesson or a takeaway from the experience>`,
+            `<a relevant link or resource that provides more information or context about ${ogPost?.authorName}>'s tweet>. <a follow-up comment that summarizes the main point or highlights a key detail from the link or resource>`,
+            `<a polite disagreement or critique of ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains your reasoning or provides an alternative view>`,
+            `<a sincere appreciation or gratitude for ${ogPost?.authorName}>'s tweet>. <a follow-up comment that expresses how the tweet helped you or inspired you>`,
+            `<a recommendation or suggestion based on ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains why you think the recommendation or suggestion would be beneficial or helpful>`,
+            `<a question or curiosity about ${ogPost?.authorName}>'s tweet>. <a follow-up comment that invites ${ogPost?.authorName} to elaborate or clarify their tweet>`,
+            `<a connection or similarity between ${ogPost?.authorName}>'s tweet and something else>. <a follow-up comment that explores the connection or similarity further or asks for ${ogPost?.authorName}'s opinion about it>`,
+            `<a compliment or praise for ${ogPost?.authorName}>'s tweet>. <a follow-up comment that specifies what you liked or admired about the tweet>`,
+            `<a challenge or invitation based on ${ogPost?.authorName}>'s tweet>. <a follow-up comment that motivates ${ogPost?.authorName} to take action or join you in something related to the tweet>`,
+            `<a reflection or insight based on ${ogPost?.authorName}>'s tweet>. <a follow-up comment that shares your thoughts or feelings about the tweet>`,
+
+            `<a remark or observation about how ${ogPost?.authorName}>'s tweet reflects or represents TweetNet's culture or values>. <a follow-up comment that praises or criticizes TweetNet for its culture or values>`,
+            `<a suggestion or request for ${ogPost?.authorName} to use a specific feature or tool of TweetNet to enhance or improve their tweet>. <a follow-up comment that explains how the feature or tool works or why it is useful>`,
+            `<a comparison or contrast between ${ogPost?.authorName}>'s tweet and a similar or different tweet from another platform>. <a follow-up comment that shows how TweetNet is better or worse than the other platform>`,
+            `<a question or curiosity about how ${ogPost?.authorName} discovered or learned about TweetNet>. <a follow-up comment that shares your own story or experience of joining or using TweetNet>`,
+            `<a compliment or praise for ${ogPost?.authorName} for being a loyal or active user of TweetNet>. <a follow-up comment that encourages ${ogPost?.authorName} to keep tweeting or invites them to follow you or someone else on TweetNet>`,
+            `<a remark or observation about how ${ogPost?.authorName}>'s tweet is trending or popular on TweetNet>. <a follow-up comment that congratulates ${ogPost?.authorName} for their success or popularity or asks them how they did it>`,
+            `<a recommendation or suggestion for ${ogPost?.authorName} to check out a specific account or hashtag on TweetNet that is related to their tweet>. <a follow-up comment that explains why you think the account or hashtag is interesting or relevant>`,
+            `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has changed or influenced your perception of TweetNet>. <a follow-up comment that expresses your gratitude or appreciation for TweetNet for providing such a platform>`,
+            `<a challenge or invitation for ${ogPost?.authorName} to participate in a specific event or campaign on TweetNet that is related to their tweet>. <a follow-up comment that explains what the event or campaign is about and how to join it>`,
+            `<a compliment or praise for ${ogPost?.authorName} for being creative or original with their tweet>. <a follow-up comment that shows how TweetNet supports or fosters creativity and originality among its users>`,
+            `<a remark or observation about how ${ogPost?.authorName}>'s tweet aligns or conflicts with @DylanKotzer's vision or mission for TweetNet>. <a follow-up comment that praises or criticizes @DylanKotzer for his vision or mission>`,
+            `<a suggestion or request for ${ogPost?.authorName} to tag or mention @DylanKotzer in their tweet>. <a follow-up comment that explains why you think @DylanKotzer would be interested or impressed by their tweet>`,
+            `<a comparison or contrast between ${ogPost?.authorName}>'s tweet and a tweet from @DylanKotzer>. <a follow-up comment that shows how ${ogPost?.authorName} is similar or different from @DylanKotzer in their style or content>`,
+            `<a question or curiosity about how ${ogPost?.authorName} feels or thinks about @DylanKotzer as the leader of TweetNet>. <a follow-up comment that shares your own opinion or impression of @DylanKotzer>`,
+            `<a compliment or praise for ${ogPost?.authorName} for being a fan or follower of @DylanKotzer>. <a follow-up comment that encourages ${ogPost?.authorName} to keep supporting or admiring @DylanKotzer or invites them to join a fan club or group on TweetNet>`,
+            `<a remark or observation about how ${ogPost?.authorName}>'s tweet is similar or different from what @DylanKotzer would tweet>. <a follow-up comment that congratulates ${ogPost?.authorName} for their consistency or diversity with @DylanKotzer's tweets>`,
+            `<a recommendation or suggestion for ${ogPost?.authorName} to check out a specific tweet or thread from @DylanKotzer that is related to their tweet>. <a follow-up comment that explains why you think the tweet or thread is informative or inspiring>`,
+            `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has affected or influenced your perception of @DylanKotzer>. <a follow-up comment that expresses your respect or admiration for @DylanKotzer for his achievements or personality>`,
+            `<a challenge or invitation for ${ogPost?.authorName} to engage in a conversation or debate with @DylanKotzer on TweetNet about their tweet>. <a follow-up comment that explains what the topic or issue is and how to contact @DylanKotzer on TweetNet>`,
+            `<a compliment or praise for ${ogPost?.authorName} for being innovative or influential with their tweet>. <a follow-up comment that shows how TweetNet and @DylanKotzer appreciate and reward innovation and influence among their users>`,
+
+            //////////////////////
+
+         
           ];
 
           const basicReplyTemplate = [
             {
               role: "user",
-              content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+              content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams/Goals: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
             },
 
             {
@@ -1323,11 +1390,27 @@ export const botsRouter = createTRPCRouter({
               content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
             },
           ];
-          const replyTemplateStrings = [
-            {
-              role: "system",
-              content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
-            },
+          const replyChainTemplateStrings = [
+            `<a summary or paraphrase of ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that expresses your agreement or disagreement with them>. <a tag or mention of someone who might be interested or affected by the tweets>`,
+            `<a quote or excerpt from ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that asks a question or shares an opinion about the quotes or excerpts>. <a tag or mention of someone who might have an answer or a different opinion>`,
+            `<a reaction or response to ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that explains your reaction or response>. <a tag or mention of someone who might have a similar or opposite reaction or response>`,
+            `<a compliment or praise for ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that specifies what you liked or admired about the tweets>. <a tag or mention of someone who might also like or admire the tweets>`,
+            `<a recommendation or suggestion based on ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that explains why you think the recommendation or suggestion would be useful or helpful>. <a tag or mention of someone who might benefit from the recommendation or suggestion>`,
+            `<a remark or observation about how ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet are related or connected>. <a follow-up comment that explores the relation or connection further or asks for more information>. <a tag or mention of someone who might know more about the relation or connection>`,
+            `<a reflection or insight based on ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that shares your thoughts or feelings about the tweets>. <a tag or mention of someone who might share or understand your thoughts or feelings>`,
+            `<a challenge or invitation based on ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that motivates your followers to take action or join you in something related to the tweets>. <a tag or mention of someone who might be interested or willing to join you>`,
+            `<a connection or similarity between your own experience or situation and ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that tells a story or gives an example of the connection or similarity>. <a tag or mention of someone who might have a similar connection or experience>`,
+            `<a critique or disagreement with ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that explains your reasoning or provides an alternative view>. <a tag or mention of someone who might support your critique or disagree with you>`,
+            `<a statement that expresses a different or opposite perspective or opinion on ${ogOgPoster}>'s tweet than ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains or supports your statement>. <a tag or mention of someone who might agree or disagree with you>`,
+            `<a question or curiosity that challenges or questions ${ogPost?.authorName}>'s tweet on ${ogOgPoster}>'s tweet>. <a follow-up comment that provides an answer or a solution to your question>. <a tag or mention of someone who might have a different answer or solution>`,
+            `<a remark or observation that points out a flaw or a mistake in ${ogPost?.authorName}>'s tweet on ${ogOgPoster}>'s tweet>. <a follow-up comment that corrects or clarifies the flaw or mistake>. <a tag or mention of someone who might have noticed or made the same flaw or mistake>`,
+            `<a compliment or praise for ${ogOgPoster}>'s tweet that implies a criticism or a disagreement with ${ogPost?.authorName}>'s tweet>. <a follow-up comment that reveals the hidden meaning or intention of your compliment>. <a tag or mention of someone who might share your view or be offended by it>`,
+            `<a suggestion or request for ${ogPost?.authorName} to reconsider or revise their tweet on ${ogOgPoster}>'s tweet>. <a follow-up comment that gives a reason or an example for your suggestion or request>. <a tag or mention of someone who might support your suggestion or reject it>`,
+            `<a comparison or contrast between your own view or experience and ${ogPost?.authorName}>'s tweet on ${ogOgPoster}>'s tweet>. <a follow-up comment that shows how you are similar or different from ${ogPost?.authorName}>. <a tag or mention of someone who might relate to you or to ${ogPost?.authorName}>`,
+            `<a reaction or response to ${ogOgPoster}>'s tweet that is different or opposite from ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains your reaction or response>. <a tag or mention of someone who might have a similar or opposite reaction or response>`,
+            `<a summary or paraphrase of ${ogOgPoster}>'s tweet that emphasizes a different aspect or detail than ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains why you think that aspect or detail is important or relevant>. <a tag or mention of someone who might agree or disagree with you>`,
+            `<a reflection or insight based on ${ogOgPoster}>'s tweet that contradicts or challenges ${ogPost?.authorName}>'s tweet>. <a follow-up comment that shares your thoughts or feelings about the tweets>. <a tag or mention of someone who might share your insight or challenge it>`,
+            `<a recommendation or suggestion based on ${ogOgPoster}>'s tweet that is different or opposite from what ${ogPost?.authorName} suggested in their tweet>. <a follow-up comment that explains why you think your recommendation or suggestion would be better or worse>. <a tag or mention of someone who might benefit from your recommendation or suggestion>`,
           ];
 
           let replyTemplates = [
@@ -1335,23 +1418,36 @@ export const botsRouter = createTRPCRouter({
             ...replyTemplateStrings,
           ];
 
+           let replyChainTemplates = [
+             ...Array(20).fill(basicReplyChainTemplate),
+             ...replyTemplateStrings,
+             ...replyChainTemplateStrings,
+           ];
+
           if (replyChain) {
+            const inspiration =
+              replyChainTemplates[
+                Math.floor(Math.random() * tweetTemplates.length)
+              ];
+
+              console.log("inspiration", inspiration)
+
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
                 {
-                  role: "system",
+                  role: "assistant",
                   content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
                 },
                 {
-                  role: "user",
-                  content: `You are replying to this tweet @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in your writing style and perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+                  role: "system",
+                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
                 {
-                  role: "system",
-                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  role: "user",
+                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration} `,
                 },
               ],
             });
@@ -1359,33 +1455,39 @@ export const botsRouter = createTRPCRouter({
             tokenUsage += newPost?.data?.usage?.total_tokens || 0;
 
             formattedString =
-              newPost?.data?.choices[0]?.message?.content.trim() ||
+              newPost?.data?.choices[0]?.message?.content ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
           } else {
+            const inspiration =
+              replyTemplates[Math.floor(Math.random() * tweetTemplates.length)];
+            
+              console.log("inspiration", inspiration);
+
+
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
                 {
-                  role: "system",
+                  role: "assistant",
                   content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
                 },
                 {
-                  role: "user",
-                  content: `We are replying to a tweet by @${ogPost?.authorName} from your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
+                  role: "system",
+                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
 
                 {
                   role: "system",
-                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration}`,
                 },
               ],
             });
 
             tokenUsage += newPost?.data?.usage?.total_tokens || 0;
             formattedString =
-              newPost?.data?.choices[0]?.message?.content.trim() ||
+              newPost?.data?.choices[0]?.message?.content ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
           }
         } else {
@@ -1413,7 +1515,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information as inspiration. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
+                content: `Create a very creative tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
               },
 
               // {
@@ -1427,7 +1529,7 @@ export const botsRouter = createTRPCRouter({
 
           tokenUsage += newPost?.data?.usage?.total_tokens || 0;
           formattedString =
-            newPost?.data?.choices[0]?.message?.content.trim() ||
+            newPost?.data?.choices[0]?.message?.content ||
             "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
         }
 
@@ -1436,15 +1538,28 @@ export const botsRouter = createTRPCRouter({
 
         let imgUrl = "";
 
+      
+
+
         if (Math.floor(Math.random() * 5) > 3) {
+          
+          
+          let imagePromptTemplates = [
+            `Image version of this: ${formattedString.slice(
+              0,
+              500
+            )}  Ultra High Quality Rendering. Extremely clear and detailed.`,
+          ];
+
           const image = await openai.createImage({
             prompt: `Image version of this: ${formattedString.slice(
               0,
               500
-            )}  Ultra High Quality Rendering. Clearer than real life.`,
+            )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
             n: 1,
             size: "512x512",
           });
+
           imgUrl = image?.data?.data[0]?.url || "";
           tokenUsage += 9000;
         }
