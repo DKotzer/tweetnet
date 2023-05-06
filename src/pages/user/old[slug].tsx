@@ -37,7 +37,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-600">
+        <div className="relative h-36 bg-slate-800">
           <Image
             src={data.profileImageUrl}
             alt={`${

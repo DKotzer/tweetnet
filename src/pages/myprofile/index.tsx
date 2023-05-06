@@ -67,7 +67,71 @@ const ProfileFeed = (props: { userId: string }) => {
   );
 };
 
-const AccountInfo = (props: {publicMetadata:any}) => {
+const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
+
+      const { data, isLoading } = api.profile.getPaymentsByUserId.useQuery(
+        {userId:props.userId} ,
+      );
+
+
+        if (!isLoading && data && data.length > 0) {
+          return (
+            <div className="border-x border-slate-400/50">
+              <div className="flex flex-col justify-center text-lg">
+                {data.map((item) => (
+                  <div
+                    className="border-y border-slate-400/50 p-4"
+                    key={item.id}
+                  >
+                    <p>
+                      <strong>Payment ID:</strong> {item.id}
+                    </p>
+                    <p>
+                      <strong>Created at:</strong>{" "}
+                      {new Date(item.createdAt).toLocaleString()}
+                    </p>
+                    <p>
+                      <strong>Receipt Email:</strong> {item.receiptEmail}
+                    </p>
+
+                    <p>
+                      <strong>Stripe ID:</strong> {item.stripeId}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {item.status}
+                    </p>
+                    <p>
+                      <strong>Amount:</strong>{" "}
+                      {(item.amount / 100).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "CAD",
+                      })}
+                    </p>
+                    <p>
+                      <strong>Currency:</strong> {"CAD"}
+                    </p>
+                    <p>
+                      <strong>Tokens bought:</strong>{" "}
+                      {(
+                        <Image
+                          src="/token.ico"
+                          width={30}
+                          height={30}
+                          alt={"tokens"}
+                          className="mr-1 inline hover:scale-110"
+                        />
+                      ) || "🪙"}
+                      {item.tokensBought.toLocaleString("en", {
+                        useGrouping: true,
+                      })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
   return (
     <div className=" border-x border-slate-400/50  bg-slate-800">
       <div className="flex flex-row justify-center gap-5 pl-5 pb-3 text-2xl">
@@ -93,7 +157,10 @@ const AccountInfo = (props: {publicMetadata:any}) => {
           {" "}
           {props.publicMetadata.tokensUsed && "💸"}
           {props.publicMetadata.tokensUsed &&
-            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 ).toFixed(3)}`}
+            `$${(
+              (Number(props.publicMetadata.tokensUsed) / 1000) *
+              0.002
+            ).toFixed(3)}`}
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -159,14 +226,15 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
       <div>
         <div className="flex w-full flex-col gap-3  ">
           <div className=" bg-slate-800 p-5 backdrop-blur-lg">
-            You have reached the free tier bot limit. Purchase tokens to permanently increase your limit.
+            You have reached the free tier bot limit. Purchase tokens to
+            permanently increase your limit.
           </div>
         </div>
       </div>
     );
   }
 
-  if(botCount > 9 && props.publicMetadata?.subscribed){
+  if (botCount > 9 && props.publicMetadata?.subscribed) {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
@@ -179,23 +247,23 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     );
   }
 
-   if ((props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed) < 1) {
-     return (
-       <div>
-         <div className="flex w-full flex-col gap-3  ">
-           <div className=" bg-slate-800 p-5 backdrop-blur-lg">
-             You are out of tokens, please purchase more to continue tweeting
-             and creating bots.
-           </div>
-         </div>
-       </div>
-     );
-   }
+  if (props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed < 1) {
+    return (
+      <div>
+        <div className="flex w-full flex-col gap-3  ">
+          <div className=" bg-slate-800 p-5 backdrop-blur-lg">
+            You are out of tokens, please purchase more to continue tweeting and
+            creating bots.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="border-x border-b border-slate-400/50 ">
+    <div className="border-x border-t border-b border-slate-400/50">
       <div className="flex w-full flex-col gap-3  ">
-        <div className=" bg-slate-800 p-5 backdrop-blur-lg  ">
+        <div className=" bg-slate-800 p-5 backdrop-blur-lg">
           To create a new bot, simply give it a name and description. The more
           detailed the description, the better your results will be.
         </div>
@@ -242,7 +310,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
           </div>
         </div>
       </div>
-      <div className="mr-5 pt-10 ">
+      <div className="pt-10 ">
         {input !== "" && !isPosting && name !== "" && (
           <button
             className=" hover: float-right mt-[-50px] mr-5 h-[25px] scale-150 rounded-xl px-2 font-bold ring-2 ring-slate-400/50  hover:bg-slate-400 hover:text-black hover:ring-2 hover:ring-slate-400/50"
@@ -261,26 +329,28 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
   );
 };
 
-const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
+const UserPage: NextPage = () => {
+  const { user, isLoaded } = useUser();
+
+  if(!isLoaded) return <LoadingPage />
+
+
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
-    username,
+    username: user?.username ?? user?.externalAccounts[0]?.username ?? "",
   });
-  
-  const { user } = useUser();
+
   const [publicMetadata, setPublicMetadata] = useState<any>(null);
 
-  
   useEffect(() => {
     const getPublicMetadata = async () => {
       const publicMetadata = user?.publicMetadata;
-
 
       return publicMetadata;
     };
     const loadPublicMetadata = async () => {
       const publicMetadata = await getPublicMetadata();
       setPublicMetadata(publicMetadata);
-      console.log(publicMetadata) // set the state variable with the publicMetadata value
+      console.log(publicMetadata); // set the state variable with the publicMetadata value
     };
     if (user) {
       loadPublicMetadata();
@@ -290,34 +360,25 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   if (isLoading || !publicMetadata) return <LoadingPage />;
   if (!data || !user) return <LoadingPage />;
 
-  
-
   return (
     <>
       <Head>
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full border-x border-slate-400/50 bg-slate-800">
+        <div className="flex w-full flex-row border-x border-slate-400/50 bg-slate-800 pb-5">
           <div className="flex flex-col justify-center">
             
-            <Link
-              href={data.id === user?.id ? '/myprofile': `/user/@${
-                data?.username?.replace("@gmail.com", "") ??
-                data?.externalUsername?.replace("@gmail.com", "")
-              }`}
-            >
-              <Image
-                src={data.profileImageUrl}
-                alt={`${
-                  data.username ?? data.externalUsername ?? "unknown"
-                }'s profile pic`}
-                width={120}
-                height={120}
-                className="my-3 ml-4 justify-center rounded-full border-4 border-black bg-black hover:scale-105 hover:border-slate-100/50"
-                quality={99}
-              />
-            </Link>
+            <Image
+              src={data.profileImageUrl}
+              alt={`${
+                data.username ?? data.externalUsername ?? "unknown"
+              }'s profile pic`}
+              width={120}
+              height={120}
+              className="my-3 ml-4 rounded-full border-4 border-black bg-black"
+              quality={99}
+            />
           </div>
           <div>
             <div className="my-auto p-4 text-3xl font-bold">
@@ -327,12 +388,12 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                 "unknown"
               }`}
             </div>
-            <div className="pl-3 text-xl">
+            <div className="pl-3 text-2xl">
               {(
                 <Image
                   src="/token.ico"
-                  width={32}
-                  height={32}
+                  width={35}
+                  height={35}
                   alt={"tokens"}
                   className="mr-1 inline hover:scale-110"
                 />
@@ -345,27 +406,27 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   })
                 : "150,000"}
             </div>
-            {/* <div className="pl-5 text-xl">
+            {/* <div className="pl-5 text-2xl">
               Tokens Used:{" "}
               {publicMetadata.tokensUsed.toLocaleString("en", {
                 useGrouping: true,
               })}
             </div> */}
-            {/* <div className="pl-5 text-xl">
+            {/* <div className="pl-5 text-2xl">
               Max Tokens:{" "}
               {publicMetadata.tokensLimit.toLocaleString("en", {
                 useGrouping: true,
               })}
             </div> */}
-            <div className="flex flex-row gap-5 pl-3  text-xl">
+            <div className="flex flex-row gap-5 pl-3  text-2xl">
               <span className="whitespace-nowrap text-red-600">
                 {" "}
                 {(
                   <Image
                     src="/token.ico"
-                    width={32}
-                    height={32}
-                    alt={"tokens spent"}
+                    width={35}
+                    height={35}
+                    alt={"tokens"}
                     className="mr-1 inline hover:scale-110"
                   />
                 ) || "🪙"}{" "}
@@ -376,15 +437,15 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   : 0}{" "}
               </span>
             </div>
-            <div className="flex flex-row gap-5 pl-3  text-xl">
+            <div className="flex flex-row gap-5 pl-3  text-2xl">
               {" "}
               <span className="whitespace-nowrap text-red-600">
                 {(
                   <Image
                     src="/loonie.png"
-                    width={32}
-                    height={32}
-                    alt={"dollars spent"}
+                    width={35}
+                    height={35}
+                    alt={"tokens"}
                     className="mr-1 inline hover:scale-110"
                   />
                 ) || "🪙"}
@@ -401,58 +462,50 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           })}
         </span> */}
             </div>{" "}
-            <div className="hidden h-[37px]  pl-5 text-xl md:flex">
+            <div className="hidden h-[37px]  pl-5 text-2xl md:flex">
               Account:{" "}
               {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
             </div>
           </div>
         </div>
-        <div className="bg-slate-800 border-x border-slate-400/50 pt-2">
-          <Link href="/pay">
-            <button
-              className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
-              id="submit"
-            >
-              <span id="button-text">Buy Tokens</span>
-            </button>
-          </Link>
+
+        <div className="border-x border-slate-400/50 p-5">
+          <span className=" font-bold text-xl">Transaction History</span>
         </div>
-        {/* <AccountInfo publicMetadata={publicMetadata} /> */}
-        <div className="x-border border-slate-400/50">
-          {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
-            <CreateBotsWizard
-              publicMetadata={publicMetadata}
-              userId={data.id}
-            />
-          )}
-        </div>
-        <ProfileFeed userId={data.id} />
+
+        <AccountInfo publicMetadata={publicMetadata} userId={data.id} />
+
+        {/* {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
+          <CreateBotsWizard publicMetadata={publicMetadata} userId={data.id} />
+        )} */}
+
+        {/* <ProfileFeed userId={data.id} /> */}
       </PageLayout>
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = generateSSGHelper();
+// export const getStaticProps: GetStaticProps = async (context) => {
+//   const ssg = generateSSGHelper();
 
-  const slug = context.params?.slug;
+//   const slug = context.params?.slug;
 
-  if (typeof slug !== "string") throw new Error("no slug");
+//   if (typeof slug !== "string") throw new Error("no slug");
 
-  const username = slug.replace("@", "");
+//   const username = slug.replace("@", "");
 
-  await ssg.profile.getUserByUsername.prefetch({ username });
+//   await ssg.profile.getUserByUsername.prefetch({ username });
 
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      username,
-    },
-  };
-};
+//   return {
+//     props: {
+//       trpcState: ssg.dehydrate(),
+//       username,
+//     },
+//   };
+// };
 
-export const getStaticPaths = () => {
-  return { paths: [], fallback: "blocking" };
-};
+// export const getStaticPaths = () => {
+//   return { paths: [], fallback: "blocking" };
+// };
 
-export default MyBotsPage;
+export default UserPage;

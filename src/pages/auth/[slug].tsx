@@ -14,6 +14,7 @@ import { PageLayout } from "~/components/layout";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import Link from "next/link";
 
 
 
@@ -149,12 +150,15 @@ const PaymentForm = (props: {
               </p>
               <p className="my-2 text-slate-100"> Have a great day! </p>
               <div className="py-10 text-center">
-                <a
-                  href="#"
+                <Link
+                  href={`/mybots/@${ user?.username ||
+                    user?.emailAddresses[0]?.emailAddress ||
+                    user?.firstName + "-" + user?.lastName ||
+                    user?.firstName}`}
                   className="bg-indigo-600 px-12 py-3 font-semibold text-white hover:bg-indigo-500"
                 >
                   GO BACK
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -209,7 +213,7 @@ const AuthPage: NextPage<{ secret: string }> = ({ secret }) => {
 
   return (
     <PageLayout>
-      <div className="border h-screen border-slate-400/50">
+      <div className="border min-h-screen border-slate-400/50">
         <Elements stripe={stripePromise}>
           {/* {redirect_status && redirect_status}{" "}
           {payment_intent && payment_intent} */}

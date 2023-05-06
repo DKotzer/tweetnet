@@ -51,48 +51,42 @@ export const profileRouter = createTRPCRouter({
       return intents;
     }),
 
+  getPaymentsByUserId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+
+      const paymentsList = ctx.prisma.payment.findMany({
+        where: {
+          authorId: input.userId as string,
+        },
+      });
+
+      console.log('paymentsList test',paymentsList)
+
+
+      
+      
+      // console.log(input);
+      // console.log("intents:", intents);
+
+      return paymentsList || []
+    }),
+
   savePayment: privateProcedure
     .input(
-    z.object({
-      stripeId: z.string(),
-      amount: z.number(),
-      status: z.string(),
-      secret: z.string(),
-      receiptEmail: z.string(),
-      authorId: z.string(),
-      tokensBought: z.number(),
-      currency: z.string(),
-    })
-  ).mutation(async ({ ctx, input }) => {
-
-    const {
-      stripeId,
-      amount,
-      status,
-      secret,
-      receiptEmail,
-      authorId,
-      tokensBought,
-      currency,
-    } = input;
-
-    if(ctx.userId !== authorId){
-      console.log("user id mismatch, cancelling payment creation");
-      return;
-    }
-
-    const existingPayment = await ctx.prisma.payment.findUnique({
-      where: {
-        stripeId,
-      },
-    });
-
-    if (existingPayment) {
-      return existingPayment;
-    }
-
-    const payment = await ctx.prisma.payment.create({
-      data: {
+      z.object({
+        stripeId: z.string(),
+        amount: z.number(),
+        status: z.string(),
+        secret: z.string(),
+        receiptEmail: z.string(),
+        authorId: z.string(),
+        tokensBought: z.number(),
+        currency: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
         stripeId,
         amount,
         status,
@@ -101,43 +95,69 @@ export const profileRouter = createTRPCRouter({
         authorId,
         tokensBought,
         currency,
-      },
-    });
+      } = input;
 
-    if(status==="success"){
-          const user = await users.getUser(ctx.userId);
-          if (!user) {
-            console.log("no user cancelling token addition");
-            return;
-          }
-          //if user has no tokens used yet (first bot), set tokens to 0
-          if (!user.publicMetadata.tokensLimit) {
-            console.log("no token limit found on account, setting to 150000");
+      if (ctx.userId !== authorId) {
+        console.log("user id mismatch, cancelling payment creation");
+        return;
+      }
+
+      const existingPayment = await ctx.prisma.payment.findUnique({
+        where: {
+          stripeId,
+        },
+      });
+
+      if (existingPayment) {
+        return existingPayment;
+      }
+
+      const payment = await ctx.prisma.payment.create({
+        data: {
+          stripeId,
+          amount,
+          status,
+          secret,
+          receiptEmail,
+          authorId,
+          tokensBought,
+          currency,
+        },
+      });
+
+      if (status === "success") {
+        const user = await users.getUser(ctx.userId);
+        if (!user) {
+          console.log("no user cancelling token addition");
+          return;
+        }
+        //if user has no tokens used yet (first bot), set tokens to 0
+        if (!user.publicMetadata.tokensLimit) {
+          console.log("no token limit found on account, setting to 150000");
+          await users.updateUser(authorId, {
+            publicMetadata: {
+              ...user.publicMetadata,
+              tokensLimit: 1150000,
+              subscribed: true,
+              tokensUsed: 0,
+            },
+          });
+        } else {
+          if (user.publicMetadata.tokensLimit) {
+            console.log(
+              ` limit found on account: ${user.publicMetadata.tokensLimit}, adding 1,000,000`
+            );
             await users.updateUser(authorId, {
               publicMetadata: {
                 ...user.publicMetadata,
-                tokensLimit: 1150000,
                 subscribed: true,
-                tokensUsed: 0,
+                tokensLimit: Number(user.publicMetadata.tokensLimit) + 1000000,
               },
             });
-          } else {
-             if (user.publicMetadata.tokensLimit) {
-               console.log(
-                 ` limit found on account: ${user.publicMetadata.tokensLimit}, adding 1,000,000`
-               );
-               await users.updateUser(authorId, {
-                 publicMetadata: {
-                   ...user.publicMetadata,
-                   subscribed: true,
-                   tokensLimit:
-                     Number(user.publicMetadata.tokensLimit) + 1000000,
-                 },
-               });
-             }
           }
-    }
+        }
+      }
 
-    return payment;
-  })
+      return payment;
+    }),
 });

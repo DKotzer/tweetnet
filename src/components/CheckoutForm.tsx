@@ -198,7 +198,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
           id="link-authentication-element"
           onChange={(event) => setEmail(event.value.email)}
         /> */}
-        <p className="rounded-xl bg-slate-500 py-1 text-center text-xl">
+        <p className="rounded-xl bg-slate-800 py-1 text-center text-xl">
           <span>1,000,000 TweetNet </span>
           <span>
             {" "}

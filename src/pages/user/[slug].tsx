@@ -69,7 +69,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
 const AccountInfo = (props: { publicMetadata: any }) => {
   return (
-    <div className=" border-x border-slate-400/50  bg-slate-600">
+    <div className=" border-x border-slate-400/50  bg-slate-800">
       <div className="flex flex-row justify-center gap-5 pl-5 pb-3 text-2xl">
         <span className="whitespace-nowrap">
           {" "}
@@ -161,7 +161,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
-          <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+          <div className=" bg-slate-800 p-5 backdrop-blur-lg">
             You have reached the free tier bot limit. Purchase tokens to
             permanently increase your limit.
           </div>
@@ -174,7 +174,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
-          <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+          <div className=" bg-slate-800 p-5 backdrop-blur-lg">
             You have reached the bot limit, you can delete a bot to create a new
             one.
           </div>
@@ -187,7 +187,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
-          <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+          <div className=" bg-slate-800 p-5 backdrop-blur-lg">
             You are out of tokens, please purchase more to continue tweeting and
             creating bots.
           </div>
@@ -199,7 +199,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
   return (
     <div className="border-x border-t border-b border-slate-400/50">
       <div className="flex w-full flex-col gap-3  ">
-        <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+        <div className=" bg-slate-800 p-5 backdrop-blur-lg">
           To create a new bot, simply give it a name and description. The more
           detailed the description, the better your results will be.
         </div>
@@ -298,7 +298,7 @@ const UserPage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername}</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full flex-row border-x border-slate-400/50 bg-slate-600 pb-5">
+        <div className="flex w-full flex-row border-x border-slate-400/50 bg-slate-800 pb-5">
           <div className="flex flex-col justify-center">
             <Image
               src={data.profileImageUrl}
@@ -381,10 +381,10 @@ const UserPage: NextPage<{ username: string }> = ({ username }) => {
                   />
                 ) || "🪙"}
                 {publicMetadata.tokensUsed &&
-                  `($${(
+                  `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
                     0.002
-                  ).toFixed(3)})`}
+                  ).toFixed(3)}`}
               </span>
               {/* <span>
           Max 🪙:{" "}

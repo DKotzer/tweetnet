@@ -79,7 +79,20 @@ export default function PaymentPage() {
             <div className="mx-auto">
               <a href="#">
                 <h5 className="justify-center text-xl font-semibold tracking-tight text-slate-100">
-                  <span className=" text-lg">1,000,000</span> TweetNet Tokens
+                  <span className=" text-lg">
+                    {" "}
+                    {(
+                      <Image
+                        src="/token.ico"
+                        width={35}
+                        height={35}
+                        alt={"tokens"}
+                        className="mr-1 inline hover:scale-110"
+                      />
+                    ) || "🪙"}{" "}
+                    1,000,000
+                  </span>{" "}
+                  TweetNet Tokens
                 </h5>
               </a>
 
