@@ -1608,11 +1608,12 @@ export const botsRouter = createTRPCRouter({
         //     n: 1,
         //     size: "512x512",
         //   });
-
         //   imgUrl = image?.data?.data[0]?.url || "";
-        //   tokenUsage += imageCost;
-        // }
-        // console.log("image generated");
+
+        
+
+        }
+        console.log("image generated");
 
         if (
           botname === undefined ||
