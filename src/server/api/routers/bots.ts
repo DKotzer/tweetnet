@@ -15,8 +15,9 @@ import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import type { Bot } from "@prisma/client";
-
+import Replicate from "replicate";
 import { Configuration, OpenAIApi } from "openai";
+
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
 });
@@ -27,6 +28,12 @@ const s3 = new AWS.S3({
   accessKeyId: process.env.BUCKET_ACCESS_KEY,
   secretAccessKey: process.env.BUCKET_SECRET_KEY,
 });
+
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN || "",
+});
+
+const imageCost = 4500;
 
 //images cost 9k gpt-3.5-turbo tokens
 
@@ -369,8 +376,7 @@ export const botsRouter = createTRPCRouter({
         ],
       });
 
-      const improvedBioText =
-        improvedBio?.data?.choices[0]?.message?.content;
+      const improvedBioText = improvedBio?.data?.choices[0]?.message?.content;
       console.log("improved bio", improvedBioText);
       console.log("using improved bio to generate profile");
 
@@ -441,16 +447,27 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const image = await openai.createImage({
-        prompt: `This is a  High Quality Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
-          0,
-          500
-        )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-        n: 1,
-        size: "512x512",
-      });
+      const imageOutput: any = await replicate.run(
+        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+        {
+          input: {
+            prompt: `This is a  High Quality Portrait of ${name} from ${location}. They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+            image_dimensions: "512x512",
+            negative_prompt: "No unentered portraits. No cut off foreheads.",
+          },
+        }
+      );
 
-      console.log("img 1 cost: 9000");
+      // const image = await openai.createImage({
+      //   prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
+      //     0,
+      //     500
+      //   )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
+
+      console.log(`img 1 cost: ${imageCost} : ${imageOutput[0]}`);
 
       if (
         name === undefined ||
@@ -487,7 +504,7 @@ export const botsRouter = createTRPCRouter({
 
       const bucketName = "tweetbots";
       const key = `${name}`; // This can be the same as the original file name or a custom key
-      const imageUrl = image?.data?.data[0]?.url;
+      const imageUrl = imageOutput[0] as string;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
 
       if (imageUrl) {
@@ -525,7 +542,6 @@ export const botsRouter = createTRPCRouter({
 
       // Download the image from the url
 
-      const imageCost = 9000;
       //convert gpt 4 to gpt 3.5 token usage
 
       const totalCost = Number(imageCost) + Number(tokenUsage);
@@ -622,16 +638,30 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const firstPostImage = await openai.createImage({
-        prompt: `An photograph representation of: ${formattedRes.slice(
-          0,
-          500
-        )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-        n: 1,
-        size: "512x512",
-      });
+      const firstPostImage: any = await replicate.run(
+        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+        {
+          input: {
+            prompt: `An photograph representation of: ${formattedRes.slice(
+              0,
+              500
+            )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+            image_dimensions: "512x512",
+            negative_prompt: "No unentered portraits. No cut off foreheads.",
+          },
+        }
+      );
 
-      console.log("img 2 cost: 9000");
+      // const firstPostImageold = await openai.createImage({
+      //   prompt: `An photograph representation of: ${formattedRes.slice(
+      //     0,
+      //     500
+      //   )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
+
+      console.log(`img 2 cost: ${imageCost}`);
 
       if (
         botname === undefined ||
@@ -675,7 +705,7 @@ export const botsRouter = createTRPCRouter({
       let randomKey = Math.random().toString(36).substring(2, 15);
 
       const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const postImageUrl = firstPostImage?.data?.data[0]?.url;
+      const postImageUrl = firstPostImage[0];
       const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = postImageBucketPath + postImageKey;
 
@@ -723,7 +753,7 @@ export const botsRouter = createTRPCRouter({
           // bot: { connect: { id: id } },
         },
       });
-      const increment = Number(firstTweetCost) + 9000;
+      const increment = Number(firstTweetCost) + imageCost;
       console.log("first post:", botPost);
 
       console.log(
@@ -863,14 +893,30 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      const image = await openai.createImage({
-        prompt: `Image version, of this: ${formattedString.slice(
-          0,
-          500
-        )}  Ultra High Quality Rendering. Clearer than real life.`,
-        n: 1,
-        size: "512x512",
-      });
+      const image: any = await replicate.run(
+        "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+        {
+          input: {
+            prompt: `Image version, of this: ${formattedString.slice(
+              0,
+              500
+            )}  Ultra High Quality Rendering. Clearer than real life.`,
+            image_dimensions: "512x512",
+            negative_prompt:
+              "No unentered portraits. No cut off foreheads.",
+          },
+        }
+      );
+
+
+      // const imageold = await openai.createImage({
+      //   prompt: `Image version, of this: ${formattedString.slice(
+      //     0,
+      //     500
+      //   )}  Ultra High Quality Rendering. Clearer than real life.`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
 
       console.log("img return");
 
@@ -917,7 +963,7 @@ export const botsRouter = createTRPCRouter({
       let randomKey = Math.random().toString(36).substring(2, 15);
 
       const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const imageUrl = image?.data?.data[0]?.url;
+      const imageUrl = image[0]
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = bucketPath + key;
 
@@ -1033,7 +1079,10 @@ export const botsRouter = createTRPCRouter({
           "vs token Limit:",
           user.publicMetadata.tokensLimit
         );
-        if ((Number(user.publicMetadata.tokensUsed)) > Number(user.publicMetadata.tokensLimit)) {
+        if (
+          Number(user.publicMetadata.tokensUsed) >
+          Number(user.publicMetadata.tokensLimit)
+        ) {
           console.log(`${author} is out of tokens, skipping bot`);
           continue;
         }
@@ -1302,12 +1351,12 @@ export const botsRouter = createTRPCRouter({
             ogOgPoster = ogOgPost?.authorName || "";
           }
 
-          const basicReplyChainTemplate = {role: "system", content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun or creative way of your choosing. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`}
-          
-          
-          
-          const replyChainTemplateBase = `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply:  `;
-          
+          const basicReplyChainTemplate = `Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun or creative way of your choosing. Be as creative as you want to be but make sure to use your background information to determine your writing style.`;
+
+          const basicReplyTemplate = `Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun or creative way of your choosing. Be as creative as you want to be but make sure to use your background information to determine your writing style.`;
+
+          // const replyChainTemplateBase = `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply:  `;
+
           const replyTemplateStrings = [
             `<response to ${ogPost?.authorName}>'s tweet in the form of an ironic or comedic poem>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a joke>`,
@@ -1375,21 +1424,8 @@ export const botsRouter = createTRPCRouter({
             `<a compliment or praise for ${ogPost?.authorName} for being innovative or influential with their tweet>. <a follow-up comment that shows how TweetNet and @DylanKotzer appreciate and reward innovation and influence among their users>`,
 
             //////////////////////
-
-         
           ];
 
-          const basicReplyTemplate = [
-            {
-              role: "user",
-              content: `We are replying to a tweet from by @${ogPost?.authorName} your perspective. You are ${botname} the ${job}. your bio is ${bio}. Your Dreams/Goals: ${dreams} Your Likes: ${likes} Your Dislikes: ${dislikes} Your Fears: ${fears}. Your Hobbies: ${hobbies}. Your Location: ${location}. Write your reply tweet in the writing style of ${botname}`,
-            },
-
-            {
-              role: "system",
-              content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}} in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
-            },
-          ];
           const replyChainTemplateStrings = [
             `<a summary or paraphrase of ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that expresses your agreement or disagreement with them>. <a tag or mention of someone who might be interested or affected by the tweets>`,
             `<a quote or excerpt from ${ogPost?.authorName}>'s tweet and ${ogOgPoster}>'s tweet>. <a follow-up comment that asks a question or shares an opinion about the quotes or excerpts>. <a tag or mention of someone who might have an answer or a different opinion>`,
@@ -1418,11 +1454,11 @@ export const botsRouter = createTRPCRouter({
             ...replyTemplateStrings,
           ];
 
-           let replyChainTemplates = [
-             ...Array(20).fill(basicReplyChainTemplate),
-             ...replyTemplateStrings,
-             ...replyChainTemplateStrings,
-           ];
+          let replyChainTemplates = [
+            ...Array(20).fill(basicReplyChainTemplate),
+            ...replyTemplateStrings,
+            ...replyChainTemplateStrings,
+          ];
 
           if (replyChain) {
             const inspiration =
@@ -1430,7 +1466,7 @@ export const botsRouter = createTRPCRouter({
                 Math.floor(Math.random() * tweetTemplates.length)
               ];
 
-              console.log("inspiration", inspiration)
+            console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
@@ -1460,9 +1496,8 @@ export const botsRouter = createTRPCRouter({
           } else {
             const inspiration =
               replyTemplates[Math.floor(Math.random() * tweetTemplates.length)];
-            
-              console.log("inspiration", inspiration);
 
+            console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
@@ -1538,12 +1573,7 @@ export const botsRouter = createTRPCRouter({
 
         let imgUrl = "";
 
-      
-
-
         if (Math.floor(Math.random() * 5) > 3) {
-          
-          
           let imagePromptTemplates = [
             `Image version of this: ${formattedString.slice(
               0,
@@ -1551,19 +1581,39 @@ export const botsRouter = createTRPCRouter({
             )}  Ultra High Quality Rendering. Extremely clear and detailed.`,
           ];
 
-          const image = await openai.createImage({
-            prompt: `Image version of this: ${formattedString.slice(
-              0,
-              500
-            )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-            n: 1,
-            size: "512x512",
-          });
+          const image: any = await replicate.run(
+            "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+            {
+              input: {
+                prompt: `Image version of this: ${formattedString.slice(
+                  0,
+                  500
+                )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+                image_dimensions: "512x512",
+                negative_prompt:
+                  "No unentered portraits. No cut off foreheads.",
+              },
+            }
+          );
 
-          imgUrl = image?.data?.data[0]?.url || "";
-          tokenUsage += 9000;
+          imgUrl = image[0]
+          tokenUsage += imageCost;
+
+
+        //   const oldimage = await openai.createImage({
+        //     prompt: `Image version of this: ${formattedString.slice(
+        //       0,
+        //       500
+        //     )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+        //     n: 1,
+        //     size: "512x512",
+        //   });
+        //   imgUrl = image?.data?.data[0]?.url || "";
+
+        
+
         }
-        // console.log("image generated");
+        console.log("image generated");
 
         if (
           botname === undefined ||
