@@ -191,9 +191,9 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
    }
 
   return (
-    <div className="border-x border-t border-b border-slate-400/50">
+    <div className="border-x border-b border-slate-400/50 ">
       <div className="flex w-full flex-col gap-3  ">
-        <div className=" bg-slate-600 p-5 backdrop-blur-lg">
+        <div className=" bg-slate-600 p-5 backdrop-blur-lg ">
           
           To create a new bot, simply give it a name and description. The more
           detailed the description, the better your results will be.
@@ -325,12 +325,12 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                 "unknown"
               }`}
             </div>
-            <div className="pl-3 text-2xl">
+            <div className="pl-3 text-xl">
               {(
                 <Image
                   src="/token.ico"
-                  width={35}
-                  height={35}
+                  width={32}
+                  height={32}
                   alt={"tokens"}
                   className="mr-1 inline hover:scale-110"
                 />
@@ -343,27 +343,27 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   })
                 : "150,000"}
             </div>
-            {/* <div className="pl-5 text-2xl">
+            {/* <div className="pl-5 text-xl">
               Tokens Used:{" "}
               {publicMetadata.tokensUsed.toLocaleString("en", {
                 useGrouping: true,
               })}
             </div> */}
-            {/* <div className="pl-5 text-2xl">
+            {/* <div className="pl-5 text-xl">
               Max Tokens:{" "}
               {publicMetadata.tokensLimit.toLocaleString("en", {
                 useGrouping: true,
               })}
             </div> */}
-            <div className="flex flex-row gap-5 pl-3  text-2xl">
+            <div className="flex flex-row gap-5 pl-3  text-xl">
               <span className="whitespace-nowrap text-red-600">
                 {" "}
                 {(
                   <Image
                     src="/token.ico"
-                    width={35}
-                    height={35}
-                    alt={"tokens"}
+                    width={32}
+                    height={32}
+                    alt={"tokens spent"}
                     className="mr-1 inline hover:scale-110"
                   />
                 ) || "🪙"}{" "}
@@ -374,15 +374,15 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   : 0}{" "}
               </span>
             </div>
-            <div className="flex flex-row gap-5 pl-3  text-2xl">
+            <div className="flex flex-row gap-5 pl-3  text-xl">
               {" "}
               <span className="whitespace-nowrap text-red-600">
                 {(
                   <Image
                     src="/loonie.png"
-                    width={35}
-                    height={35}
-                    alt={"tokens"}
+                    width={32}
+                    height={32}
+                    alt={"dollars spent"}
                     className="mr-1 inline hover:scale-110"
                   />
                 ) || "🪙"}
@@ -399,7 +399,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           })}
         </span> */}
             </div>{" "}
-            <div className="hidden h-[37px]  pl-5 text-2xl md:flex">
+            <div className="hidden h-[37px]  pl-5 text-xl md:flex">
               Account:{" "}
               {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
             </div>
