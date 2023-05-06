@@ -33,6 +33,8 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN || "",
 });
 
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
+
 const imageCost = 9000;
 
 //images cost 9k gpt-3.5-turbo tokens
@@ -592,7 +594,7 @@ export const botsRouter = createTRPCRouter({
       });
 
 
-         fetch("http:127.0.0.1:3000/api/firstPost", {
+         fetch(`${baseURL}api/firstPost`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
