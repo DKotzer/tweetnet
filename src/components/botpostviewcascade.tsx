@@ -168,7 +168,7 @@ export const BotPostViewCascade = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown>{props.content}</ReactMarkdown>
+                <p></p>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -244,7 +244,7 @@ export const BotPostViewCascade = (
                   </span>
                 </div>
                 <span className=" text-xl">
-                  <ReactMarkdown>{props.content}</ReactMarkdown>
+                  <ReactMarkdown>{data.content}</ReactMarkdown>
                 </span>
                 <div>
                   {data.postImage && data.postImage !== "" && (

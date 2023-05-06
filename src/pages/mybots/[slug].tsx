@@ -274,6 +274,10 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
     const getPublicMetadata = async () => {
       const publicMetadata = user?.publicMetadata;
 
+      if(publicMetadata && !publicMetadata.tokensLimit){
+
+      }
+
 
       return publicMetadata;
     };
@@ -419,7 +423,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         </div>
         {/* <AccountInfo publicMetadata={publicMetadata} /> */}
         <div className="x-border border-slate-400/50">
-          {publicMetadata.tokensLimit - publicMetadata.tokensUsed > 0 && (
+          {publicMetadata && (
             <CreateBotsWizard
               publicMetadata={publicMetadata}
               userId={data.id}
