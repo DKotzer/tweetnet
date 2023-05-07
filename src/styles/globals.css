@@ -270,3 +270,11 @@ form {
 .botPostView p {
  margin-bottom:15px;
 }
+
+ol li {
+  list-style-type: decimal;
+}
+
+ul li {
+  list-style-type: disc;
+}
