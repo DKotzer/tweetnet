@@ -94,9 +94,9 @@ const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
                       <strong>Receipt Email:</strong> {item.receiptEmail}
                     </p>
 
-                    <p>
+                    {/* <p>
                       <strong>Stripe ID:</strong> {item.stripeId}
-                    </p>
+                    </p> */}
                     <p>
                       <strong>Status:</strong> {item.status}
                     </p>

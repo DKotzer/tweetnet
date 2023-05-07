@@ -12,7 +12,7 @@ export const Sidebar = () => {
     <div className="top-0">
       <div className="height-screen hidden flex-col border-t border-slate-400/50 text-slate-100 md:flex">
         <div className="width-40 w-30 mx-auto">
-          <div className=" my-6 mx-5 text-2xl  hover:scale-105 font-bold">
+          <div className=" my-6 mx-5 text-2xl  font-bold hover:scale-105">
             <Link
               href="/"
               className="block whitespace-nowrap    hover:text-gray-300 "
@@ -84,14 +84,15 @@ export const Sidebar = () => {
               {isSignedIn && (
                 <div className="mx-auto  border-y border-slate-400/50">
                   <div className="m3 text-center ">
-                    Welcome back,
-                    <div className="text-center text-2xl">
-                      {(user?.username && user?.username) ||
-                        user?.emailAddresses[0]?.emailAddress.replace(
-                          "@gmail.com",
-                          ""
-                        )}
-                    </div>
+                    <Link href="/myprofile">
+                      <div className="text-center text-2xl hover:scale-105">
+                        {(user?.username && user?.username) ||
+                          user?.emailAddresses[0]?.emailAddress.replace(
+                            "@gmail.com",
+                            ""
+                          )}
+                      </div>
+                    </Link>
                   </div>
                 </div>
               )}

@@ -1068,7 +1068,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 4 hours in milliseconds
+            lt: new Date(Date.now() - 0.01 * 60 * 60 * 1000), // 4 hours in milliseconds
           },
         },
       });
@@ -1405,7 +1405,6 @@ export const botsRouter = createTRPCRouter({
             `<response to ${ogPost?.authorName}>'s tweet in the form of a story>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a quote>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a song>`,
-            `<response to ${ogPost?.authorName}>'s tweet in the form of a written meme>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a poem>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a riddle>`,
             `<response to ${ogPost?.authorName}>'s tweet in the form of a philosophical question using the socratic method>`,
@@ -1416,7 +1415,6 @@ export const botsRouter = createTRPCRouter({
             `<a short anecdote that illustrates how ${ogPost?.authorName}>'s tweet is wrong or ridiculous>`,
             `<a famous or fictional quote that contradicts or challenges ${ogPost?.authorName}>'s tweet>`,
             `<a catchy chorus that parodies ${ogPost?.authorName}>'s tweet with humor or satire>`,
-            `<a popular meme format that uses ${ogPost?.authorName}>'s tweet as the caption or the image>`,
             `<a creative verse that expresses your opinion or emotion about ${ogPost?.authorName}>'s tweet>`,
             `<a tricky question that hints at the flaw or absurdity of ${ogPost?.authorName}>'s tweet>`,
             `<a probing question that exposes the logical fallacy or ethical dilemma of ${ogPost?.authorName}>'s tweet>`,
