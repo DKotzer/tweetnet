@@ -395,9 +395,9 @@ export const botsRouter = createTRPCRouter({
         max_tokens: 100,
         messages: [
           {
-            role: "system",
+            role: "assistant",
             content:
-              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. N/A is NOT an acceptable value, be createive. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess.",
+              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. Be very creative and fill out all required fields. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> . These are all REQUIRED fields, if there is no relevant data for a field, make your best guess based on the other details.",
           },
           {
             role: "user",
@@ -908,7 +908,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+            content: `Creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
           },
           {
             role: "system",
@@ -1521,11 +1521,11 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
                 {
                   role: "user",
-                  content: `Create a very creative, and in character reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration} `,
+                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration}. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
                 },
               ],
             });
@@ -1552,12 +1552,12 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
 
                 {
                   role: "system",
-                  content: `Create a very creative, and in character reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration}`,
+                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following template loosely for inspiration for your tweet reply: : ${inspiration}. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
                 },
               ],
             });
@@ -1592,7 +1592,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround your post in quotes.`,
+                content: `Create a very creative tweet in a writing style based on your traits using this prompt or general template for inspiration: ${inspiration}: ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
               },
 
               // {
