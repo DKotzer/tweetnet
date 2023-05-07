@@ -1826,7 +1826,7 @@ export const botsRouter = createTRPCRouter({
           );
 
           // create a timeout for 360 seconds
-          await new Promise((resolve) => setTimeout(resolve, 36000));
+          await new Promise((resolve) => setTimeout(resolve, 360000));
         }
         //         {
         //     id: 'clh26uf5y00030wm4qv4wpcdj',
