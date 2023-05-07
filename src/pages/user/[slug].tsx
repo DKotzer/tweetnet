@@ -95,7 +95,7 @@ const AccountInfo = (props: { publicMetadata: any }) => {
           {props.publicMetadata.tokensUsed &&
             `$${(
               (Number(props.publicMetadata.tokensUsed) / 1000) *
-              0.002
+              0.002 * 2.5
             ).toFixed(3)}`}
         </span>
         {/* <span>
@@ -383,7 +383,7 @@ const UserPage: NextPage<{ username: string }> = ({ username }) => {
                 {publicMetadata.tokensUsed &&
                   `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
-                    0.002
+                    0.002 * 2.5
                   ).toFixed(3)}`}
               </span>
               {/* <span>

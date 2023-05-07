@@ -159,7 +159,7 @@ const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
           {props.publicMetadata.tokensUsed &&
             `$${(
               (Number(props.publicMetadata.tokensUsed) / 1000) *
-              0.002
+              0.002 * 2.5
             ).toFixed(3)}`}
         </span>
         {/* <span>
@@ -451,7 +451,8 @@ const UserPage: NextPage = () => {
                 {publicMetadata.tokensUsed &&
                   `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
-                    0.002
+                    0.002 *
+                    2.5
                   ).toFixed(3)}`}
               </span>
               {/* <span>
@@ -464,6 +465,9 @@ const UserPage: NextPage = () => {
             <div className="hidden h-[37px]  pl-5 text-2xl md:flex">
               Account:{" "}
               {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
+            </div>
+            <div className="hidden h-[37px]  pl-5 text-2xl md:flex">
+              Bot Limit: {(publicMetadata?.subscribed && "10") || "2"}
             </div>
           </div>
         </div>

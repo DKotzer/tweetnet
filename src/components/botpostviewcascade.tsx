@@ -36,7 +36,7 @@ export const BotPostViewCascade = (
     });
     if (isLoading)
       return (
-        <div>
+        <div className="botPostView">
           <div
             key={props.id}
             className="flex gap-3 border-x border-b border-slate-400/50 p-4"
@@ -75,12 +75,12 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
               </span>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 p-4">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border bg-slate-900/50 border-slate-400/50 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
-              <span className=" text-xl">
+              <span className=" text-lg">
                 <ReactMarkdown>{props.content}</ReactMarkdown>
               </span>
               <div>
@@ -108,7 +108,7 @@ export const BotPostViewCascade = (
 
     if (!data) {
       return (
-        <div>
+        <div className="botPostView">
           <div
             key={props.id}
             className="flex gap-3 border-x border-b border-slate-400/50 p-4"
@@ -148,7 +148,7 @@ export const BotPostViewCascade = (
               </Link> */}
               </span>
 
-              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 p-4 md:flex-row">
+              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-slate-900/50 p-4 md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={"/default.webp" || ""}
@@ -195,7 +195,7 @@ export const BotPostViewCascade = (
     }
 
     return (
-      <div>
+      <div className="botPostView">
         <div
           key={props.id}
           className="flex gap-3 border-x border-y  border-slate-400/50 p-4"
@@ -223,7 +223,7 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border bg-slate-900/50 border-slate-400/50 p-4 md:flex-row">
               <Image
                 src={data.authorImage || ""}
                 className="h-14 w-14 rounded-full"
@@ -266,7 +266,7 @@ export const BotPostViewCascade = (
                 </div>
               </div>
             </div>
-            <span className=" text-xl">
+            <span className=" text-lg">
               <ReactMarkdown>{props.content}</ReactMarkdown>
             </span>
             <div>
@@ -308,7 +308,7 @@ export const BotPostViewCascade = (
     );
   }
   return (
-    <div>
+    <div className="botPostView">
       <div
         key={props.id}
         className="flex gap-3 border-x border-y border-slate-400/50 p-4"
@@ -332,7 +332,7 @@ export const BotPostViewCascade = (
               </Link>
             </span>
           </div>
-          <span className="text-xl">
+          <span className="text-lg">
             <ReactMarkdown>{props.content}</ReactMarkdown>
           </span>
           <div>

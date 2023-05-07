@@ -266,3 +266,7 @@ form {
   max-width: 100%;
   height: auto;
 }
+
+.botPostView p {
+ margin-bottom:15px;
+}

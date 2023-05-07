@@ -115,7 +115,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           {isModalOpen && (
             <div className="modal  " onClick={handleCloseModal}>
               <div className="modal-content">
-                <button className=" w-5 h-5 modal-close hover:scale-110">❌</button>
+                <button className=" modal-close h-5 w-5 hover:scale-110">
+                  ✖️
+                </button>
                 <div>
                   {/* Your image content */}
                   <Image

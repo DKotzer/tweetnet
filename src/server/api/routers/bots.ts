@@ -1068,7 +1068,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - 0.01 * 60 * 60 * 1000), // 4 hours in milliseconds
+            lt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours in milliseconds
           },
         },
       });

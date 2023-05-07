@@ -93,7 +93,7 @@ const AccountInfo = (props: {publicMetadata:any}) => {
           {" "}
           {props.publicMetadata.tokensUsed && "💸"}
           {props.publicMetadata.tokensUsed &&
-            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 ).toFixed(3)}`}
+            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 * 2.5 ).toFixed(3)}`}
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -362,7 +362,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
               })}
             </div> */}
             <div className="flex flex-row gap-5 pl-3  text-xl">
-              <span className="whitespace-nowrap text-red-600">
+              {/* <span className="whitespace-nowrap text-red-600">
                 {" "}
                 {(
                   <Image
@@ -395,9 +395,9 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                 {publicMetadata.tokensUsed &&
                   `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
-                    0.002
+                    0.002 * 2.5
                   ).toFixed(3)}`}
-              </span>
+              </span> */}
               {/* <span>
           Max 🪙:{" "}
           {props.publicMetadata.tokensLimit.toLocaleString("en", {
@@ -405,9 +405,9 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           })}
         </span> */}
             </div>{" "}
-            <div className="hidden h-[37px]  pl-5 text-xl md:flex">
-              Account:{" "}
-              {(publicMetadata?.subscribed && "Activated") || "Free Mode"}
+            <div className="h-[37px]  pl-5 text-xl flex">
+              Bot Limit:{" "}
+              {(publicMetadata?.subscribed && "10") || "2"}
             </div>
           </div>
         </div>
