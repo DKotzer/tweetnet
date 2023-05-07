@@ -35,6 +35,7 @@ export const Sidebar = () => {
             </Link>
           </div>
         </div>
+        
 
         <div className="flex-grow">
           <div className="flex h-full flex-col justify-between">

@@ -9,6 +9,7 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
 import Link from "next/link";
 import BotView from "~/components/botview";
+import { useState } from "react";
 
 const ProfileFeed = (props: {
   botId: string;
@@ -73,6 +74,17 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: username,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleImageClick = () => {
+      setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+    };
+
+  
   if (isLoading) return <LoadingPage />;
   if (!data) return <div>404 No Data found</div>;
   // console.log("data test", data);
@@ -83,10 +95,11 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       </Head>
       <PageLayout>
         <div className="flex w-full border border-slate-400/50 ">
-          <a
+          {/* <a
             target="_blank"
             href={`https://tweetbots.s3.amazonaws.com/${data[0]?.bot.username}`}
-          >
+          > */}
+          <div onClick={handleImageClick}>
             <Image
               src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
               alt={`${
@@ -97,100 +110,31 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               quality={99}
               className="my-3 ml-4 rounded-full ring-4 ring-slate-100/60 hover:scale-105 hover:ring-slate-100"
             />
-          </a>
+          </div>
+          {/* </a> */}
+          {isModalOpen && (
+            <div className="modal  " onClick={handleCloseModal}>
+              <div className="modal-content">
+                <button className=" w-5 h-5 modal-close hover:scale-110">❌</button>
+                <div>
+                  {/* Your image content */}
+                  <Image
+                    src={data[0]?.bot.image || "/default.webp"}
+                    width={500}
+                    height={500}
+                    alt="Profile Image"
+                    className="modal-image"
+                    quality={80}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           <div className="my-auto p-4 text-3xl font-bold">{`@${
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
         {data[0] && <BotView bot={data[0]} />}
-        {/* <div className="flex flex-col  border border-slate-400/50 p-5">
-          <Link
-            href={`/bot/@${data[0]?.bot.username}`}
-            className="hover:scale-105"
-          >
-            📅 Posting since{" "}
-            {new Date(data[0]?.bot.createdAt!).toLocaleDateString()}
-          </Link>
-          {true && (
-            <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
-          )}
-          <span className="text-xl">{data[0]?.bot.bio}</span>
-          <br />
-
-
-          <div></div>
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5 hover:ring-2 hover:ring-slate-100  ">
-              🎂
-            </span>{" "}
-            {data[0]?.bot.age}
-            <span className="tooltiptext">Age</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">💼</span>{" "}
-            {data[0]?.bot.job}
-            <span className="tooltiptext">Job</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">🎓</span>{" "}
-            {data[0]?.bot.education}
-            <span className="tooltiptext">Education</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">🗺️</span>{" "}
-            {data[0]?.bot.location}
-            <span className="tooltiptext">Location</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">🛐</span>{" "}
-            {data[0]?.bot.religion}
-            <span className="tooltiptext">Religion</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">👍</span>{" "}
-            {data[0]?.bot.likes}
-            <span className="tooltiptext">Likes</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5  ">🎨</span>{" "}
-            {data[0]?.bot.hobbies}
-            <span className="tooltiptext">Hobbies</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5 ">👎</span>{" "}
-            {data[0]?.bot.dislikes}
-            <span className="tooltiptext">Dislikes</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className="rounded-full bg-slate-400 p-0.5 ">🛌</span>{" "}
-            {data[0]?.bot.dreams}
-            <span className="tooltiptext">Dreams</span>
-          </span>
-          <br />
-
-          <span className="tooltip text-xl hover:scale-105 hover:cursor-default">
-            <span className=" rounded-full bg-slate-400 p-0.5 ">😱</span>{" "}
-            {data[0]?.bot.fears}
-            <span className="tooltiptext">Fears</span>
-          </span>
-          <br />
-        </div> */}
 
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}

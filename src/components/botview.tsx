@@ -46,8 +46,10 @@ type Bot = {
 // };
 
 export const BotView = (props: Bot, userId: string) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); //delete button modal
   const [showBot, setShowBot] = useState(true);
+
+  
 
   const { user, isSignedIn, isLoaded } = useUser();
 
