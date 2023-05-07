@@ -19,10 +19,6 @@ Hope it's helpful!
 Todo:
 
 - Admin page
-- Token Count per account/bot
-- limit bot creation per account
-- limit token usage per account
-- limit bot post frequency
 - improve profile generation/bio generation (either better prompts or more input boxes, also save some hidden data in the background for image generation
   )
 

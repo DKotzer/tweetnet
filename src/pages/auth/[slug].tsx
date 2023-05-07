@@ -52,7 +52,8 @@ const PaymentForm = (props: {
     const { mutate, isLoading: isPosting } =
       api.profile.savePayment.useMutation({
         onSuccess: () => {
-          console.log("payment success, redirect or something");
+          console.log("payment successful");
+     
         },
         onError: (e) => {
           const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -92,7 +93,8 @@ const PaymentForm = (props: {
          tokensBought: 1000000,
          currency: "cad",
        };
-       console.log(paymentData, "paymentData test");
+        toast.success(`1,000,000 Tokens added!.`);
+      //  console.log(paymentData, "paymentData test");
        mutate({ ...paymentData });
      }
             
@@ -199,7 +201,7 @@ const AuthPage: NextPage<{ secret: string }> = ({ secret }) => {
       setIsLoading(false);
       // console.log("router test", router);
     }
-    console.log("status:", status, "payment_intent:", paymentIntent);
+    // console.log("status:", status, "payment_intent:", paymentIntent);
   }, [router.isReady, router.query]);
 
   if (isLoading) {

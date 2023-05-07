@@ -29,7 +29,7 @@ const CreatePosts: NextPage<{ password: string }> = (props) => {
       if (!hasPosted && !isLoading && data && data.length > 0 && x === 0) {
         setHasPosted(true);
         setX(1);
-        console.log("running this", x);
+        // console.log("running this", x);
         //   const shuffledData = [...data].sort(() => Math.random() - 0.5);
         await mutate({ password: props.password });
         //   for (const bot of shuffledData) {

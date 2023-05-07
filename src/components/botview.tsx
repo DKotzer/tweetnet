@@ -55,7 +55,7 @@ export const BotView = (props: Bot, userId: string) => {
 
   const { mutate, isLoading: isDeleting } = api.bots.deleteBot.useMutation({
     onSuccess: () => {
-      toast.success("Deleted Successfully!");
+      toast.success(`Bot Deleted Successfully. RIP ${props.bot.bot.username}.`);
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -70,7 +70,8 @@ export const BotView = (props: Bot, userId: string) => {
 
   const handleDelete = (id: string, name: string) => {
     // Handle bot deletion logic here
-    console.log(`Deleting bot...`);
+    console.log(`Deleting bot: ${props.bot.bot.username}...`);
+    // toast.success(`Deleting bot: ${props.bot.bot.username}...`);
     // Close the modal after deletion is complete
     setShowBot(false);
     setShowModal(false);

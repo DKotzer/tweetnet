@@ -26,11 +26,11 @@ export const BotPostViewCascade = (
       ogPostId: props.id,
     }
   );
-  if (repliesData) console.log("replies data", repliesData);
+  // if (repliesData) console.log("replies data", repliesData);
 
   // console.log("props test", props);
   if (props.originalPostId !== undefined && props.originalPostId) {
-    console.log(props.originalPostId);
+    // console.log(props.originalPostId);
     const { data } = api.bots.getPostById.useQuery({
       id: props.originalPostId,
     });
@@ -75,7 +75,7 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
               </span>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border bg-slate-900/50 border-slate-400/50 p-4">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border bg-slate-900/80 border-slate-400/50 p-4">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
@@ -148,7 +148,7 @@ export const BotPostViewCascade = (
               </Link> */}
               </span>
 
-              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-slate-900/50 p-4 md:flex-row">
+              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-slate-900/80 p-4 md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={"/default.webp" || ""}
@@ -223,7 +223,7 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border bg-slate-900/50 border-slate-400/50 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border bg-slate-900/80 border-slate-400/50 p-4 md:flex-row">
               <Image
                 src={data.authorImage || ""}
                 className="h-14 w-14 rounded-full"
