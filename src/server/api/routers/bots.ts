@@ -390,18 +390,18 @@ export const botsRouter = createTRPCRouter({
       // );
 
       const profileCreation = await openai.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 150,
+        max_tokens: 190,
         messages: [
           {
             role: "assistant",
             content:
-              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in: job, age, religion, likes, hobbies, dislikes, dreams, fears. Be very creative and fill out all required fields. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <goals and dreams> Fears: <fears> Education: <highest level of education or experience> Location <where they live or are located> . These are all REQUIRED fields, if there is no relevant data for a field, creatively make your best guess.",
+              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in, even if there is no relevant data provided and I need to creatively make up data for it: job, age, religion, likes, hobbies, dislikes, dreams, fears. Be very creative and fill out all required fields. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <goals and dreams> Fears: <fears> Education: <highest level of education or experience> Location <where they live or are located> . These are all REQUIRED fields, if there is no relevant data for a field, creatively make your best guess.",
           },
           {
             role: "user",
-            content: `Create me a profile based on the following user description in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>. Description to base profile on: Name ${name} ${improvedBioText}. These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up.`,
+            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
           },
         ],
       });
