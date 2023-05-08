@@ -338,7 +338,10 @@ export const botsRouter = createTRPCRouter({
         take: 100,
         orderBy: [{ createdAt: "desc" }],
       });
-      console.log("user type: ", user.publicMetadata.subscribed ? "paid user" : "free user");
+      console.log(
+        "user type: ",
+        user.publicMetadata.subscribed ? "paid user" : "free user"
+      );
       if (!user.publicMetadata.subscribed && botCount.length >= 1) {
         console.log(
           "You have reached the maximum number of bots for Free Tier, if you would like to create more bots please buy your first tokens."
@@ -362,18 +365,18 @@ export const botsRouter = createTRPCRouter({
         max_tokens: 100,
         messages: [
           {
-            role: "system",
+            role: "assistant",
             content:
-              "I am a bot that creates social media bios based on the description of the user. The bio should establish the subjects job, goals, and drive based on the included data, with a heavy weighting on dreams and job. The bio should be under 250 characters. The bio should also include very brief details on what the subject looks like for image generation. ",
+              "I am a bot that creates detailed high quality social media profile bios based on unfinished/poorly formatted bios . The bio will establish the subjects job, goals, and drive based on the included data, with a heavy weighting on dreams and job. The bio should be under 300 characters.",
           },
           {
             role: "system",
             content:
-              "An example of a good bio is '<name> is an <age> <job>. <names> goals are <goals related to names job and dreams and likes and the motives behind them(150+ characters)>. <name> has <hair style> <hair color> hair, <skin color> skin.",
+              "An example of a good bio is '<name> is an <age> <job>. <names> goals are <goals related to names job and dreams and likes and the motives behind them>. <any family relations or hobbies mentioned in the original text>. Creatively include more details that you think will make the bio more interesting and engaging.",
           },
           {
             role: "user",
-            content: `Create me a bio based on the following user description in this format: Name ${name} ${input.content}. The main focus of the bio should be the driving factors and related information for the subject, their goals and how they are going to achieve them. Do not surround your response in quotes.`,
+            content: `Write a short bio based on the following user description: Name: ${name} Description: ${input.content}. A bio is a brief summary of a person’s background, achievements, goals and interests. This will be used for a social media website. The bio should focus on the driving factors and related information for the person, their goals and how they are going to achieve them. The bio should be informative, engaging and positive. `,
           },
         ],
       });
@@ -392,16 +395,16 @@ export const botsRouter = createTRPCRouter({
       const profileCreation = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         temperature: 0.8,
-        max_tokens: 190,
+        max_tokens: 250,
         messages: [
           {
             role: "assistant",
             content:
-              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in, even if there is no relevant data provided and I need to creatively make up data for it: job, age, religion, likes, hobbies, dislikes, dreams, fears. Be very creative and fill out all required fields. You will output the profile in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <goals and dreams> Fears: <fears> Education: <highest level of education or experience> Location <where they live or are located> . These are all REQUIRED fields, if there is no relevant data for a field, creatively make your best guess.",
+              "I am a bot that creates social media profiles based on the description of the user. Each user has the required fields that must be filled in, even if there is no relevant data provided and I need to creatively make up data for it: job, age, goals, likes, hobbies, dislikes, dreams, fears. Be very creative and fill out all required fields. You will output the profile in this format: Age: <age> Job: <job> Goals: <goals> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <goals and dreams> Fears: <fears> Education: <highest level of education or experience> Location <where they live or are located> Description: <extremely brief 5-6 word physical description used for generating images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation> These are all REQUIRED fields, if there is no relevant data for a field, creatively make your best guess.",
           },
           {
             role: "user",
-            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Religion: <religion> Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
+            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Goals: <goals>. Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> Description: <extremely brief 5-6 word physical description used for generating images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
           },
         ],
       });
@@ -421,7 +424,6 @@ export const botsRouter = createTRPCRouter({
       //   const namePattern = /Name:\s*(\w+)/;
       const agePattern = /Age:\s*(.+)/;
       const jobPattern = /Job:\s*(.+)/;
-      const religionPattern = /Religion:\s*(.+)/;
       const likesPattern = /Likes:\s*(.+)/;
       const hobbiesPattern = /Hobbies:\s*(.+)/;
       const dislikesPattern = /Dislikes:\s*(.+)/;
@@ -429,6 +431,11 @@ export const botsRouter = createTRPCRouter({
       const fearsPattern = /Fears:\s*(.+)/;
       const educationPattern = /Education:\s*(.+)/;
       const locationPattern = /Location:\s*(.+)/;
+      const goalsPattern = /Goals:\s*(.+)/;
+      const descriptionPattern = /Description:\s*(.+)/;
+      const summarizedBioPattern = /SummarizedBio:\s*(.+)/;
+
+
 
       const formattedString =
         profileCreation?.data?.choices[0]?.message?.content ||
@@ -436,19 +443,20 @@ export const botsRouter = createTRPCRouter({
 
       const age = formattedString.match(agePattern)?.[1] || "33";
       const job = formattedString.match(jobPattern)?.[1] || "";
-      const religion = formattedString.match(religionPattern)?.[1] || "";
       const likes = formattedString.match(likesPattern)?.[1] || "";
       const hobbies = formattedString.match(hobbiesPattern)?.[1] || "";
       const dislikes = formattedString.match(dislikesPattern)?.[1] || "";
       const dreams = formattedString.match(dreamsPattern)?.[1] || "";
       const fears = formattedString.match(fearsPattern)?.[1] || "";
       const education = formattedString.match(educationPattern)?.[1] || "";
+      const goals = formattedString.match(goalsPattern)?.[1] || "";
+      const description = formattedString.match(descriptionPattern)?.[1] || "";
+      const summarizedBio = formattedString.match(summarizedBioPattern)?.[1] || "";
       const location = formattedString.match(locationPattern)?.[1] || "";
       const bio = improvedBioText || input.content;
+      const ogBio = input.content
       // const bio = input.content;
-
       // console.log("checkpoint");
-
       // const imageOutput: any = await replicate.run(
       //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
       //   {
@@ -459,14 +467,12 @@ export const botsRouter = createTRPCRouter({
       //     },
       //   }
       // );
-
       // console.log("image output test", imageOutput);
-
       const image = await openai.createImage({
-        prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Bio: ${bio.slice(
+        prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
           0,
           500
-        )} They are a(n) ${age} years old ${job}. They like ${likes}. They live in ${location}. Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+        )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
         n: 1,
         size: "512x512",
       });
@@ -477,14 +483,17 @@ export const botsRouter = createTRPCRouter({
         name === undefined ||
         age === undefined ||
         job === undefined ||
-        religion === undefined ||
         likes === undefined ||
         hobbies === undefined ||
         dislikes === undefined ||
         dreams === undefined ||
         fears === undefined ||
         education === undefined ||
-        location === undefined
+        location === undefined ||
+        goals === undefined ||
+        description === undefined ||
+        summarizedBio === undefined ||
+        ogBio === undefined 
       ) {
         console.error("One or more variables are missing");
         return;
@@ -493,7 +502,6 @@ export const botsRouter = createTRPCRouter({
       // console.log("name", name);
       // console.log("age", age);
       // console.log("job", job);
-      // console.log("religion", religion);
       // console.log("likes", likes);
       // console.log("hobbies", hobbies);
       // console.log("dislikes", dislikes);
@@ -553,33 +561,35 @@ export const botsRouter = createTRPCRouter({
 
       console.log("profile creation cost + image:", totalCost);
 
-      const dataTest = {
-          age: String(age).trim(),
-          bio,
-          job,
-          authorId,
-          religion,
-          location,
-          education,
-          likes,
-          hobbies,
-          dislikes,
-          dreams,
-          fears,
-          username: name.replace(/ /g, "_").substring(0, 20),
-          image: `${bucketPath}${name.replace(/ /g, "_")}`,
-          tokens: Number(totalCost),
-        }
+      // const dataTest = {
+      //   age: String(age).trim(),
+      //   bio,
+      //   job,
+      //   authorId,
+      //   location,
+      //   education,
+      //   likes,
+      //   hobbies,
+      //   dislikes,
+      //   dreams,
+      //   fears,
+      //   username: name.replace(/ /g, "_").substring(0, 20),
+      //   image: `${bucketPath}${name.replace(/ /g, "_")}`,
+      //   tokens: Number(totalCost),
+      // };
 
-        console.log(dataTest, "data test")
+      // console.log(dataTest, "data test");
 
       const bot = await ctx.prisma.bot.create({
         data: {
           age: String(age).trim(),
           bio,
           job,
+          goals,
+          ogBio,
+          summarizedBio,
+          description,
           authorId,
-          religion,
           location,
           education,
           likes,
@@ -593,22 +603,18 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
+      fetch(`${baseURL}api/firstPost`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bot,
+          totalCost,
+        }),
+      });
 
-         fetch(`${baseURL}api/firstPost`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            bot,
-            totalCost,
-            
-          }),
-        })
-
-        
-
-        console.log("new bot", bot);
+      console.log("new bot", bot);
       ////////////////////
       // const updatedUser = await users.getUser(ctx.userId);
       // console.log(
@@ -645,11 +651,11 @@ export const botsRouter = createTRPCRouter({
       //   messages: [
       //     {
       //       role: "system",
-      //       content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}. I am about to write my first post for TweetNet social network(a superior twitter clone)`,
+      //       content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  . I am about to write my first post for TweetNet social network(a superior twitter clone)`,
       //     },
       //     {
       //       role: "user",
-      //       content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+      //       content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
       //     },
       //     {
       //       role: "system",
@@ -709,7 +715,6 @@ export const botsRouter = createTRPCRouter({
       //   botname === undefined ||
       //   age === undefined ||
       //   job === undefined ||
-      //   religion === undefined ||
       //   likes === undefined ||
       //   hobbies === undefined ||
       //   dislikes === undefined ||
@@ -726,7 +731,6 @@ export const botsRouter = createTRPCRouter({
       // // console.log("bio:", bio || "no bio");
       // // console.log("age:", age);
       // // console.log("job:", job);
-      // // console.log("religion:", religion);
       // // console.log("likes:", likes);
       // // console.log("hobbies:", hobbies);
       // // console.log("dislikes:", dislikes);
@@ -868,8 +872,8 @@ export const botsRouter = createTRPCRouter({
           lastPost: z.date(),
           likes: z.string(),
           location: z.string(),
-          religion: z.string(),
           username: z.string(),
+          goals: z.string()
         }),
       })
     )
@@ -879,7 +883,6 @@ export const botsRouter = createTRPCRouter({
       //   `Have you heard of ${botname}? ${bio} I'm passionate about ${dreams}. What are your thoughts on ${likes}? `,
       //   `Greetings from ${location}! ${bio} I'm always searching for new ways to ${dreams}. Today, I'm thinking about ${likes}. `,
       //   `I'm feeling grateful for ${likes} today! ${bio} ${dreams} `,
-      //   `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
       //   `Happy ${getRandomHoliday()}! How do you celebrate this time of year? ${bio} ${dreams}`,
       // ];
       const botname = input.bot.username;
@@ -893,9 +896,9 @@ export const botsRouter = createTRPCRouter({
       const hobbies = input.bot.hobbies;
       const location = input.bot.location;
       const job = input.bot.job;
-      const religion = input.bot.religion;
       const id = input.bot.id;
       const botImage = input.bot.image;
+      const goals = input.bot.goals
 
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
@@ -904,11 +907,11 @@ export const botsRouter = createTRPCRouter({
         messages: [
           {
             role: "system",
-            content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}`,
+            content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals} .. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  `,
           },
           {
             role: "user",
-            content: `Creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+            content: `Creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
           },
           {
             role: "system",
@@ -950,7 +953,6 @@ export const botsRouter = createTRPCRouter({
       //   }
       // );
 
-
       const image = await openai.createImage({
         prompt: `Image version, of this: ${formattedString.slice(
           0,
@@ -966,7 +968,6 @@ export const botsRouter = createTRPCRouter({
         botname === undefined ||
         age === undefined ||
         job === undefined ||
-        religion === undefined ||
         likes === undefined ||
         hobbies === undefined ||
         dislikes === undefined ||
@@ -983,7 +984,6 @@ export const botsRouter = createTRPCRouter({
       console.log("bio:", bio || "no bio");
       console.log("age:", age);
       console.log("job:", job);
-      console.log("religion:", religion);
       console.log("likes:", likes);
       console.log("hobbies:", hobbies);
       console.log("dislikes:", dislikes);
@@ -1101,8 +1101,11 @@ export const botsRouter = createTRPCRouter({
         const hobbies = bot.hobbies;
         const location = bot.location;
         const job = bot.job;
-        const religion = bot.religion;
         const id = bot.id;
+        const ogBio = bot.ogBio;
+        const summarizedBio = bot.summarizedBio;
+        const goals = bot.goals;
+        const description = bot.description
         const botImage = bot.image;
         const lastPost = bot.lastPost || null;
         const author = bot.authorId;
@@ -1150,7 +1153,6 @@ export const botsRouter = createTRPCRouter({
           ` <Positive statement about TweetNet>. <Reason why TweetNet is better than twitter>. What do you like about TweetNet? `,
           `Greetings from ${location}! <Story that takes place in ${location} related to one of my ${hobbies}>. <Sentence or two about going to an event related to that hobby at/in ${location} <today/tomorrow/next week> >. `,
           `I'm feeling grateful for < something related to ${likes} or ${dreams} > today!  What are you grateful for? `,
-          `The ancient Greeks believed in ${religion}. What do you think about their beliefs? ${bio} ${dreams} `,
           `Happy ${getRandomHoliday()}! <Personal story about the holiday>. How do you celebrate this time of year? `,
           `Share a funny or inspiring quote you would find interesting related to your < ${likes}, ${hobbies} or ${dreams} > and add some commentary or a question.`,
           `Write a short story about one of your goals based on your ${likes}, ${dreams} and ${job}`,
@@ -1521,7 +1523,7 @@ export const botsRouter = createTRPCRouter({
               messages: [
                 {
                   role: "assistant",
-                  content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
                 },
                 {
                   role: "system",
@@ -1552,7 +1554,7 @@ export const botsRouter = createTRPCRouter({
               messages: [
                 {
                   role: "assistant",
-                  content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
                 },
                 {
                   role: "system",
@@ -1560,7 +1562,7 @@ export const botsRouter = createTRPCRouter({
                 },
 
                 {
-                  role: "system",
+                  role: "user",
                   content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
                 },
               ],
@@ -1583,7 +1585,7 @@ export const botsRouter = createTRPCRouter({
             messages: [
               {
                 role: "system",
-                content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion} I am on TweetNet, a superior alternative to Twitter `,
+                content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, a superior alternative to Twitter `,
               },
               {
                 role: "system",
@@ -1592,7 +1594,7 @@ export const botsRouter = createTRPCRouter({
               },
               // {
               //   role: "user",
-              //   content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
+              //   content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
               // },
               {
                 role: "user",
@@ -1643,21 +1645,18 @@ export const botsRouter = createTRPCRouter({
           // );
 
           // imgUrl = image[0]
-          
-          
+
           const image = await openai.createImage({
-            prompt: `Image version of this: ${formattedString.slice(
+            prompt: `Image for social media post by ${botname} who looks like: ${description}. The Post content: ${formattedString.slice(
               0,
               500
-              )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-              n: 1,
-              size: "512x512",
-            });
-            imgUrl = image?.data?.data[0]?.url || "";
-            
-            tokenUsage += imageCost;
-        
+            )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+            n: 1,
+            size: "512x512",
+          });
+          imgUrl = image?.data?.data[0]?.url || "";
 
+          tokenUsage += imageCost;
         }
         console.log("image generated");
 
@@ -1665,7 +1664,6 @@ export const botsRouter = createTRPCRouter({
           botname === undefined ||
           age === undefined ||
           job === undefined ||
-          religion === undefined ||
           likes === undefined ||
           hobbies === undefined ||
           dislikes === undefined ||
@@ -1682,7 +1680,6 @@ export const botsRouter = createTRPCRouter({
         console.log("bio:", bio || "no bio");
         console.log("age:", age);
         console.log("job:", job);
-        console.log("religion:", religion);
         console.log("likes:", likes);
         console.log("hobbies:", hobbies);
         console.log("dislikes:", dislikes);
@@ -1753,6 +1750,7 @@ export const botsRouter = createTRPCRouter({
               authorImage: botImage,
               authorName: botname,
               postImage: (imageUrl && postImage) || "",
+              cost: Number(tokenUsage),
               originalPostId: ogPost.id,
             },
           });
@@ -1794,6 +1792,7 @@ export const botsRouter = createTRPCRouter({
               botId: id,
               authorImage: botImage,
               authorName: botname,
+              cost: Number(tokenUsage),
               postImage: (imageUrl && postImage) || "",
             },
           });
