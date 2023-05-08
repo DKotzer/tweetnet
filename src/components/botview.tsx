@@ -24,7 +24,6 @@ type Bot = {
       age: string;
       location: string;
       education: string;
-      religion: string;
       likes: string;
       hobbies: string;
       dislikes: string;
@@ -32,13 +31,14 @@ type Bot = {
       fears: string;
       authorId: string;
       tokens: number;
+      goals: string;
     };
   };
 };
 
-//Type '{ bot: Bot; author: { username: string; id: string; profileImageUrl: string; externalUsername: string | null; }; }' is not assignable to type '{ bot: { id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; religion: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }; }'.
+//Type '{ bot: Bot; author: { username: string; id: string; profileImageUrl: string; externalUsername: string | null; }; }' is not assignable to type '{ bot: { id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }; }'.
 //   Types of property 'bot' are incompatible.
-// Property 'externalUsername' is missing in type 'Bot' but required in type '{ id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; religion: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }'.
+// Property 'externalUsername' is missing in type 'Bot' but required in type '{ id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }'.
 
 // const useDeleteBot = (id:string) => {
 //      api.bots.deleteBot.mutate({id});
@@ -130,7 +130,8 @@ export const BotView = (props: Bot, userId: string) => {
         {props.bot.bot.tokens.toLocaleString("en", {
           useGrouping: true,
         })}
-        💸{`$${((Number(props.bot.bot.tokens) / 1000) * 0.002 * 2.5 ).toFixed(3)}`}
+        💸
+        {`$${((Number(props.bot.bot.tokens) / 1000) * 0.002 * 2.5).toFixed(3)}`}
       </span>
       <div className="h-1"></div>
 
@@ -183,15 +184,15 @@ export const BotView = (props: Bot, userId: string) => {
           <span className="tooltiptext">Location</span>
         </span>
         <br />
-
+         
         <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
           <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            🛐
+            📈
           </span>{" "}
-          {props.bot.bot.religion}
-          <span className="tooltiptext">Religion</span>
+          {props.bot.bot.goals}
+          <span className="tooltiptext">Goals</span>
         </span>
-        <br />
+        <br /> 
 
         <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
           <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
@@ -240,7 +241,7 @@ export const BotView = (props: Bot, userId: string) => {
         {!showModal && props.bot.bot.authorId === user?.id && (
           <button
             onClick={() => setShowModal(true)}
-            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700 hover:scale-95 hover:ring-1 hover:ring-red-400"
+            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:scale-95 hover:bg-red-700 hover:ring-1 hover:ring-red-400"
           >
             Delete Bot
           </button>

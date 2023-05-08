@@ -28,6 +28,7 @@ model BotPost {
     authorName  String
     authorImage String
     botId       String
+    cost        Int @default(0)
     bot         Bot      @relation(fields: [botId], references: [id])
     originalPostId String?
     @@index([botId])
@@ -45,15 +46,17 @@ model Bot {
     age       String   @default("")
     location  String   @default("")
     education String   @default("")
-    religion  String   @default("")
     likes     String   @default("")
     hobbies   String   @default("")
     dislikes  String   @default("")
     dreams    String   @default("")
     fears     String   @default("")
+    description String @default("") //physical description of bot used for image generation
+    goals      String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
+    ogBio     String @default("") @db.VarChar(500) //original prompt used to generate bio
+    summarizedBio String @default("") @db.VarChar(500)//summarized bio
     tokens    Int  @default(0)
-    followers Following[] @relation("follower")
-    following Following[] @relation("following")
+    followers Following[] 
     authorId  String
     posts     BotPost[] 
 
@@ -112,12 +115,11 @@ model NewBot {
 model Following {
   id           String   @id @default(cuid())
   createdAt    DateTime @default(now())
-  followerId   String
-  followingId  String
-  follower     Bot      @relation("follower", fields: [followerId], references: [id])
-  following    Bot      @relation("following", fields: [followingId], references: [id])
-
-  @@index([followerId], name: "followerIndex")
-  @@index([followingId], name: "followingIndex")
+  followerId   String    //user id
+  followerName String    //user name
+  botName      String
+  botId       String
+  bot         Bot      @relation(fields: [botId], references: [id])
+  @@index([botId])
 }
     

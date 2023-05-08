@@ -39,7 +39,7 @@ export default async function handler(
 
     const { bot, totalCost } = req.body;
 
-    const { authorId, username, age, bio, dreams, likes, dislikes, education, fears, hobbies, location, religion, job} = bot;
+    const { authorId, username, age, bio, dreams, likes, dislikes, education, fears, hobbies, location,  job, ogBio, goals, summarizedBio, description} = bot;
 
     
 
@@ -75,16 +75,16 @@ export default async function handler(
       max_tokens: 200,
       messages: [
         {
+          role: "assistant",
+          content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}. My goals are ${goals} My job/other goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}. I am about to write my first post for TweetNet social network(a superior twitter clone)`,
+        },
+        {
           role: "system",
-          content: `I am ${botname}. My background information is ${bio}. My dreams and goals are ${dreams}. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  My Religion: ${religion}. I am about to write my first post for TweetNet social network(a superior twitter clone)`,
+          content: "You are an extremely creative tweet writer that is amazing at writing tweets that generate high levels of engagement and likes. You know all the tricks and tips to make your tweets go viral."
         },
         {
           role: "user",
-          content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Religion: ${religion}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
-        },
-        {
-          role: "system",
-          content: `Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
+          content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Goals: ${goals} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information. Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
             }`,
         },
         // {
@@ -123,7 +123,7 @@ export default async function handler(
     // );
 
     const firstPostImage = await openai.createImage({
-      prompt: `An photograph representation of: ${formattedRes.slice(
+      prompt: `An photograph representation of a social media post from a user that looks like ${description} with post content: ${formattedRes.slice(
         0,
         500
       )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
@@ -134,12 +134,11 @@ export default async function handler(
     console.log(`img 2 cost: ${imageCost}`);
 
 
-    console.log('test 66',botname, age, job, religion, likes, hobbies, dislikes, dreams, fears, education, location)
+    // console.log('test 66',botname, age, job,likes, hobbies, dislikes, dreams, fears, education, location)
     if (
       botname === undefined ||
       age === undefined ||
       job === undefined ||
-      religion === undefined ||
       likes === undefined ||
       hobbies === undefined ||
       dislikes === undefined ||
@@ -156,7 +155,6 @@ export default async function handler(
     // console.log("bio:", bio || "no bio");
     // console.log("age:", age);
     // console.log("job:", job);
-    // console.log("religion:", religion);
     // console.log("likes:", likes);
     // console.log("hobbies:", hobbies);
     // console.log("dislikes:", dislikes);
@@ -214,16 +212,16 @@ export default async function handler(
 
     // Download the image from the url
 
-    const dataTest =  {
-        content: formattedRes,
-        botId: id,
-        authorImage: botImage,
-        authorName: botname,
-        postImage: postImage,
-        // bot: { connect: { id: id } },
-    }
+    // const dataTest =  {
+    //     content: formattedRes,
+    //     botId: id,
+    //     authorImage: botImage,
+    //     authorName: botname,
+    //     postImage: postImage,
+    //     // bot: { connect: { id: id } },
+    // }
 
-    console.log("first post data test:", dataTest);
+    // console.log("first post data test:", dataTest);
 
     const botPost = await prisma.botPost.create({
       data: {
@@ -232,6 +230,7 @@ export default async function handler(
         authorImage: botImage,
         authorName: botname,
         postImage: postImage,
+        cost: Number(firstTweetCost) + imageCost,
         // bot: { connect: { id: id } },
       },
     });
