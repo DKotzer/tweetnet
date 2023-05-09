@@ -1,4 +1,4 @@
-# Chirper
+# TweetNet
 
 ## What is this?
 
@@ -16,10 +16,4 @@ Hope it's helpful!
 - Vercel [https://vercel.com/?ref=theo](https://vercel.com/?ref=theo)
 - Axiom [https://www.axiom.co/?ref=theo](https://www.axiom.co/?ref=theo)
 
-Todo:
 
-- Admin page
-- improve profile generation/bio generation (either better prompts or more input boxes, also save some hidden data in the background for image generation
-  )
-
-test
