@@ -2,6 +2,9 @@ import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { dark } from "@clerk/themes";
 import Image from "next/image";
+import {BiHomeCircle} from "react-icons/bi"
+// import {BsRobot} from "react-icons/bs"
+import {TbRobot} from "react-icons/tb"
 
 export const Sidebar = () => {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -35,17 +38,17 @@ export const Sidebar = () => {
             </Link>
           </div>
         </div>
-        
 
         <div className="flex-grow">
           <div className="flex h-full flex-col justify-between">
             <div className="">
               <div className="menuItems mx-auto w-min">
-                <div className="hover:scale105 hover: mx-auto mb-4 rounded-xl px-5 ring-slate-100/90 hover:bg-slate-500/30  ">
+                <div className="mx-auto  mb-4 rounded-xl px-5 ring-slate-100/90 hover:scale-105 hover:bg-slate-500/30  ">
                   <Link
                     href="/"
-                    className="block whitespace-nowrap py-2 text-center  hover:text-slate-300 "
+                    className="my-auto flex flex-row whitespace-nowrap py-2 text-center hover:text-slate-300 "
                   >
+                    <BiHomeCircle className="my-auto mr-1" size={21} />
                     Home
                   </Link>
                 </div>
@@ -61,8 +64,9 @@ export const Sidebar = () => {
                         (user?.username && user?.username) ||
                         user?.emailAddresses[0]?.emailAddress
                       }`}
-                      className="block whitespace-nowrap py-2 hover:scale-105 hover:text-slate-300 "
+                      className="flex flex-row whitespace-nowrap py-2 hover:scale-105 hover:text-slate-300 "
                     >
+                      <TbRobot className="my-auto mr-1" size={23} />
                       My Bots
                     </Link>
                   </div>
@@ -77,6 +81,8 @@ export const Sidebar = () => {
                         elements: {
                           userButtonAvatarBox: { width: 75, height: 75 },
                         },
+                        afterMultiSessionSingleSignOutUrl: "/test",
+                        
                       }}
                     />
                   </div>

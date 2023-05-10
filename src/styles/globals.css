@@ -95,6 +95,8 @@ body {
   display: block;
 }
 .navTitle {
+  padding-right:32px;
+  padding-left:10px;
   display: none;
 }
 
@@ -278,3 +280,4 @@ ol li {
 ul li {
   list-style-type: disc;
 }
+

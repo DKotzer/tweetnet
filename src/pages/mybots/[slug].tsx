@@ -52,7 +52,8 @@ const ProfileFeed = (props: { userId: string }) => {
   if (!data || data.length === 0)
     return (
       <div className="h-full w-full border-x border-slate-400/50 md:w-[628px]">
-        User has no bots
+        Create your first bot!
+        
       </div>
     );
 
@@ -154,7 +155,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     },
   });
 
-  if (botCount > 0 && !props.publicMetadata?.subscribed) {
+  if (botCount > 1 && !props.publicMetadata?.subscribed) {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
@@ -265,7 +266,6 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
     username,
   });
-  
   const { user } = useUser();
   const [publicMetadata, setPublicMetadata] = useState<any>(null);
 
@@ -291,8 +291,25 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
     }
   }, [user]);
 
+  if (!data ) return <LoadingPage />;
+
+  if (data && user && user.id !== data.id) {
+    return (
+      <PageLayout>
+        <div>You can only view the profile of your own account.</div>
+      </PageLayout>
+    );
+
+  }
+
+  if(data && !user){
+    return (
+      <PageLayout> <div>You must be logged in to view this page.</div></PageLayout>
+    )
+
+  }
+ 
   if (isLoading || !publicMetadata) return <LoadingPage />;
-  if (!data || !user) return <LoadingPage />;
 
   
 
@@ -423,7 +440,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
         </div>
         {/* <AccountInfo publicMetadata={publicMetadata} /> */}
         <div className="x-border border-slate-400/50">
-          {publicMetadata && (
+          {publicMetadata && user?.id && data.id === user?.id && (
             <CreateBotsWizard
               publicMetadata={publicMetadata}
               userId={data.id}

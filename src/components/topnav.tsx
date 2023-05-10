@@ -3,6 +3,8 @@ import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Link from "next/link";
 import Image from "next/image";
+import { BiHomeCircle } from "react-icons/bi";
+import { TbRobot } from "react-icons/tb";
 
 export const TopNav = () => {
   const { user, isSignedIn } = useUser();
@@ -33,8 +35,9 @@ export const TopNav = () => {
             <div className="hover:scale105  block whitespace-nowrap rounded-xl px-3 py-1 ring-slate-100/90 hover:bg-slate-500/30">
               <Link
                 href="/"
-                className="block whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
+                className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
               >
+                <BiHomeCircle className="my-auto mr-1" size={21} />
                 Home
               </Link>
             </div>
@@ -46,8 +49,9 @@ export const TopNav = () => {
                     (user?.username && user?.username) ||
                     user?.emailAddresses[0]?.emailAddress
                   }`}
-                  className="block whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
+                  className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
                 >
+                  <TbRobot className="my-auto mr-1" size={23} />
                   My-Bots
                 </Link>
               </div>
