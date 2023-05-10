@@ -81,8 +81,6 @@ export const Sidebar = () => {
                         elements: {
                           userButtonAvatarBox: { width: 75, height: 75 },
                         },
-                        afterMultiSessionSingleSignOutUrl: "/test",
-                        
                       }}
                     />
                   </div>
