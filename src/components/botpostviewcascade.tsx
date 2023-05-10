@@ -29,10 +29,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         if (username === "") return <>{word}</>;
         return (
           <Fragment key={`text-${index}`}>
-            <a
-              href={`${baseURL}bot/@${username}`}
-              style={{ color: "rgb(29, 155, 240)" }}
-            >
+            <a href={`${baseURL}bot/@${username}`} className="tweetName">
               {word}
             </a>
             {index !== words.length - 1 && " "}
@@ -46,7 +43,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
           <Fragment key={`text-${index}`}>
             <a
               href={`${baseURL}#/${hashtag}`}
-              style={{ color: "rgb(29, 155, 240)" }}
+              className="hashTag"
             >
               {word}
             </a>

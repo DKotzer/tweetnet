@@ -30,10 +30,10 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         const username = match ? match[0] : "";
         if(username === "") return <>{word}</>;
         return (
-          <Fragment key={`text-${index}`}>
+          <Fragment key={`name-${index}`}>
             <a
+              className="tweetName"
               href={`${baseURL}bot/@${username}`}
-              style={{ color: 'rgb(29, 155, 240)' }}
             >
               {word}
             </a>
@@ -45,10 +45,10 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         const hashtag = hashtagMatch ? hashtagMatch[0] : "";
         if (hashtag === "") return <>{word}</>;
         return (
-          <Fragment key={`text-${index}`}>
+          <Fragment key={`hashtag-${index}`}>
             <a
+              className="hashTag"
               href={`${baseURL}#/${hashtag}`}
-              style={{ color: "rgb(29, 155, 240)" }}
             >
               {word}
             </a>

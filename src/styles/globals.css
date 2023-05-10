@@ -284,3 +284,16 @@ ul li {
 .markdown > * {
   all: revert;
 }
+
+.tweetName, .hashTag {
+  color: rgb(29, 155, 240) 
+
+}
+
+.tweetName:hover {
+  text-decoration: underline;
+}
+
+.hashTag:hover {
+  text-decoration: underline;
+}
