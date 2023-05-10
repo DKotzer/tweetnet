@@ -3,11 +3,77 @@ import { RouterOutputs, api } from "~/utils/api";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
+import React, { Fragment } from "react";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
 dayjs.extend(relativeTime);
+
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
+
+
+
+interface CustomTextProps {
+  children: React.ReactNode;
+}
+
+const CustomText: React.FC<CustomTextProps> = ({ children }) => {
+  // console.log("CustomText children:", children);
+  const content = (children as string[])[0];
+  let output;
+  if (content) {
+    const words = content.split(" ");
+    output = words.map((word, index) => {
+      if (word.startsWith("@")) {
+        const match = word.slice(1).match(/[a-zA-Z0-9_]*/);
+        const username = match ? match[0] : "";
+        if(username === "") return <>{word}</>;
+        return (
+          <Fragment key={`text-${index}`}>
+            <a
+              href={`${baseURL}bot/@${username}`}
+              style={{ color: 'rgb(29, 155, 240)' }}
+            >
+              {word}
+            </a>
+            {index !== words.length - 1 && " "}
+          </Fragment>
+        );
+      } else if (word.startsWith("#")) {
+        const hashtagMatch = word.slice(1).match(/[a-zA-Z0-9_]*/);
+        const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+        if (hashtag === "") return <>{word}</>;
+        return (
+          <Fragment key={`text-${index}`}>
+            <a
+              href={`${baseURL}#/${hashtag}`}
+              style={{ color: "rgb(29, 155, 240)" }}
+            >
+              {word}
+            </a>
+            {index !== words.length - 1 && " "}
+          </Fragment>
+        );
+      } else {
+        return (
+          <>
+            {word}
+            {index !== words.length - 1 && " "}
+          </>
+        );
+      }
+    });
+  } else {
+    output = <>{content}</>;
+  }
+  // console.log("CustomText output:", output);
+  return <>{output}</>;
+};
+
+
+
+
 
 type Post = {
   id: string;
@@ -21,7 +87,7 @@ type Post = {
 export const BotPostView = (
   props: { username: string; image: string } & Post
 ) => {
-  // console.log("props test", props);
+  // console.log("props test", props.content);
   if (props.originalPostId !== undefined && props.originalPostId) {
     const { data, isLoading } = api.bots.getPostById.useQuery({
       id: props.originalPostId,
@@ -34,7 +100,7 @@ export const BotPostView = (
             key={props.id}
             className="flex gap-3 border-x border-b border-slate-400/50 p-4"
           >
-            <Link href={`/bot/@${props.username}`}>
+            <Link href={`/bot/@${props.username}`} className="h-fit">
               <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                 <Image
                   src={props.image}
@@ -98,15 +164,16 @@ export const BotPostView = (
           </div>
         </div>
       );
+      //  console.log("MyComponent content:", props.content);
 
     if (!data) {
       return (
-        <div className="botPostView">
+        <div className="botPostView hover:bg-[#ffffff08]">
           <div
             key={props.id}
             className="flex gap-3 border-x border-b border-slate-400/50 p-4"
           >
-            <Link href={`/bot/@${props.username}`}>
+            <Link href={`/bot/@${props.username}`} className="h-fit">
               <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                 <Image
                   src={props.image}
@@ -188,12 +255,12 @@ export const BotPostView = (
     }
 
     return (
-      <div className="botPostView">
+      <div className="botPostView hover:bg-[#ffffff08]">
         <div
           key={props.id}
           className="flex gap-3 border-x border-b border-slate-400/50 p-4"
         >
-          <Link href={`/bot/@${props.username}`}>
+          <Link href={`/bot/@${props.username}`} className="h-fit">
             <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
               <Image
                 src={props.image}
@@ -227,7 +294,7 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border bg-slate-900/80 border-slate-400/50 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-slate-900/80 p-4 md:flex-row">
               <Link href={`/bot/@${data.authorName}`}>
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
@@ -278,7 +345,9 @@ export const BotPostView = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown>{props.content}</ReactMarkdown>
+              <ReactMarkdown components={{ p: CustomText } as Components}>
+                {props.content}
+              </ReactMarkdown>
             </span>
             <div>
               {props.postImage && props.postImage !== "" && (
@@ -304,9 +373,9 @@ export const BotPostView = (
   return (
     <div
       key={props.id}
-      className="flex gap-3 border-x border-b border-slate-400/50 p-4 botPostView"
+      className="botPostView hover:bg-[#ffffff08] flex gap-3 border-x border-b border-slate-400/50 p-4"
     >
-      <Link href={`/bot/@${props.username}`}>
+      <Link href={`/bot/@${props.username}`} className="h-fit">
         <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
           <Image
             src={props.image}
@@ -330,7 +399,9 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          <ReactMarkdown>{props.content}</ReactMarkdown>
+          <ReactMarkdown components={{ p: CustomText } as Components}>
+            {props.content}
+          </ReactMarkdown>
         </span>
         <div>
           {props.postImage && props.postImage !== "" && (

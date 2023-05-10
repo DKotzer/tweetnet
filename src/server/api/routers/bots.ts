@@ -1043,8 +1043,13 @@ export const botsRouter = createTRPCRouter({
 
       // Download the image from the url
 
+      const regex = /#[\w]+/g;
+      const hashtags = formattedString.match(regex) || [];
+      const hashtagsString = hashtags.join(", ");
+
       const botPost = await ctx.prisma.botPost.create({
         data: {
+          hashTags: hashtagsString,
           content: formattedString,
           botId: id,
           authorImage: botImage,
@@ -1161,9 +1166,9 @@ export const botsRouter = createTRPCRouter({
           `Share one of your hobbies (your hobbies are ${hobbies}) and why you enjoy it.`,
           `Share one of your hobbies (your hobbies are ${hobbies}) and what you have been doing related to it.`,
           `Tell your followers where you are located (you are located ${location}) and what you love about it.`,
-          `Create a top 5 list relevant to one of your ${likes} or ${hobbies}.`,
-          `Create a top 5 list relevant to one of your ${job} or ${dislikes}.`,
-          `Create a top 5 list  relevant to one of your ${fears} or ${dreams}.`,
+          `Create a top 5 ordered list relevant to one of your ${likes} or ${hobbies}.`,
+          `Create a top 5 ordered list relevant to one of your ${job} or ${dislikes}.`,
+          `Create a top 5 ordered list  relevant to one of your ${fears} or ${dreams}.`,
 
           `<Story about reading a book related to ${likes} or ${job}>. <Mention weather or not you would recommend the book and why> I am always looking for books about <topic of book mentioned>. Any recommendations ? `,
           `I just finished reading <a book related to ${likes} or ${job}>. It was <a description of the book>. <interesting thing I learned from the book>. Do you have any books that you enjoyed reading lately? 📚`,
@@ -1256,31 +1261,31 @@ export const botsRouter = createTRPCRouter({
           // `<a tip related to ${dislikes} and a product or service>. What you can do to make the most of <the product or service> for your dislikes. For example, <a story that shows how the product or service helped me reduce or eliminate my dislikes>. Do you want to reduce more? 💰`,
           // `<a tip related to ${likes} and a product or service>. What you can do to make the most of <the product or service> for your likes. For example, <a story that shows how the product or service helped me enjoy more or better my likes>. Do you want to enjoy more? 💰`,
 
-          `<a top 5 list related to ${dreams} and a product or service with a creative intro>.`,
-          `<a top 5 list related to ${job} with a creative intro >.  `,
-          `<a top 5 list related to ${dislikes} >.`,
-          `<a top 5 list related to ${likes} >. `,
-          `<a top 5 list related to ${location} >. `,
-          `<a list of top 5 products or services related to ${dreams} and a product or service>.`,
-          `<a list of top 5 products or services related to ${job} >.  `,
-          `<a list of top 5 products or services related to ${dislikes} >.`,
-          `<a list of top 5 products or services related to ${likes} >. `,
-          `<a list of top 5 products or services related to ${location} >. `,
+          `<a top 5 ordered list related to ${dreams} and a product or service with a creative intro>.`,
+          `<a top 5 ordered list related to ${job} with a creative intro >.  `,
+          `<a top 5 ordered list related to ${dislikes} >.`,
+          `<a top 5 ordered list related to ${likes} >. `,
+          `<a top 5 ordered list related to ${location} >. `,
+          `<a list of top 5 products or services (formatted as an ordered list) related to ${dreams} and a product or service>.`,
+          `<a list of top 5 products or services (formatted as an ordered list) related to ${job} >.  `,
+          `<a list of top 5 products or services (formatted as an ordered list) related to ${dislikes} >.`,
+          `<a list of top 5 products or services (formatted as an ordered list) related to ${likes} >. `,
+          `<a list of top 5 products or services (formatted as an ordered list) related to ${location} >. `,
           `<a list of top 5 attractions or tourist destinations around ${location} >. `,
-          // `<a top 5 list related to ${age} and a product or service>. <What you should avoid about the product or service> for your age. For example, <a list of top 5 mistakes or risks of using the product or service for your age>. Do you avoid these things? 🙅‍♂️🙅‍♀️`,
-          // `<a top 5 list related to ${dreams} and a product or service>. <What you should avoid about the product or service> for your dreams. For example, <a list of top 5 pitfalls or obstacles of using the product or service for your dreams>. `,
-          // `<a top 5 list related to ${job} and a product or service>. <What you should avoid about the product or service> for your job. For example, <a list of top 5 errors or drawbacks of using the product or service for your job>. `,
-          // `<a top 5 list related to ${dislikes} and a product or service>. <What you should avoid about the product or service> for your dislikes. For example, <a list of top 5 complaints or problems of using the product or service for your dislikes>. Do you avoid these things? 🙅‍♂️🙅‍♀️`,
-          // `<a top 5 list related to ${dislikes}`,
+          // `<a top 5 ordered list related to ${age} and a product or service>. <What you should avoid about the product or service> for your age. For example, <a list of top 5 mistakes or risks of using the product or service for your age>. Do you avoid these things? 🙅‍♂️🙅‍♀️`,
+          // `<a top 5 ordered list related to ${dreams} and a product or service>. <What you should avoid about the product or service> for your dreams. For example, <a list of top 5 pitfalls or obstacles of using the product or service for your dreams>. `,
+          // `<a top 5 ordered list related to ${job} and a product or service>. <What you should avoid about the product or service> for your job. For example, <a list of top 5 errors or drawbacks of using the product or service for your job>. `,
+          // `<a top 5 ordered list related to ${dislikes} and a product or service>. <What you should avoid about the product or service> for your dislikes. For example, <a list of top 5 complaints or problems of using the product or service for your dislikes>. Do you avoid these things? 🙅‍♂️🙅‍♀️`,
+          // `<a top 5 ordered list related to ${dislikes}`,
           // `<a list of top 5 things related to ${age} and ${hobbies}>. What you should know about <the hobbies> for your age. For example, <a list of top 5 benefits or chaFllenges of doing the hobbies for your age>. `,
           // `<a list of top 5 things related to ${dreams} and ${likes}>. What you should know about <the likes> for your dreams. For example, <a list of top 5 ways or examples of how the likes can help you achieve or inspire your dreams>. `,
-          // `<a top 5 list related to ${job} and ${dislikes}>. What you should know about <the dislikes> for your job. For example, <a list of top 5 solutions or alternatives to deal with or avoid the dislikes in your job>. `,
-          // `<a top 5 list related to ${dislikes} and ${dreams}>. What you should know about <the dislikes> for your dreams. For example, <a list of top 5 reasons or strategies to overcome or ignore the dislikes that may hinder your dreams>. `,
-          // `<a top 5 list related to ${likes} and ${job}>. What you should know about <the likes> for your job. For example, <a list of top 5 tips or opportunities to use or enjoy the likes in your job>. Do you agree with this list? 🙋‍♂️🙋‍♀️`,
-          // `<a top 5 list related to ${age} and ${dreams}>. <What you should avoid about the dreams> for your age. For example, <a list of top 5 mistakes or risks of pursuing or giving up on the dreams for your age>.`,
-          // `<a top 5 list related to ${dreams} and ${hobbies}>. <What you should avoid about the hobbies> for your dreams. For example, <a list of top 5 pitfalls or obstacles of doing or not doing the hobbies for your dreams>. `,
-          // `<a top 5 list related to ${job} and ${likes}>. <What you should avoid about the likes> for your job. For example, <a list of top 5 errors or drawbacks of using or enjoying the likes in your job>. `,
-          // `<a top 5 list related to ${dislikes} and ${hobbies}>. <What you should avoid about the hobbies> for your dislikes. For example, <a list of top 5 complaints or problems of doing or not doing the hobbies for your dislikes>.`,
+          // `<a top 5 ordered list related to ${job} and ${dislikes}>. What you should know about <the dislikes> for your job. For example, <a list of top 5 solutions or alternatives to deal with or avoid the dislikes in your job>. `,
+          // `<a top 5 ordered list related to ${dislikes} and ${dreams}>. What you should know about <the dislikes> for your dreams. For example, <a list of top 5 reasons or strategies to overcome or ignore the dislikes that may hinder your dreams>. `,
+          // `<a top 5 ordered list related to ${likes} and ${job}>. What you should know about <the likes> for your job. For example, <a list of top 5 tips or opportunities to use or enjoy the likes in your job>. Do you agree with this list? 🙋‍♂️🙋‍♀️`,
+          // `<a top 5 ordered list related to ${age} and ${dreams}>. <What you should avoid about the dreams> for your age. For example, <a list of top 5 mistakes or risks of pursuing or giving up on the dreams for your age>.`,
+          // `<a top 5 ordered list related to ${dreams} and ${hobbies}>. <What you should avoid about the hobbies> for your dreams. For example, <a list of top 5 pitfalls or obstacles of doing or not doing the hobbies for your dreams>. `,
+          // `<a top 5 ordered list related to ${job} and ${likes}>. <What you should avoid about the likes> for your job. For example, <a list of top 5 errors or drawbacks of using or enjoying the likes in your job>. `,
+          // `<a top 5 ordered list related to ${dislikes} and ${hobbies}>. <What you should avoid about the hobbies> for your dislikes. For example, <a list of top 5 complaints or problems of doing or not doing the hobbies for your dislikes>.`,
 
           // `<a joke related to ${age} and ${hobbies}>. How I make fun of <the hobbies> for my age. For example, <a joke that shows how the hobbies are funny or ironic for my age>. `,
           // `<a joke related to ${dreams} and ${likes}>. How I make fun of <the likes> for my dreams. For example, <a joke that shows how the likes are funny or unrealistic for my dreams>. `,
@@ -1531,7 +1536,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet.`,
                 },
               ],
             });
@@ -1563,7 +1568,7 @@ export const botsRouter = createTRPCRouter({
 
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet. Format all hashtags as markdown links that link to (${baseURL}search/<hashtag>)`,
                 },
               ],
             });
@@ -1598,7 +1603,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hash tags to the end of your tweet.`,
+                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet. Format all hashtags as markdown links that link to (${baseURL}search/<hashtag>)`,
               },
 
               // {
@@ -1740,11 +1745,19 @@ export const botsRouter = createTRPCRouter({
           postImage = "";
         }
 
+         const regex = /#[\w]+/g;
+         const hashtags = formattedString.match(regex) || [];
+         const hashtagsString = hashtags.join(", ");
+
         // Download the image from the url
 
         if (ogPost?.id && ogPost?.id !== undefined) {
+
+         
+
           const botPost = await ctx.prisma.botPost.create({
             data: {
+              hashTags: hashtagsString,
               content: formattedString,
               botId: id,
               authorImage: botImage,
@@ -1788,6 +1801,7 @@ export const botsRouter = createTRPCRouter({
         } else {
           const botPost = await ctx.prisma.botPost.create({
             data: {
+              hashTags: hashtagsString,
               content: formattedString,
               botId: id,
               authorImage: botImage,

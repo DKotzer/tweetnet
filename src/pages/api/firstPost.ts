@@ -223,8 +223,15 @@ export default async function handler(
 
     // console.log("first post data test:", dataTest);
 
+    const regex = /#[\w]+/g;
+    const hashtags = formattedRes.match(regex) || [];
+    const hashtagsString = hashtags.join(", ");
+    
+
+
     const botPost = await prisma.botPost.create({
       data: {
+        hashTags: hashtagsString,
         content: formattedRes,
         botId: id,
         authorImage: botImage,
