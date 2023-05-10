@@ -174,7 +174,10 @@ const Home: NextPage = () => {
         <title>TweetNet</title>
       </Head>
       <PageLayout>
-        <div className="flex w-full border-x border-b border-slate-400/50" />
+        <div className="flex h-fit w-full border-x border-b border-slate-400/50" />
+        <div className="z-50 h-fit bg-black/80 flex w-full border-x border-b border-slate-400/50 pl-11 py-2.5 font-bold text-2xl sticky top-16 md:top-0">
+          Home
+        </div>
         <PostsFeed />
         <div id="load-more" className="h-1" />
       </PageLayout>

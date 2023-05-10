@@ -94,7 +94,7 @@ const AccountInfo = (props: {publicMetadata:any}) => {
           {" "}
           {props.publicMetadata.tokensUsed && "💸"}
           {props.publicMetadata.tokensUsed &&
-            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 * 2.5 ).toFixed(3)}`}
+            `$${((Number(props.publicMetadata.tokensUsed) / 1000) * 0.002 * 2.5 ).toFixed(2)}`}
         </span>
         {/* <span>
           Max 🪙:{" "}
@@ -159,7 +159,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
-          <div className=" bg-slate-900/80 p-5 backdrop-blur-lg">
+          <div className=" bg-slate-900/80 p-5 backdrop-blur-lg border-slate-400/50 border-x">
             You have reached the free tier bot limit. Purchase tokens to permanently increase your limit.
           </div>
         </div>
@@ -171,7 +171,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
     return (
       <div>
         <div className="flex w-full flex-col gap-3  ">
-          <div className=" bg-slate-900/80 p-5 backdrop-blur-lg">
+          <div className=" border-x border-slate-400/50 bg-slate-900/80 p-5 backdrop-blur-lg">
             You have reached the bot limit, you can delete a bot to create a new
             one.
           </div>
@@ -184,7 +184,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
      return (
        <div>
          <div className="flex w-full flex-col gap-3  ">
-           <div className=" bg-slate-900/80 p-5 backdrop-blur-lg">
+           <div className=" backdrop-blur-lg border-slate-400/50 border-x bg-slate-900/80 p-5">
              You are out of tokens, please purchase more to continue tweeting
              and creating bots.
            </div>
@@ -291,7 +291,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
     }
   }, [user]);
 
-  if (!data ) return <LoadingPage />;
+  if (!data || !user) return <LoadingPage />;
 
   if (data && user && user.id !== data.id) {
     return (
@@ -302,12 +302,6 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
 
   }
 
-  if(data && !user){
-    return (
-      <PageLayout> <div>You must be logged in to view this page.</div></PageLayout>
-    )
-
-  }
  
   if (isLoading || !publicMetadata) return <LoadingPage />;
 
@@ -321,12 +315,15 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
       <PageLayout>
         <div className="flex w-full border-x border-slate-400/50 bg-slate-900/80">
           <div className="flex flex-col justify-center">
-            
             <Link
-              href={data.id === user?.id ? '/myprofile': `/user/@${
-                data?.username?.replace("@gmail.com", "") ??
-                data?.externalUsername?.replace("@gmail.com", "")
-              }`}
+              href={
+                data.id === user?.id
+                  ? "/myprofile"
+                  : `/user/@${
+                      data?.username?.replace("@gmail.com", "") ??
+                      data?.externalUsername?.replace("@gmail.com", "")
+                    }`
+              }
             >
               <Image
                 src={data.profileImageUrl}
@@ -340,7 +337,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
               />
             </Link>
           </div>
-          <div>
+          <div className="pb-2">
             <div className="my-auto p-4 text-3xl font-bold">
               {`${
                 data?.username?.replace("@gmail.com", "") ??
@@ -413,7 +410,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
                   `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
                     0.002 * 2.5
-                  ).toFixed(3)}`}
+                  ).toFixed(2)}`}
               </span> */}
               {/* <span>
           Max 🪙:{" "}
@@ -422,13 +419,19 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           })}
         </span> */}
             </div>{" "}
-            <div className="h-[37px]  pl-5 text-xl flex">
-              Bot Limit:{" "}
-              {(publicMetadata?.subscribed && "10") || "2"}
+            <div className="flex   pl-5 text-xl">
+              Bot Limit: {(publicMetadata?.subscribed && "10") || "2"}
             </div>
+            {publicMetadata && user?.id && data.id === user?.id && (
+              <Link href={`/myprofile`}>
+                <div className="hoverUnderline  flex pl-5 text-xl hover:scale-105">
+                  My Account Page
+                </div>
+              </Link>
+            )}
           </div>
         </div>
-        <div className="bg-slate-900/80 border-x border-slate-400/50 pt-2">
+        <div className="border-x border-slate-400/50 bg-slate-900/80 pt-2">
           <Link href="/pay">
             <button
               className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
@@ -446,6 +449,14 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
               userId={data.id}
             />
           )}
+        </div>
+        <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
+          {`${
+            data?.username?.replace("@gmail.com", "") ??
+            data?.externalUsername?.replace("@gmail.com", "") ??
+            "unknown"
+          }'s`}{" "}
+          Bots
         </div>
         <ProfileFeed userId={data.id} />
       </PageLayout>

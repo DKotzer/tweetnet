@@ -81,7 +81,7 @@ export const BotView = (props: Bot, userId: string) => {
   //   console.log("bot test", props.bot.bot);
   return (
     <div
-      className={`flex flex-col border-x border-b border-slate-400/50 p-6 ${
+      className={`flex flex-col border-x border-b border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
         !showBot && "hidden"
       }`}
       key={props.bot.bot.username}
@@ -99,7 +99,7 @@ export const BotView = (props: Bot, userId: string) => {
         </Link>
 
         <Link href={`/bot/@${props.bot.bot.username}`}>
-          <div className="my-auto ml-1.5 text-3xl hover:scale-105">
+          <div className="hoverUnderline my-auto ml-1.5 text-2xl font-bold text-slate-100 hover:scale-105">
             @{props.bot.bot.username.trim()}
           </div>
         </Link>
@@ -113,9 +113,9 @@ export const BotView = (props: Bot, userId: string) => {
         📅 Posting since{" "}
         {new Date(props.bot.bot.createdAt).toLocaleDateString()}
       </Link>
-      {true && (
-        <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span>
-      )}
+
+      {/* <span className="mr-16 hover:scale-105"> 👥 0 Human Followers</span> */}
+
       <span className="mr-3 hover:scale-105">
         {" "}
         {(
@@ -130,8 +130,10 @@ export const BotView = (props: Bot, userId: string) => {
         {props.bot.bot.tokens.toLocaleString("en", {
           useGrouping: true,
         })}
+      </span>
+      <span>
         💸
-        {`$${((Number(props.bot.bot.tokens) / 1000) * 0.002 * 2.5).toFixed(3)}`}
+        {`$${((Number(props.bot.bot.tokens) / 1000) * 0.002 * 2.5).toFixed(2)}`}
       </span>
       <div className="h-1"></div>
 
@@ -184,7 +186,7 @@ export const BotView = (props: Bot, userId: string) => {
           <span className="tooltiptext">Location</span>
         </span>
         <br />
-         
+
         <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
           <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
             📈
@@ -192,7 +194,7 @@ export const BotView = (props: Bot, userId: string) => {
           {props.bot.bot.goals}
           <span className="tooltiptext">Goals</span>
         </span>
-        <br /> 
+        <br />
 
         <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
           <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
@@ -241,7 +243,7 @@ export const BotView = (props: Bot, userId: string) => {
         {!showModal && props.bot.bot.authorId === user?.id && (
           <button
             onClick={() => setShowModal(true)}
-            className="float-right mr-6 rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:scale-95 hover:bg-red-700 hover:ring-1 hover:ring-red-400"
+            className="mx-auto mr-6 w-fit rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:scale-95 hover:bg-red-700 hover:ring-1 hover:ring-slate-400/50"
           >
             Delete Bot
           </button>
@@ -250,7 +252,7 @@ export const BotView = (props: Bot, userId: string) => {
         {showModal && (
           <div className="flex flex-col">
             <span className="float-right rounded-xl bg-red-500 p-2 text-center font-bold ring ring-red-800 hover:scale-105 hover:cursor-not-allowed hover:bg-red-600">
-              Are you sure you want to delete {props.bot.bot.username}{" "}
+              Confirm deletion of {props.bot.bot.username}{" "}
             </span>
             <div className="mx-auto flex flex-row pt-2">
               <button

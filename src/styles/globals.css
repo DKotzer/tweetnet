@@ -297,3 +297,7 @@ ul li {
 .hashTag:hover {
   text-decoration: underline;
 }
+
+.hoverUnderline:hover {
+  text-decoration: underline;
+}

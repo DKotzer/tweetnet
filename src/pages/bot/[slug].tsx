@@ -95,6 +95,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       </Head>
       <PageLayout>
         <div className="flex w-full border border-slate-400/50 ">
+          {/* <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-1 pl-11 text-2xl font-bold md:top-0"> */}
+
           {/* <a
             target="_blank"
             href={`https://tweetbots.s3.amazonaws.com/${data[0]?.bot.username}`}
@@ -132,7 +134,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               </div>
             </div>
           )}
-          <div className="my-auto p-4 text-3xl font-bold">{`@${
+          <div className="my-auto p-4 text-3xl font-bold text-slate-100 ">{`@${
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>

@@ -117,13 +117,13 @@ export const BotPostView = (
               <div className="mb-3 flex gap-1 text-slate-400">
                 <Link
                   href={`/bot/@${props.username}`}
-                  className="hover:scale-105"
+                  className="hoverUnderline hover:scale-105"
                 >
                   <span className=" text-3xl ">{`@${props.username}`}</span>
                 </Link>
                 <Link
                   href={`/post/${props.id}`}
-                  className="my-auto font-thin  hover:scale-105 "
+                  className="hoverUnderline my-auto font-thin hover:scale-105 "
                 >
                   {` · ${dayjs(props.createdAt).fromNow()}`}
                 </Link>
@@ -134,7 +134,7 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
               </span>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 bg-slate-900/80 p-4">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 ">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
@@ -190,13 +190,13 @@ export const BotPostView = (
               <div className="mb-3 flex gap-1 text-slate-400">
                 <Link
                   href={`/bot/@${props.username}`}
-                  className="hover:scale-105"
+                  className="hoverUnderline hover:scale-105"
                 >
                   <span className=" text-3xl ">{`@${props.username}`}</span>
                 </Link>
                 <Link
                   href={`/post/${props.id}`}
-                  className="my-auto font-thin  hover:scale-105 "
+                  className="hoverUnderline my-auto font-thin hover:scale-105 "
                 >
                   {` · ${dayjs(props.createdAt).fromNow()}`}
                 </Link>
@@ -208,7 +208,7 @@ export const BotPostView = (
               </Link> */}
               </span>
 
-              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 bg-slate-900/80 p-4 md:flex-row">
+              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={"/default.webp" || ""}
@@ -274,16 +274,16 @@ export const BotPostView = (
           </Link>
 
           <div className="flex flex-col">
-            <div className="mb-3 flex gap-1 text-slate-400">
+            <div className="mb-3 flex gap-1 text-slate-400 ">
               <Link
                 href={`/bot/@${props.username}`}
-                className="hover:scale-105"
+                className="hoverUnderline hover:scale-105"
               >
                 <span className=" text-3xl ">{`@${props.username}`}</span>
               </Link>
               <Link
                 href={`/post/${props.id}`}
-                className="my-auto font-thin  hover:scale-105 "
+                className="hoverUnderline my-auto  font-thin hover:scale-105"
               >
                 {` · ${dayjs(props.createdAt).fromNow()}`}
               </Link>
@@ -294,7 +294,7 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-slate-900/80 p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
               <Link href={`/bot/@${data.authorName}`}>
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
@@ -311,11 +311,11 @@ export const BotPostView = (
                 <div className="mb-3 flex gap-1 text-slate-400">
                   <Link
                     href={`/bot/@${data.authorName}`}
-                    className="hover:scale-105"
+                    className="hoverUnderline hover:scale-105 "
                   >
                     <span className="  text-2xl">{`@${data.authorName} `}</span>
                   </Link>
-                  <span className="my-auto font-thin hover:scale-105">
+                  <span className="hoverUnderline my-auto font-thin hover:scale-105">
                     <Link href={`/post/${data.id}`}>
                       {` · ${dayjs(data.createdAt).fromNow()}`}
                     </Link>
@@ -373,7 +373,7 @@ export const BotPostView = (
   return (
     <div
       key={props.id}
-      className="botPostView hover:bg-[#ffffff08] flex gap-3 border-x border-b border-slate-400/50 p-4"
+      className="botPostView flex gap-3 border-x border-b border-slate-400/50 p-4 hover:bg-[#ffffff08]"
     >
       <Link href={`/bot/@${props.username}`} className="h-fit">
         <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
@@ -389,10 +389,13 @@ export const BotPostView = (
       </Link>
       <div className="flex flex-col">
         <div className="mb-3 flex gap-1 text-slate-400">
-          <Link href={`/bot/@${props.username}`} className="hover:scale-105 ">
+          <Link
+            href={`/bot/@${props.username}`}
+            className="hoverUnderline hover:scale-105 "
+          >
             <span className=" text-3xl ">{`@${props.username} `}</span>
           </Link>
-          <span className="my-auto font-thin hover:scale-105">
+          <span className="hoverUnderline my-auto font-thin hover:scale-105">
             <Link href={`/post/${props.id}`}>
               {` · ${dayjs(props.createdAt).fromNow()}`}
             </Link>
