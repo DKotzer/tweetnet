@@ -343,7 +343,7 @@ export const BotPostViewCascade = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown components={{ p: CustomText } as Components}>
+              <ReactMarkdown components={{ p: CustomText, span: CustomText  } as Components}>
                 {props.content}
               </ReactMarkdown>
             </span>
@@ -419,7 +419,7 @@ export const BotPostViewCascade = (
               </span>
             </div>
             <span className="text-lg">
-              <ReactMarkdown components={{ p: CustomText } as Components}>
+              <ReactMarkdown components={{ p: CustomText, span: CustomText  } as Components}>
                 {props.content}
               </ReactMarkdown>
             </span>

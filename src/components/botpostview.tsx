@@ -4,6 +4,9 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown, { Components } from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import { visit } from "unist-util-visit";
 import React, { Fragment } from "react";
 
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -13,6 +16,16 @@ dayjs.extend(relativeTime);
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
 
+
+const transformSpanToP = () => {
+  return (tree: any) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName === "span") {
+        node.tagName = "p";
+      }
+    });
+  };
+};
 
 interface CustomTextProps {
   children: React.ReactNode;
@@ -140,7 +153,10 @@ export const BotPostView = (
                 </div>
               </div>
               <span className=" text-lg">
-                <ReactMarkdown>{props.content}</ReactMarkdown>
+                <ReactMarkdown components={
+                      { p: CustomText, span: CustomText } as Components
+                    }
+                  >{props.content}</ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -228,7 +244,10 @@ export const BotPostView = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown>{props.content}</ReactMarkdown>
+                <ReactMarkdown components={
+                      { p: CustomText, span: CustomText } as Components
+                    }
+                  >{props.content}</ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -294,7 +313,7 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
               <Link href={`/bot/@${data.authorName}`}>
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
@@ -322,7 +341,13 @@ export const BotPostView = (
                   </span>
                 </div>
                 <span className=" text-lg">
-                  <ReactMarkdown>{data.content}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={
+                      { p: CustomText, span: CustomText } as Components
+                    }
+                  >
+                    {data.content}
+                  </ReactMarkdown>
                 </span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
@@ -345,7 +370,9 @@ export const BotPostView = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown components={{ p: CustomText } as Components}>
+              <ReactMarkdown
+                components={{ p: CustomText, span: CustomText } as Components}
+              >
                 {props.content}
               </ReactMarkdown>
             </span>
@@ -402,7 +429,10 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          <ReactMarkdown components={{ p: CustomText } as Components}>
+          <ReactMarkdown
+            components={{ p: CustomText} as Components}
+            // rehypePlugins={[transformSpanToP]}
+          >
             {props.content}
           </ReactMarkdown>
         </span>
