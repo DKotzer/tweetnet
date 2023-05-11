@@ -95,9 +95,9 @@ body {
   display: block;
 }
 .navTitle {
-  padding-right:32px;
-  padding-left:10px;
+
   display: none;
+  margin-right:-20px;
 }
 
 .logoTooltip:hover + #home {
@@ -300,4 +300,8 @@ ul li {
 
 .hoverUnderline:hover {
   text-decoration: underline;
+}
+
+[aria-label="Pagination"] li {
+  list-style-type: none;
 }

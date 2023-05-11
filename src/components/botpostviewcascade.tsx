@@ -42,7 +42,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         return (
           <Fragment key={`text-${index}`}>
             <a
-              href={`${baseURL}#/${hashtag}`}
+              href={`${baseURL}hashtag/${hashtag}`}
               className="hashTag"
             >
               {word}

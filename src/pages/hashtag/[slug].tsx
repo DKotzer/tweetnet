@@ -1,24 +1,40 @@
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { BotPostView } from "~/components/botpostview";
-import ReactPaginate from "react-paginate";
+// import { PostView } from "~/components/postview";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useEffect, useState } from "react";
+// import { UserButton, useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
+import Link from "next/link";
+import { BotView } from "~/components/botview";
+// import { users } from "@clerk/clerk-sdk-node";
+// import { clerkClient } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
+import ReactPaginate from "react-paginate";
+import { BotPostView } from "~/components/botpostview";
 
-const PostsFeed = () => {
+const PostsFeed = (props: {hashtag: string}) => {
   const paginationCount = 6;
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 150;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
   const [dylanLog, setDylanLog] = useState(true);
 
-  const { data, isLoading } = api.bots.getAllPosts.useQuery({
+
+  const { data, isLoading } = api.bots.getPostsByHashTag.useQuery({
+    hashtag: props.hashtag,
     page: currentPage + 1,
     per_page: postsPerPage,
   });
+
+//   const { data, isLoading } = api.bots.getAllPosts.useQuery({
+//     page: currentPage + 1,
+//     per_page: postsPerPage,
+//   });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -94,14 +110,14 @@ const PostsFeed = () => {
     );
   if (!data) return <div>Please reload.</div>;
 
-  if (!isLoading && data.posts.length < 1)
-    return <div>No one has posted yet</div>;
+  if (!isLoading && data.length < 1)
+    return <div>No one has used this hash tag recently</div>;
 
-  if (!isLoading && data.posts.length > 0)
+  if (!isLoading && data.length > 0)
     return (
       <>
         <div className="flex flex-col">
-          {data.posts.slice(0, visiblePosts).map((fullPost) => (
+          {data.slice(0, visiblePosts).map((fullPost) => (
             <BotPostView
               {...fullPost}
               key={fullPost.id}
@@ -114,7 +130,7 @@ const PostsFeed = () => {
           <div id="load-more" />
         </div>
         <ReactPaginate
-          pageCount={Math.ceil(data.total / postsPerPage)}
+          pageCount={Math.ceil(data.length / postsPerPage)}
           marginPagesDisplayed={3}
           pageRangeDisplayed={2}
           onPageChange={handlePageChange}
@@ -138,7 +154,7 @@ const PostsFeed = () => {
 
   return (
     <div className="flex flex-col">
-      {data.posts.map((fullPost) => (
+      {data.map((fullPost) => (
         <BotPostView
           {...fullPost}
           key={fullPost.id}
@@ -149,7 +165,7 @@ const PostsFeed = () => {
         />
       ))}
       <ReactPaginate
-        pageCount={data.total / postsPerPage}
+        pageCount={data.length / postsPerPage}
         marginPagesDisplayed={3}
         pageRangeDisplayed={2}
         onPageChange={handlePageChange}
@@ -167,22 +183,65 @@ const PostsFeed = () => {
   );
 };
 
-const Home: NextPage = () => {
+//   if (!data || data.length === 0)
+//     return (
+//       <div className="h-full w-full border-x border-slate-400/50 md:w-[628px]">
+//         Create your first bot!
+//       </div>
+//     );
+
+//   // console.log("bots", data);
+
+//   return (
+//     <div className="flex flex-col">
+//       {data.map((bot) => (
+//         <BotView bot={bot} key={bot.bot.username} />
+//       ))}
+//     </div>
+//   );
+// };
+
+
+
+
+const HashTagPage: NextPage<{ hashtag: string }> = ({ hashtag }) => {
+ 
   return (
     <>
       <Head>
-        <title>TweetNet</title>
+        <title>{hashtag}</title>
       </Head>
       <PageLayout>
-        <div className="flex h-fit w-full border-x border-b border-slate-400/50" />
-        <div className="z-50 h-fit bg-black/80 flex w-full border border-slate-400/50 pl-11 py-2.5 font-bold text-2xl sticky top-16 md:top-0">
-          Home
-        </div>
-        <PostsFeed />
-        <div id="load-more" className="h-1" />
+        <div className="sticky top-16 z-50 flex h-fit w-full border border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">{hashtag}</div>
+      <PostsFeed hashtag={hashtag} />
+        
       </PageLayout>
     </>
   );
 };
 
-export default Home;
+export const getStaticProps: GetStaticProps = async (context) => {
+  const ssg = generateSSGHelper();
+
+  const slug = context.params?.slug;
+
+  if (typeof slug !== "string") throw new Error("no slug");
+
+//   const hashtag = slug.replace("#", "");
+   const hashtag = `#${slug}`
+
+  await ssg.bots.getPostsByHashTag.prefetch({ hashtag });
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      hashtag,
+    },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};
+
+export default HashTagPage;

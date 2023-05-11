@@ -435,8 +435,6 @@ export const botsRouter = createTRPCRouter({
       const descriptionPattern = /Description:\s*(.+)/;
       const summarizedBioPattern = /SummarizedBio:\s*(.+)/;
 
-
-
       const formattedString =
         profileCreation?.data?.choices[0]?.message?.content ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
@@ -451,10 +449,11 @@ export const botsRouter = createTRPCRouter({
       const education = formattedString.match(educationPattern)?.[1] || "";
       const goals = formattedString.match(goalsPattern)?.[1] || "";
       const description = formattedString.match(descriptionPattern)?.[1] || "";
-      const summarizedBio = formattedString.match(summarizedBioPattern)?.[1] || "";
+      const summarizedBio =
+        formattedString.match(summarizedBioPattern)?.[1] || "";
       const location = formattedString.match(locationPattern)?.[1] || "";
       const bio = improvedBioText || input.content;
-      const ogBio = input.content
+      const ogBio = input.content;
       // const bio = input.content;
       // console.log("checkpoint");
       // const imageOutput: any = await replicate.run(
@@ -493,7 +492,7 @@ export const botsRouter = createTRPCRouter({
         goals === undefined ||
         description === undefined ||
         summarizedBio === undefined ||
-        ogBio === undefined 
+        ogBio === undefined
       ) {
         console.error("One or more variables are missing");
         return;
@@ -873,7 +872,7 @@ export const botsRouter = createTRPCRouter({
           likes: z.string(),
           location: z.string(),
           username: z.string(),
-          goals: z.string()
+          goals: z.string(),
         }),
       })
     )
@@ -898,7 +897,7 @@ export const botsRouter = createTRPCRouter({
       const job = input.bot.job;
       const id = input.bot.id;
       const botImage = input.bot.image;
-      const goals = input.bot.goals
+      const goals = input.bot.goals;
 
       const newPost = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
@@ -1110,7 +1109,7 @@ export const botsRouter = createTRPCRouter({
         const ogBio = bot.ogBio;
         const summarizedBio = bot.summarizedBio;
         const goals = bot.goals;
-        const description = bot.description
+        const description = bot.description;
         const botImage = bot.image;
         const lastPost = bot.lastPost || null;
         const author = bot.authorId;
@@ -1745,16 +1744,13 @@ export const botsRouter = createTRPCRouter({
           postImage = "";
         }
 
-         const regex = /#[\w]+/g;
-         const hashtags = formattedString.match(regex) || [];
-         const hashtagsString = hashtags.join(", ");
+        const regex = /#[\w]+/g;
+        const hashtags = formattedString.match(regex) || [];
+        const hashtagsString = hashtags.join(", ");
 
         // Download the image from the url
 
         if (ogPost?.id && ogPost?.id !== undefined) {
-
-         
-
           const botPost = await ctx.prisma.botPost.create({
             data: {
               hashTags: hashtagsString,
@@ -1945,4 +1941,32 @@ export const botsRouter = createTRPCRouter({
 
       // Handle any errors during image deletion
     }),
+
+  getPostsByHashTag: publicProcedure
+    .input(
+      z.object({
+        hashtag: z.string(),
+        page: z.number().optional().default(1),
+        per_page: z.number().optional().default(200),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, per_page } = input;
+      const skip = (page - 1) * per_page;
+      const take = per_page;
+      const posts = await ctx.prisma.botPost.findMany({
+        skip,
+        take,
+        orderBy: [{ createdAt: "desc" }],
+        where: {
+          hashTags: {
+            contains: input.hashtag,
+          },
+        },
+      });
+      const total = await ctx.prisma.botPost.count();
+      return posts;
+    }),
+
+  
 });

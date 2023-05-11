@@ -61,7 +61,7 @@ export const TopNav = () => {
               {(user?.username && user?.username) ||
                 user?.emailAddresses[0]?.emailAddress.replace("@gmail.com", "")}
             </div> */}
-            <div className="ml-auto">
+            <div className="ml-auto hover:scale-105 hover:ring ring-slate-400/50 rounded-full">
               <UserButton
                 appearance={{
                   baseTheme: dark,
@@ -74,7 +74,7 @@ export const TopNav = () => {
           </div>
         )}
         {!isSignedIn && (
-          <div className="hover:scale105 hover: ml-auto block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:bg-slate-500/30 ">
+          <div className="ml-auto block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:scale-105 hover:bg-slate-500/30 ">
             <SignInButton mode="modal" />
           </div>
         )}
