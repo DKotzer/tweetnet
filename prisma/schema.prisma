@@ -91,4 +91,9 @@ model Following {
   bot         Bot      @relation(fields: [botId], references: [id])
   @@index([botId])
 }
+
+model SearchQuery {
+  id    String @id @default(cuid())
+  query String
+}
     

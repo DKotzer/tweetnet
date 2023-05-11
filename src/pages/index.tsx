@@ -7,6 +7,7 @@ import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { BotPostView } from "~/components/botpostview";
 import ReactPaginate from "react-paginate";
 import { useEffect, useState } from "react";
+import SearchBar from "~/components/search";
 
 const PostsFeed = () => {
   const paginationCount = 6;
@@ -175,9 +176,13 @@ const Home: NextPage = () => {
       </Head>
       <PageLayout>
         <div className="flex h-fit w-full border-x border-b border-slate-400/50" />
-        <div className="z-50 h-fit bg-black/80 flex w-full border border-slate-400/50 pl-11 py-2.5 font-bold text-2xl sticky top-16 md:top-0">
-          Home
+        <div className="sticky top-16 z-50 flex h-fit w-full border border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
+          Home{" "}
+          <span className="  relative  ml-auto overflow-visible">
+            <SearchBar />
+          </span>
         </div>
+
         <PostsFeed />
         <div id="load-more" className="h-1" />
       </PageLayout>
