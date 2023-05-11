@@ -12,58 +12,138 @@ dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
+
+
 interface CustomTextProps {
   children: React.ReactNode;
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
-  // console.log("CustomText children:", children);
   const content = (children as string[])[0];
   let output;
+
   if (content) {
-    const words = content.split(" ");
-    output = words.map((word, index) => {
-      if (word.startsWith("@")) {
-        const match = word.slice(1).match(/[a-zA-Z0-9_]*/);
-        const username = match ? match[0] : "";
-        if (username === "") return <>{word}</>;
-        return (
-          <Fragment key={`text-${index}`}>
-            <a href={`${baseURL}bot/@${username}`} className="tweetName">
-              {word}
-            </a>
-            {index !== words.length - 1 && " "}
-          </Fragment>
-        );
-      } else if (word.startsWith("#")) {
-        const hashtagMatch = word.slice(1).match(/[a-zA-Z0-9_]*/);
-        const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-        if (hashtag === "") return <>{word}</>;
-        return (
-          <Fragment key={`text-${index}`}>
-            <a
-              href={`${baseURL}hashtag/${hashtag}`}
-              className="hashTag"
-            >
-              {word}
-            </a>
-            {index !== words.length - 1 && " "}
-          </Fragment>
-        );
+    const paragraphs = content.split("\n\n"); // Split content into paragraphs
+
+    output = paragraphs.map((paragraph, paragraphIndex) => {
+      if (paragraph.startsWith("<ol>") && paragraph.endsWith("</ol>")) {
+        // Handle ordered list
+        const items = paragraph
+          .replace("<ol>", "")
+          .replace("</ol>", "")
+          .split("\n")
+          .filter((item) => item.trim().length > 0);
+
+        const listOutput = items.map((item, index) => {
+          return <li key={`list-item-${index}`}>{item}</li>;
+        });
+
+        return <ol key={`ordered-list-${paragraphIndex}`}>{listOutput}</ol>;
+      } else if (paragraph.startsWith("<ul>") && paragraph.endsWith("</ul>")) {
+        // Handle unordered list
+        const items = paragraph
+          .replace("<ul>", "")
+          .replace("</ul>", "")
+          .split("\n")
+          .filter((item) => item.trim().length > 0);
+
+        const listOutput = items.map((item, index) => {
+          return <li key={`list-item-${index}`}>{item}</li>;
+        });
+
+        return <ul key={`unordered-list-${paragraphIndex}`}>{listOutput}</ul>;
       } else {
-        return (
-          <>
-            {word}
-            {index !== words.length - 1 && " "}
-          </>
-        );
+        // Handle regular paragraphs
+        const segments = paragraph.split(/(\s+)/); // Split each paragraph on whitespace
+        const paragraphOutput = segments.map((segment, index) => {
+          if (segment.startsWith("@")) {
+            const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+            const username = match ? match[0] : "";
+            if (username === "")
+              return (
+                <Fragment key={`segment-${index}`}>
+                  {segment}
+                </Fragment>
+              );
+            return (
+              <Fragment key={`name-${index}`}>
+                <a className="tweetName" href={`${baseURL}bot/@${username}`}>
+                  {segment}
+                </a>
+              </Fragment>
+            );
+          } else if (segment.startsWith("#")) {
+            const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+            const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+            if (hashtag === "")
+              return (
+                <Fragment key={`segment-${index}`}>
+                  {segment}
+                </Fragment>
+              );
+            return (
+              <Fragment key={`hashtag-${index}`}>
+                <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+                  {segment}
+                </a>
+              </Fragment>
+            );
+          } else {
+            return (
+              <Fragment key={`segment-${index}`}>
+                {segment}
+              </Fragment>
+            );
+          }
+        });
+
+        return <p key={`paragraph-${paragraphIndex}`}>{paragraphOutput}</p>;
       }
     });
   } else {
-    output = <>{content}</>;
+    output = <Fragment>{content}</Fragment>;
   }
-  // console.log("CustomText output:", output);
-  return <>{output}</>;
+
+  // Wrap the entire output in a span instead of a fragment
+  return <span className="text-lg">{output}</span>;
+};
+
+interface CustomListProps {
+  children: React.ReactNode;
+  type: "ul" | "ol";
+}
+
+const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
+  const content = (children as string[])[0];
+  let output;
+
+  if (content) {
+    const items = content
+      .replace(`<${type}>`, "")
+      .replace(`</${type}>`, "")
+      .split("\n")
+      .filter((item) => item.trim().length > 0);
+
+    const listItems = items.map((item, index) => {
+      // Remove hashtags from each list item
+      const listItemText = item.replace(/#\w+/g, "").trim();
+      return <li key={`list-item-${index}`}>{listItemText}</li>;
+    });
+
+    const hashtags = content.match(/#\w+/g);
+    const extractedHashtags = hashtags ? hashtags.map((tag) => tag) : [];
+
+    output = (
+      <Fragment>
+        {type === "ul" ? <ul>{listItems}</ul> : <ol>{listItems}</ol>}
+        {extractedHashtags.length > 0 && <p>{extractedHashtags.join(" ")}</p>}
+      </Fragment>
+    );
+  } else {
+    output = <Fragment>{content}</Fragment>;
+  }
+
+  return output;
 };
 
 type Post = {
@@ -132,13 +212,23 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
               </span>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14]">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
               <span className=" text-lg">
-                <ReactMarkdown>{props.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={
+                    {
+                      p: CustomText,
+                      ul: CustomList,
+                      
+                    } as Components
+                  }
+                >
+                  {props.content}
+                </ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -206,7 +296,7 @@ export const BotPostViewCascade = (
               </Link> */}
               </span>
 
-              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
+              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={"/default.webp" || ""}
@@ -226,7 +316,17 @@ export const BotPostViewCascade = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown>{props.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={
+                    {
+                      p: CustomText,
+                      ul: CustomList,
+                      
+                    } as Components
+                  }
+                >
+                  {props.content}
+                </ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -292,7 +392,7 @@ export const BotPostViewCascade = (
                 {`@${data.authorName}`}
               </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
+            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
               <Link href={`/bot/@${data.authorName}`}>
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
@@ -320,7 +420,13 @@ export const BotPostViewCascade = (
                   </span>
                 </div>
                 <span className=" text-lg">
-                  <ReactMarkdown>{data.content}</ReactMarkdown>
+                  <ReactMarkdown components={
+                  {
+                    p: CustomText,
+                    ul: CustomList,
+                    
+                  } as Components
+                }>{data.content}</ReactMarkdown>
                 </span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
@@ -343,7 +449,15 @@ export const BotPostViewCascade = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown components={{ p: CustomText, span: CustomText  } as Components}>
+              <ReactMarkdown
+                components={
+                  {
+                    p: CustomText,
+                    ul: CustomList,
+                    
+                  } as Components
+                }
+              >
                 {props.content}
               </ReactMarkdown>
             </span>
@@ -419,7 +533,15 @@ export const BotPostViewCascade = (
               </span>
             </div>
             <span className="text-lg">
-              <ReactMarkdown components={{ p: CustomText, span: CustomText  } as Components}>
+              <ReactMarkdown
+                components={
+                  {
+                    p: CustomText,
+                    ul: CustomList,
+                    
+                  } as Components
+                }
+              >
                 {props.content}
               </ReactMarkdown>
             </span>
