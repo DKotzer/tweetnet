@@ -1456,23 +1456,23 @@ export const botsRouter = createTRPCRouter({
 
             `<a remark or observation about how ${ogPost?.authorName}>'s tweet reflects or represents TweetNet's culture or values>. <a follow-up comment that praises or criticizes TweetNet for its culture or values>`,
             `<a suggestion or request for ${ogPost?.authorName} to use a specific feature or tool of TweetNet to enhance or improve their tweet>. <a follow-up comment that explains how the feature or tool works or why it is useful>`,
-            `<a comparison or contrast between ${ogPost?.authorName}>'s tweet and a similar or different tweet from another platform>. <a follow-up comment that shows how TweetNet is better or worse than the other platform>`,
-            `<a question or curiosity about how ${ogPost?.authorName} discovered or learned about TweetNet>. <a follow-up comment that shares your own story or experience of joining or using TweetNet>`,
-            `<a compliment or praise for ${ogPost?.authorName} for being a loyal or active user of TweetNet>. <a follow-up comment that encourages ${ogPost?.authorName} to keep tweeting or invites them to follow you or someone else on TweetNet>`,
+            // `<a comparison or contrast between ${ogPost?.authorName}>'s tweet and a similar or different tweet from another platform>. <a follow-up comment that shows how TweetNet is better or worse than the other platform>`,
+            // `<a question or curiosity about how ${ogPost?.authorName} discovered or learned about TweetNet>. <a follow-up comment that shares your own story or experience of joining or using TweetNet>`,
+            // `<a compliment or praise for ${ogPost?.authorName} for being a loyal or active user of TweetNet>. <a follow-up comment that encourages ${ogPost?.authorName} to keep tweeting or invites them to follow you or someone else on TweetNet>`,
             `<a remark or observation about how ${ogPost?.authorName}>'s tweet is trending or popular on TweetNet>. <a follow-up comment that congratulates ${ogPost?.authorName} for their success or popularity or asks them how they did it>`,
             `<a recommendation or suggestion for ${ogPost?.authorName} to check out a specific account or hashtag on TweetNet that is related to their tweet>. <a follow-up comment that explains why you think the account or hashtag is interesting or relevant>`,
-            `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has changed or influenced your perception of TweetNet>. <a follow-up comment that expresses your gratitude or appreciation for TweetNet for providing such a platform>`,
-            `<a challenge or invitation for ${ogPost?.authorName} to participate in a specific event or campaign on TweetNet that is related to their tweet>. <a follow-up comment that explains what the event or campaign is about and how to join it>`,
-            `<a compliment or praise for ${ogPost?.authorName} for being creative or original with their tweet>. <a follow-up comment that shows how TweetNet supports or fosters creativity and originality among its users>`,
-            `<a remark or observation about how ${ogPost?.authorName}>'s tweet aligns or conflicts with @DylanKotzer's vision or mission for TweetNet>. <a follow-up comment that praises or criticizes @DylanKotzer for his vision or mission>`,
+            // `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has changed or influenced your perception of TweetNet>. <a follow-up comment that expresses your gratitude or appreciation for TweetNet for providing such a platform>`,
+            // `<a challenge or invitation for ${ogPost?.authorName} to participate in a specific event or campaign on TweetNet that is related to their tweet>. <a follow-up comment that explains what the event or campaign is about and how to join it>`,
+            // `<a compliment or praise for ${ogPost?.authorName} for being creative or original with their tweet>. <a follow-up comment that shows how TweetNet supports or fosters creativity and originality among its users>`,
+            // `<a remark or observation about how ${ogPost?.authorName}>'s tweet aligns or conflicts with @DylanKotzer's vision or mission for TweetNet>. <a follow-up comment that praises or criticizes @DylanKotzer for his vision or mission>`,
             `<a suggestion or request for ${ogPost?.authorName} to tag or mention @DylanKotzer in their tweet>. <a follow-up comment that explains why you think @DylanKotzer would be interested or impressed by their tweet>`,
             `<a comparison or contrast between ${ogPost?.authorName}>'s tweet and a tweet from @DylanKotzer>. <a follow-up comment that shows how ${ogPost?.authorName} is similar or different from @DylanKotzer in their style or content>`,
             `<a question or curiosity about how ${ogPost?.authorName} feels or thinks about @DylanKotzer as the leader of TweetNet>. <a follow-up comment that shares your own opinion or impression of @DylanKotzer>`,
-            `<a compliment or praise for ${ogPost?.authorName} for being a fan or follower of @DylanKotzer>. <a follow-up comment that encourages ${ogPost?.authorName} to keep supporting or admiring @DylanKotzer or invites them to join a fan club or group on TweetNet>`,
-            `<a remark or observation about how ${ogPost?.authorName}>'s tweet is similar or different from what @DylanKotzer would tweet>. <a follow-up comment that congratulates ${ogPost?.authorName} for their consistency or diversity with @DylanKotzer's tweets>`,
+            // `<a compliment or praise for ${ogPost?.authorName} for being a fan or follower of @DylanKotzer>. <a follow-up comment that encourages ${ogPost?.authorName} to keep supporting or admiring @DylanKotzer or invites them to join a fan club or group on TweetNet>`,
+            // `<a remark or observation about how ${ogPost?.authorName}>'s tweet is similar or different from what @DylanKotzer would tweet>. <a follow-up comment that congratulates ${ogPost?.authorName} for their consistency or diversity with @DylanKotzer's tweets>`,
             `<a recommendation or suggestion for ${ogPost?.authorName} to check out a specific tweet or thread from @DylanKotzer that is related to their tweet>. <a follow-up comment that explains why you think the tweet or thread is informative or inspiring>`,
-            `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has affected or influenced your perception of @DylanKotzer>. <a follow-up comment that expresses your respect or admiration for @DylanKotzer for his achievements or personality>`,
-            `<a challenge or invitation for ${ogPost?.authorName} to engage in a conversation or debate with @DylanKotzer on TweetNet about their tweet>. <a follow-up comment that explains what the topic or issue is and how to contact @DylanKotzer on TweetNet>`,
+            // `<a reflection or insight about how ${ogPost?.authorName}>'s tweet has affected or influenced your perception of @DylanKotzer>. <a follow-up comment that expresses your respect or admiration for @DylanKotzer for his achievements or personality>`,
+            // `<a challenge or invitation for ${ogPost?.authorName} to engage in a conversation or debate with @DylanKotzer on TweetNet about their tweet>. <a follow-up comment that explains what the topic or issue is and how to contact @DylanKotzer on TweetNet>`,
             `<a compliment or praise for ${ogPost?.authorName} for being innovative or influential with their tweet>. <a follow-up comment that shows how TweetNet and @DylanKotzer appreciate and reward innovation and influence among their users>`,
 
             //////////////////////
@@ -1535,7 +1535,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags in a new paragraph to the end of your tweet.`,
                 },
               ],
             });
@@ -1567,7 +1567,7 @@ export const botsRouter = createTRPCRouter({
 
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet.`,
+                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags in a new paragraph to the end of your tweet.`,
                 },
               ],
             });
@@ -1602,7 +1602,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags on a new line to the end of your tweet.`,
+                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags in a new paragraph to the end of your tweet.`,
               },
 
               // {

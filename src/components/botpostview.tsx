@@ -8,13 +8,15 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { visit } from "unist-util-visit";
 import React, { Fragment } from "react";
+import Linkify from "linkify-react";
+import "linkify-plugin-hashtag";
+
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
 dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
-
 
 
 const transformSpanToP = () => {
@@ -27,6 +29,29 @@ const transformSpanToP = () => {
   };
 };
 
+// const options = {
+//   formatHref: {
+//     hashtag: (href) => "https://twitter.com/hashtag/" + href.substr(1),
+//   },
+// };
+
+// const renderLink = ({ attributes, content }) => {
+//   const { href, ...props } = attributes;
+//   return (
+//     <Link to={href} {...props}>
+//       {content}
+//     </Link>
+//   );
+// };
+
+// const options = {
+//   formatHref: {
+//     hashtag: (href:any) => `https://${baseURL}hashtag/` + href.substr(1),
+//   },
+//    render: {hashtag: renderLink}, 
+// };
+
+
 interface CustomTextProps {
   children: React.ReactNode;
 }
@@ -34,47 +59,132 @@ interface CustomTextProps {
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output;
+
   if (content) {
-    const segments = content.split(/(\s+|\n+)/); // Split on whitespace and new lines
-    output = segments.map((segment, index) => {
-      if (segment.startsWith("@")) {
-        const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-        const username = match ? match[0] : "";
-        if (username === "") return <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>;
-        return (
-          <React.Fragment key={`name-${index}`}>
-            <a className="tweetName" href={`${baseURL}bot/@${username}`}>
-              {segment}
-            </a>
-          </React.Fragment>
-        );
-      } else if (segment.startsWith("#")) {
-        const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-        const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-        if (hashtag === "") return <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>;
-        return (
-          <React.Fragment key={`hashtag-${index}`}>
-            <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
-              {segment}
-            </a>
-          </React.Fragment>
-        );
-      } else if (segment === "\n") {
-        return <br key={`newline-${index}`} />;
+    const paragraphs = content.split("\n\n"); // Split content into paragraphs
+
+    output = paragraphs.map((paragraph, paragraphIndex) => {
+      if (paragraph.startsWith("<ol>") && paragraph.endsWith("</ol>")) {
+        // Handle ordered list
+        const items = paragraph
+          .replace("<ol>", "")
+          .replace("</ol>", "")
+          .split("\n")
+          .filter((item) => item.trim().length > 0);
+
+        const listOutput = items.map((item, index) => {
+          return <li key={`list-item-${index}`}>{item}</li>;
+        });
+
+        return <ol key={`ordered-list-${paragraphIndex}`}>{listOutput}</ol>;
+      } else if (paragraph.startsWith("<ul>") && paragraph.endsWith("</ul>")) {
+        // Handle unordered list
+        const items = paragraph
+          .replace("<ul>", "")
+          .replace("</ul>", "")
+          .split("\n")
+          .filter((item) => item.trim().length > 0);
+
+        const listOutput = items.map((item, index) => {
+          return <li key={`list-item-${index}`}>{item}</li>;
+        });
+
+        return <ul key={`unordered-list-${paragraphIndex}`}>{listOutput}</ul>;
       } else {
-        return (
-          <React.Fragment key={`segment-${index}`}>
-            {segment}
-          </React.Fragment>
-        );
+        // Handle regular paragraphs
+        const segments = paragraph.split(/(\s+)/); // Split each paragraph on whitespace
+        const paragraphOutput = segments.map((segment, index) => {
+          if (segment.startsWith("@")) {
+            const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+            const username = match ? match[0] : "";
+            if (username === "")
+              return (
+                <React.Fragment key={`segment-${index}`}>
+                  {segment}
+                </React.Fragment>
+              );
+            return (
+              <React.Fragment key={`name-${index}`}>
+                <a className="tweetName" href={`${baseURL}bot/@${username}`}>
+                  {segment}
+                </a>
+              </React.Fragment>
+            );
+          } else if (segment.startsWith("#")) {
+            const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+            const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+            if (hashtag === "")
+              return (
+                <React.Fragment key={`segment-${index}`}>
+                  {segment}
+                </React.Fragment>
+              );
+            return (
+              <React.Fragment key={`hashtag-${index}`}>
+                <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+                  {segment}
+                </a>
+              </React.Fragment>
+            );
+          } else {
+            return (
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
+            );
+          }
+        });
+
+        return <p key={`paragraph-${paragraphIndex}`}>{paragraphOutput}</p>;
       }
     });
   } else {
     output = <React.Fragment>{content}</React.Fragment>;
   }
 
-  return <React.Fragment>{output}</React.Fragment>;
+  // Wrap the entire output in a span instead of a fragment
+  return <span className="text-lg">{output}</span>;
 };
+
+
+interface CustomListProps {
+  children: React.ReactNode;
+  type: "ul" | "ol";
+}
+
+const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
+  const content = (children as string[])[0];
+  let output;
+
+  if (content) {
+    const items = content
+      .replace(`<${type}>`, "")
+      .replace(`</${type}>`, "")
+      .split("\n")
+      .filter((item) => item.trim().length > 0);
+
+    const listItems = items.map((item, index) => {
+      // Remove hashtags from each list item
+      const listItemText = item.replace(/#\w+/g, "").trim();
+      return <li key={`list-item-${index}`}>{listItemText}</li>;
+    });
+
+    const hashtags = content.match(/#\w+/g);
+    const extractedHashtags = hashtags ? hashtags.map((tag) => tag) : [];
+
+    output = (
+      <React.Fragment>
+        {type === "ul" ? <ul>{listItems}</ul> : <ol>{listItems}</ol>}
+        {extractedHashtags.length > 0 && <p>{extractedHashtags.join(" ")}</p>}
+      </React.Fragment>
+    );
+  } else {
+    output = <React.Fragment>{content}</React.Fragment>;
+  }
+
+  return output;
+};
+
 
 
 
@@ -139,16 +249,17 @@ export const BotPostView = (
                 {`@${data.authorName}`}
               </Link> */}
               </span>
-              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 ">
+              <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] ">
                 <div className="mx-auto my-auto">
                   <LoadingSpinner size={50} />
                 </div>
               </div>
               <span className=" text-lg">
-                <ReactMarkdown components={
-                      { p: CustomText, span: CustomText } as Components
-                    }
-                  >{props.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{ p: CustomText, ul: CustomList, ol: CustomList } as Components}
+                >
+                  {props.content}
+                </ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -216,7 +327,7 @@ export const BotPostView = (
               </Link> */}
               </span>
 
-              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 hover:bg-[#ffffff14] bg-[#ffffff0d] p-4 md:flex-row">
+              <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={"/default.webp" || ""}
@@ -236,10 +347,17 @@ export const BotPostView = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown components={
-                      { p: CustomText, span: CustomText } as Components
-                    }
-                  >{props.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={
+                    {
+                      p: CustomText,
+                      ul: CustomList,
+                      
+                    } as Components
+                  }
+                >
+                  {props.content}
+                </ReactMarkdown>
               </span>
               <div>
                 {props.postImage && props.postImage !== "" && (
@@ -335,7 +453,11 @@ export const BotPostView = (
                 <span className=" text-lg">
                   <ReactMarkdown
                     components={
-                      { p: CustomText, span: CustomText } as Components
+                      {
+                        p: CustomText,
+                        ul: CustomList,
+                        
+                      } as Components
                     }
                   >
                     {data.content}
@@ -363,7 +485,13 @@ export const BotPostView = (
             </div>
             <span className=" text-lg">
               <ReactMarkdown
-                components={{ p: CustomText, span: CustomText } as Components}
+                components={
+                  {
+                    p: CustomText,
+                    ul: CustomList,
+                    
+                  } as Components
+                }
               >
                 {props.content}
               </ReactMarkdown>
@@ -421,9 +549,14 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          
+          {/* <Linkify as="div" options={options}>
+            {props.content} dylan@gmail.com @bob #test
+          </Linkify> */}
+
           <ReactMarkdown
-            components={{ p: CustomText} as Components}
+            components={
+              { p: CustomText, ul: CustomList} as Components
+            }
             // rehypePlugins={[transformSpanToP]}
           >
             {props.content}
