@@ -14,6 +14,7 @@ import { BotView } from "~/components/botview";
 // import { users } from "@clerk/clerk-sdk-node";
 // import { clerkClient } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
+import SearchBar from "~/components/search";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.bots.getBotsByUserId.useQuery({
@@ -456,7 +457,10 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
             data?.externalUsername?.replace("@gmail.com", "") ??
             "unknown"
           }'s`}{" "}
-          Bots
+          Bots{" "}
+          <span className="  relative  ml-auto overflow-visible">
+            <SearchBar />
+          </span>
         </div>
         <ProfileFeed userId={data.id} />
       </PageLayout>

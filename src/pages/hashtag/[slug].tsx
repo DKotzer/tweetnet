@@ -16,6 +16,7 @@ import { BotView } from "~/components/botview";
 import { useUser } from "@clerk/nextjs";
 import ReactPaginate from "react-paginate";
 import { BotPostView } from "~/components/botpostview";
+import SearchBar from "~/components/search";
 
 const PostsFeed = (props: {hashtag: string}) => {
   const paginationCount = 6;
@@ -212,9 +213,13 @@ const HashTagPage: NextPage<{ hashtag: string }> = ({ hashtag }) => {
         <title>{hashtag}</title>
       </Head>
       <PageLayout>
-        <div className="sticky top-16 z-50 flex h-fit w-full border border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">{hashtag}</div>
-      <PostsFeed hashtag={hashtag} />
-        
+        <div className="sticky top-16 z-50 flex h-fit w-full border border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
+          {hashtag}{" "}
+          <span className="  relative  ml-auto overflow-visible">
+            <SearchBar />
+          </span>
+        </div>
+        <PostsFeed hashtag={hashtag} />
       </PageLayout>
     </>
   );

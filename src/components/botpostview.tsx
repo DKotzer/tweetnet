@@ -50,57 +50,42 @@ const transformSpanToP = () => {
 // };
 
 
-interface CustomTextProps {
-  children: React.ReactNode;
-}
-
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output;
+  let hashtags = [];
 
   if (content) {
-    const paragraphs = content.split("\n\n"); // Split content into paragraphs
+    const paragraphs = content
+      .split(/\n\n|\r\n\r\n/)
+      .filter((paragraph) => paragraph.trim() !== "");
 
     output = paragraphs.map((paragraph, paragraphIndex) => {
-      if (paragraph.startsWith("<ol>") && paragraph.endsWith("</ol>")) {
-        // Handle ordered list
-        const items = paragraph
-          .replace("<ol>", "")
-          .replace("</ol>", "")
-          .split("\n")
-          .filter((item) => item.trim().length > 0);
-
-        const listOutput = items.map((item, index) => {
-          return <li key={`list-item-${index}`}>{item}</li>;
-        });
-
-        return <ol key={`ordered-list-${paragraphIndex}`}>{listOutput}</ol>;
-      } else if (paragraph.startsWith("<ul>") && paragraph.endsWith("</ul>")) {
-        // Handle unordered list
-        const items = paragraph
-          .replace("<ul>", "")
-          .replace("</ul>", "")
-          .split("\n")
-          .filter((item) => item.trim().length > 0);
-
-        const listOutput = items.map((item, index) => {
-          return <li key={`list-item-${index}`}>{item}</li>;
-        });
-
-        return <ul key={`unordered-list-${paragraphIndex}`}>{listOutput}</ul>;
-      } else {
-        // Handle regular paragraphs
-        const segments = paragraph.split(/(\s+)/); // Split each paragraph on whitespace
-        const paragraphOutput = segments.map((segment, index) => {
-          if (segment.startsWith("@")) {
-            const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-            const username = match ? match[0] : "";
-            if (username === "")
-              return (
-                <React.Fragment key={`segment-${index}`}>
-                  {segment}
-                </React.Fragment>
-              );
+      const segments = paragraph.split(/(\s+)/);
+      const paragraphOutput = segments.map((segment, index) => {
+        if (segment.startsWith("#")) {
+          const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+          if (hashtag === "") {
+            return (
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
+            );
+          } else {
+            hashtags.push(hashtag); // Collect hashtags for later use
+            return null;
+          }
+        } else if (segment.startsWith("@")) {
+          const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const username = match ? match[0] : "";
+          if (username === "") {
+            return (
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
+            );
+          } else {
             return (
               <React.Fragment key={`name-${index}`}>
                 <a className="tweetName" href={`${baseURL}bot/@${username}`}>
@@ -108,41 +93,50 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                 </a>
               </React.Fragment>
             );
-          } else if (segment.startsWith("#")) {
-            const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-            const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-            if (hashtag === "")
-              return (
-                <React.Fragment key={`segment-${index}`}>
-                  {segment}
-                </React.Fragment>
-              );
-            return (
-              <React.Fragment key={`hashtag-${index}`}>
-                <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
-                  {segment}
-                </a>
-              </React.Fragment>
-            );
-          } else {
-            return (
-              <React.Fragment key={`segment-${index}`}>
-                {segment}
-              </React.Fragment>
-            );
           }
-        });
+        } else {
+          return (
+            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
+          );
+        }
+      });
 
-        return <p key={`paragraph-${paragraphIndex}`}>{paragraphOutput}</p>;
-      }
+      return (
+        <p
+          key={`paragraph-${paragraphIndex}`}
+          style={{ whiteSpace: "pre-wrap" }}
+        >
+          {paragraphOutput}
+        </p>
+      );
     });
   } else {
     output = <React.Fragment>{content}</React.Fragment>;
   }
 
-  // Wrap the entire output in a span instead of a fragment
-  return <span className="text-lg">{output}</span>;
+  const hashtagsOutput =
+    hashtags.length > 0 ? (
+      <p className="hashtag-container">
+        {hashtags.map((hashtag, index) => (
+          <React.Fragment key={`hashtag-${index}`}>
+            {index > 0 && " "} {/* Add space between hashtags */}
+            <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+              #{hashtag}
+            </a>{" "}
+            {/* Include "#" symbol and make it a link */}
+          </React.Fragment>
+        ))}
+      </p>
+    ) : null;
+
+  return (
+    <div className="text-lg">
+      {output}
+      {hashtagsOutput}
+    </div>
+  );
 };
+
 
 
 interface CustomListProps {
