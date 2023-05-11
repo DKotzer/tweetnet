@@ -32,56 +32,48 @@ interface CustomTextProps {
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
-  // console.log("CustomText children:", children);
   const content = (children as string[])[0];
   let output;
   if (content) {
-    const words = content.split(" ");
-    output = words.map((word, index) => {
-      if (word.startsWith("@")) {
-        const match = word.slice(1).match(/[a-zA-Z0-9_]*/);
+    const segments = content.split(/(\s+|\n+)/); // Split on whitespace and new lines
+    output = segments.map((segment, index) => {
+      if (segment.startsWith("@")) {
+        const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
         const username = match ? match[0] : "";
-        if(username === "") return <>{word}</>;
+        if (username === "") return <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>;
         return (
-          <Fragment key={`name-${index}`}>
-            <a
-              className="tweetName"
-              href={`${baseURL}bot/@${username}`}
-            >
-              {word}
+          <React.Fragment key={`name-${index}`}>
+            <a className="tweetName" href={`${baseURL}bot/@${username}`}>
+              {segment}
             </a>
-            {index !== words.length - 1 && " "}
-          </Fragment>
+          </React.Fragment>
         );
-      } else if (word.startsWith("#")) {
-        const hashtagMatch = word.slice(1).match(/[a-zA-Z0-9_]*/);
+      } else if (segment.startsWith("#")) {
+        const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
         const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-        if (hashtag === "") return <>{word}</>;
+        if (hashtag === "") return <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>;
         return (
-          <Fragment key={`hashtag-${index}`}>
-            <a
-              className="hashTag"
-              href={`${baseURL}hashtag/${hashtag}`}
-            >
-              {word}
+          <React.Fragment key={`hashtag-${index}`}>
+            <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+              {segment}
             </a>
-            {index !== words.length - 1 && " "}
-          </Fragment>
+          </React.Fragment>
         );
+      } else if (segment === "\n") {
+        return <br key={`newline-${index}`} />;
       } else {
         return (
-          <>
-            {word}
-            {index !== words.length - 1 && " "}
-          </>
+          <React.Fragment key={`segment-${index}`}>
+            {segment}
+          </React.Fragment>
         );
       }
     });
   } else {
-    output = <>{content}</>;
+    output = <React.Fragment>{content}</React.Fragment>;
   }
-  // console.log("CustomText output:", output);
-  return <>{output}</>;
+
+  return <React.Fragment>{output}</React.Fragment>;
 };
 
 
@@ -429,6 +421,7 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
+          
           <ReactMarkdown
             components={{ p: CustomText} as Components}
             // rehypePlugins={[transformSpanToP]}

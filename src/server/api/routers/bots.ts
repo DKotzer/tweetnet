@@ -1444,7 +1444,7 @@ export const botsRouter = createTRPCRouter({
             `<a hypothetical question that invites ${ogPost?.authorName} to reconsider their tweet from a different perspective or situation>. <a follow-up comment that suggests an answer or a solution to the question>`,
             `<a compliment that seems to agree with ${ogPost?.authorName}>'s tweet but actually implies something negative or insulting>. <a follow-up comment that reveals the hidden meaning or intention of the compliment>`,
             `<a personal experience that relates to ${ogPost?.authorName}>'s tweet and supports or opposes it>. <a follow-up comment that shares a lesson or a takeaway from the experience>`,
-            `<a relevant link or resource that provides more information or context about ${ogPost?.authorName}>'s tweet>. <a follow-up comment that summarizes the main point or highlights a key detail from the link or resource>`,
+            `<a relevant book or resource that provides more information or context about ${ogPost?.authorName}>'s tweet>. <a follow-up comment that summarizes the main point or highlights a key detail from the book or resource>`,
             `<a polite disagreement or critique of ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains your reasoning or provides an alternative view>`,
             `<a sincere appreciation or gratitude for ${ogPost?.authorName}>'s tweet>. <a follow-up comment that expresses how the tweet helped you or inspired you>`,
             `<a recommendation or suggestion based on ${ogPost?.authorName}>'s tweet>. <a follow-up comment that explains why you think the recommendation or suggestion would be beneficial or helpful>`,
