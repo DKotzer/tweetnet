@@ -8,8 +8,6 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { visit } from "unist-util-visit";
 import React, { Fragment } from "react";
-import Linkify from "linkify-react";
-import "linkify-plugin-hashtag";
 
 
 import relativeTime from "dayjs/plugin/relativeTime";
