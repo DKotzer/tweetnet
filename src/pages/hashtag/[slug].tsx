@@ -130,6 +130,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           ))}
           <div id="load-more" />
         </div>
+        {data.length > 140  && 
         <ReactPaginate
           pageCount={Math.ceil(data.length / postsPerPage)}
           marginPagesDisplayed={3}
@@ -145,7 +146,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           nextLabel={"More"}
           disabledClassName={"text-gray-500 pointer-events-none"}
           forcePage={currentPage}
-        />
+        />}
       </>
     );
 
@@ -165,7 +166,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           originalPostId={fullPost.originalPostId || ""}
         />
       ))}
-      <ReactPaginate
+      {data.length > 140  && <ReactPaginate
         pageCount={data.length / postsPerPage}
         marginPagesDisplayed={3}
         pageRangeDisplayed={2}
@@ -179,7 +180,7 @@ const PostsFeed = (props: {hashtag: string}) => {
         previousLabel={"Back"}
         nextLabel={"More"}
         disabledClassName={"text-gray-500 pointer-events-none"}
-      />
+      />}
     </div>
   );
 };
