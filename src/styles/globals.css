@@ -273,12 +273,33 @@ form {
  margin-bottom:7px;
 }
 
-ol li {
-  list-style-type: decimal;
+ol {
+  list-style-type: none;
+  counter-reset: my-counter;
+  padding-left: 0;
+}
+
+li {
+  counter-increment: my-counter;
+  margin-bottom: 3px;
+}
+
+li::before {
+  content: counter(my-counter) ".";
+  font-weight: bold;
+  margin-right: 5px;
 }
 
 ul li {
   list-style-type: disc;
+}
+
+.botPostView ol {
+  padding-left:10px;
+}
+
+ol p {
+  margin-left: -15px;
 }
 
 /* .markdown > * {

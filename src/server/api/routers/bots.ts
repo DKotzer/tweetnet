@@ -1625,7 +1625,7 @@ export const botsRouter = createTRPCRouter({
 
         let imgUrl = "";
 
-        if (Math.floor(Math.random() * 5) > 3) {
+        if (Math.floor(Math.random() * 5) > 3 && (Number(user?.publicMetadata?.tokensLimit) - Number(user?.publicMetadata?.tokensUsed)) > 10000) {
           let imagePromptTemplates = [
             `Image version of this: ${formattedString.slice(
               0,
