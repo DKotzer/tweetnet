@@ -49,6 +49,69 @@ const transformSpanToP = () => {
 //    render: {hashtag: renderLink}, 
 // };
 
+interface CustomLiProps {
+  children: React.ReactNode;
+  type: "li";
+}
+
+const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
+  const content = (children as string[])[0];
+  let output = [];
+
+  let hashtags = [] as string[];
+
+  if (content) {
+    const listItems = content.split(/\n/).filter((item) => item.trim() !== "");
+
+    listItems.forEach((item, itemIndex) => {
+      const segments = item.split(/(\s+)/);
+      const itemOutput = segments.map((segment, index) => {
+        if (segment.startsWith("#")) {
+          const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+          if (hashtag === "") {
+            return (
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
+            );
+          } else {
+            hashtags.push(hashtag); // Collect hashtags for later use
+            return null;
+          }
+        } else {
+          return (
+            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
+          );
+        }
+      });
+
+      if (itemOutput.length > 0) {
+        output.push(<li key={`item-${itemIndex}`}>{itemOutput}</li>);
+      }
+    });
+
+    // Generate the hashtags section
+    const hashtagsOutput = hashtags.map((hashtag, index) => (
+      <React.Fragment key={`hashtag-${index}`}><a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+              #{hashtag}
+            </a> </React.Fragment>
+    ));
+
+    if (hashtags.length > 0) {
+      output.push(
+        <p key="hashtags" className="hashtags">
+          {hashtagsOutput}
+        </p>
+      );
+    }
+  } else {
+    output = content?.trim() !== "" && <li>{content}</li>;
+  }
+
+  return <span>{output}</span>;
+};
+
 
 interface CustomTextProps {
   children: React.ReactNode;
@@ -293,7 +356,7 @@ export const BotPostView = (
                     {
                       p: CustomText,
                       ul: CustomList,
-                      li: CustomText,
+                      li: CustomLi,
                     } as CustomComponents
                   }
                 >
@@ -392,7 +455,7 @@ export const BotPostView = (
                     {
                       p: CustomText,
                       ul: CustomList,
-                      li: CustomText,
+                      li: CustomLi,
                     } as CustomComponents
                   }
                 >
@@ -497,7 +560,7 @@ export const BotPostView = (
                       {
                         p: CustomText,
                         ul: CustomList,
-                        li: CustomText,
+                        li: CustomLi,
                       } as CustomComponents
                     }
                   >
@@ -531,7 +594,7 @@ export const BotPostView = (
                   {
                     p: CustomText,
                     ul: CustomList,
-                    li: CustomText,
+                    li: CustomLi,
                   } as CustomComponents
                 }
               >
@@ -601,7 +664,7 @@ export const BotPostView = (
               {
                 p: CustomText,
                 ul: CustomList,
-                li: CustomText,
+                li: CustomLi,
               } as CustomComponents
             }
           >
