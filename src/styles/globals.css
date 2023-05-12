@@ -273,13 +273,13 @@ form {
  margin-bottom:7px;
 }
 
-ol {
+.botPostView ol {
   list-style-type: none;
   counter-reset: my-counter;
   padding-left: 0;
 }
 
-li {
+.botPostView li {
   counter-increment: my-counter;
   margin-bottom: 3px;
 }
