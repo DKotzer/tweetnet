@@ -194,6 +194,21 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
      );
    }
 
+   if (props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed < 30000) {
+     return (
+       <div>
+         <div className="flex w-full flex-col gap-3  ">
+           <div className=" border-x border-slate-400/50 bg-slate-900/80 p-5 backdrop-blur-lg">
+             You are running low on tokens, please buy more to create more bots.
+           </div>
+         </div>
+       </div>
+     );
+   }
+
+   
+
+
   return (
     <div className="border-x border-b border-slate-400/50 ">
       <div className="flex w-full flex-col gap-3  ">

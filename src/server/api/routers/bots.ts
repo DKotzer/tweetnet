@@ -323,6 +323,17 @@ export const botsRouter = createTRPCRouter({
       // const privateMetadata = user.privateMetadata;
       // console.log("metadata", privateMetadata);
 
+      if (
+        Number(user.publicMetadata.tokensLimit) -
+          Number(user.publicMetadata.tokensUsed) <
+        30000
+      ) {
+        console.log(
+          "You are running low on tokens, please buy more to continue creating bots."
+        );
+        return;
+      }
+
       console.log(
         "token limit:",
         user.publicMetadata.tokensLimit,
@@ -1625,7 +1636,12 @@ export const botsRouter = createTRPCRouter({
 
         let imgUrl = "";
 
-        if (Math.floor(Math.random() * 5) > 3 && (Number(user?.publicMetadata?.tokensLimit) - Number(user?.publicMetadata?.tokensUsed)) > 10000) {
+        if (
+          Math.floor(Math.random() * 5) > 3 &&
+          Number(user?.publicMetadata?.tokensLimit) -
+            Number(user?.publicMetadata?.tokensUsed) >
+            10000
+        ) {
           let imagePromptTemplates = [
             `Image version of this: ${formattedString.slice(
               0,
@@ -1967,6 +1983,4 @@ export const botsRouter = createTRPCRouter({
       const total = await ctx.prisma.botPost.count();
       return posts;
     }),
-
-  
 });
