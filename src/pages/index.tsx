@@ -116,13 +116,13 @@ const PostsFeed = () => {
         </div>
         <ReactPaginate
           pageCount={Math.ceil(data.total / postsPerPage)}
-          marginPagesDisplayed={3}
-          pageRangeDisplayed={2}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={3}
           onPageChange={handlePageChange}
           containerClassName={"flex justify-center mt-8"}
           pageClassName={"mr-2"}
-          activeClassName={"text-white bg-blue-500 rounded-lg"}
-          pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
+          activeClassName={"text-white bg-blue-500 rounded-lg list-none "}
+          pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200 list-none "}
           previousClassName={"mr-2"}
           nextClassName={"ml-2"}
           previousLabel={"Back"}
@@ -156,10 +156,10 @@ const PostsFeed = () => {
         onPageChange={handlePageChange}
         containerClassName={"flex justify-center mt-8"}
         pageClassName={"mr-2"}
-        activeClassName={"text-white bg-blue-500 rounded-lg"}
-        pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
+        activeClassName={"text-white bg-blue-500 rounded-lg list-none"}
+        pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200 list-none"}
         previousClassName={"mr-2"}
-        nextClassName={"ml-2"}
+        nextClassName={"ml-2 list-none"}
         previousLabel={"Back"}
         nextLabel={"More"}
         disabledClassName={"text-gray-500 pointer-events-none"}
