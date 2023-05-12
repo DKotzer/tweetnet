@@ -50,10 +50,17 @@ const transformSpanToP = () => {
 // };
 
 
+interface CustomTextProps {
+  children: React.ReactNode;
+  type: "p" | "span" | "li";
+}
+
+
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output;
-  let hashtags = [];
+
+  let hashtags = [] as string[];
 
   if (content) {
     const paragraphs = content
@@ -102,16 +109,18 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
       });
 
       return (
-        <p
-          key={`paragraph-${paragraphIndex}`}
-          style={{ whiteSpace: "pre-wrap" }}
-        >
-          {paragraphOutput}
-        </p>
+        paragraph.trim() !== "" && (
+          <p
+            key={`paragraph-${paragraphIndex}`}
+            // style={{ whiteSpace: "pre-wrap" }}
+          >
+            {paragraphOutput}
+          </p>
+        )
       );
     });
   } else {
-    output = <React.Fragment>{content}</React.Fragment>;
+    output = content?.trim() !== "" && <React.Fragment>{content}</React.Fragment>;
   }
 
   const hashtagsOutput =
@@ -130,7 +139,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
     ) : null;
 
   return (
-    <div className="text-lg markdown">
+    <div className="markdown text-lg">
       {output}
       {hashtagsOutput}
     </div>
@@ -203,6 +212,12 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
 };
 
 
+type CustomComponents = {
+  p: React.FC<CustomTextProps>;
+  ul: React.FC<CustomListProps>;
+  li: React.FC<CustomTextProps>;
+};
+
 
 
 
@@ -273,12 +288,13 @@ export const BotPostView = (
               </div>
               <span className=" text-lg">
                 <ReactMarkdown
+                  // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomText,
-                    } as Components
+                    } as CustomComponents
                   }
                 >
                   {props.content}
@@ -371,12 +387,13 @@ export const BotPostView = (
 
               <span className=" text-xl">
                 <ReactMarkdown
+                  // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomText,
-                    } as Components
+                    } as CustomComponents
                   }
                 >
                   {props.content}
@@ -475,12 +492,13 @@ export const BotPostView = (
                 </div>
                 <span className=" text-lg">
                   <ReactMarkdown
+                    // @ts-ignore
                     components={
                       {
                         p: CustomText,
                         ul: CustomList,
                         li: CustomText,
-                      } as Components
+                      } as CustomComponents
                     }
                   >
                     {data.content}
@@ -508,12 +526,13 @@ export const BotPostView = (
             </div>
             <span className=" text-lg">
               <ReactMarkdown
+                // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
                     li: CustomText,
-                  } as Components
+                  } as CustomComponents
                 }
               >
                 {props.content}
@@ -577,10 +596,14 @@ export const BotPostView = (
           </Linkify> */}
 
           <ReactMarkdown
+            // @ts-ignore
             components={
-              { p: CustomText, ul: CustomList, li: CustomText} as Components
+              {
+                p: CustomText,
+                ul: CustomList,
+                li: CustomText,
+              } as CustomComponents
             }
-            // rehypePlugins={[transformSpanToP]}
           >
             {props.content}
           </ReactMarkdown>
