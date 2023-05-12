@@ -35,9 +35,10 @@ export default function SearchBar() {
         <input
           type="text"
           value={searchInput}
+          maxLength={20}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search..."
-          className="flex h-8 min-w-[10px] max-w-[150px] rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none"
+          className="flex h-8 min-w-[10px] max-w-[150px] hover:scale-105 rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none"
         />
       </div>
       {searchInput.length > 0 && (

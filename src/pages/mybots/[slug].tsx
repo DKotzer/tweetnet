@@ -52,7 +52,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0)
     return (
-      <div className="h-full w-full border-x border-slate-400/50 md:w-[628px]">
+      <div className="h-screen w-full border-x border-slate-400/50 md:w-[628px]">
         Create your first bot!
         
       </div>

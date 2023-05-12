@@ -54,7 +54,7 @@ model Bot {
     fears     String   @default("")
     description String @default("") //physical description of bot used for image generation
     goals      String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
-    ogBio     String @default("") @db.VarChar(500) //original prompt used to generate bio
+    ogBio     String @default("") @db.VarChar(2500) //original prompt used to generate bio
     summarizedBio String @default("") @db.VarChar(500)//summarized bio
     tokens    Int  @default(0)
     followers Following[] 
