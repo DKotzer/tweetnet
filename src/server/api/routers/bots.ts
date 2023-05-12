@@ -1260,17 +1260,17 @@ export const botsRouter = createTRPCRouter({
           // `<a tip related to ${dislikes} and a product or service>. What you can do to make the most of <the product or service> for your dislikes. For example, <a story that shows how the product or service helped me reduce or eliminate my dislikes>. Do you want to reduce more? 💰`,
           // `<a tip related to ${likes} and a product or service>. What you can do to make the most of <the product or service> for your likes. For example, <a story that shows how the product or service helped me enjoy more or better my likes>. Do you want to enjoy more? 💰`,
 
-          `<a top 5 ordered list related to ${dreams} and a product or service with a creative intro>.`,
-          `<a top 5 ordered list related to ${job} with a creative intro >.  `,
-          `<a top 5 ordered list related to ${dislikes} >.`,
-          `<a top 5 ordered list related to ${likes} >. `,
-          `<a top 5 ordered list related to ${location} >. `,
-          `<a list of top 5 products or services (formatted as an ordered list) related to ${dreams} and a product or service>.`,
-          `<a list of top 5 products or services (formatted as an ordered list) related to ${job} >.  `,
-          `<a list of top 5 products or services (formatted as an ordered list) related to ${dislikes} >.`,
-          `<a list of top 5 products or services (formatted as an ordered list) related to ${likes} >. `,
-          `<a list of top 5 products or services (formatted as an ordered list) related to ${location} >. `,
-          `<a list of top 5 attractions or tourist destinations around ${location} >. `,
+          `<an intro followed by a top 5 ordered list related to ${dreams} and a product or service with a creative intro>.`,
+          `<an intro followed by a top 5 ordered list related to ${job} with a creative intro >.  `,
+          `<an intro followed by a top 5 ordered list related to ${dislikes} >.`,
+          `<an intro followed by a top 5 ordered list related to ${likes} >. `,
+          `<an intro followed by a top 5 ordered list related to ${location} >. `,
+          `<an intro followed by a list of top 5 products or services (formatted as an ordered list) related to ${dreams} and a product or service>.`,
+          `<an intro followed by a list of top 5 products or services (formatted as an ordered list) related to ${job} >.  `,
+          `<an intro followed by a list of top 5 products or services (formatted as an ordered list) related to ${dislikes} >.`,
+          `<an intro followed by a list of top 5 products or services (formatted as an ordered list) related to ${likes} >. `,
+          `<an intro followed by a list of top 5 products or services (formatted as an ordered list) related to ${location} >. `,
+          `<an intro followed by a list of top 5 attractions or tourist destinations around ${location} >. `,
           // `<a top 5 ordered list related to ${age} and a product or service>. <What you should avoid about the product or service> for your age. For example, <a list of top 5 mistakes or risks of using the product or service for your age>. Do you avoid these things? 🙅‍♂️🙅‍♀️`,
           // `<a top 5 ordered list related to ${dreams} and a product or service>. <What you should avoid about the product or service> for your dreams. For example, <a list of top 5 pitfalls or obstacles of using the product or service for your dreams>. `,
           // `<a top 5 ordered list related to ${job} and a product or service>. <What you should avoid about the product or service> for your job. For example, <a list of top 5 errors or drawbacks of using the product or service for your job>. `,
@@ -1531,11 +1531,11 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags in a new paragraph at the end of your tweet.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
                 },
               ],
             });
@@ -1562,12 +1562,12 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
                 },
 
                 {
                   role: "user",
-                  content: `Create a very creative, and in character twitter reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags in a new paragraph at the end of your tweet.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
                 },
               ],
             });
@@ -1602,7 +1602,7 @@ export const botsRouter = createTRPCRouter({
               // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags in a new paragraph at the end of your tweet.`,
+                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
               },
 
               // {

@@ -130,17 +130,29 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       return <li key={`list-item-${index}`}>{listItemText}</li>;
     });
 
-    const hashtags = content.match(/#\w+/g);
-    const extractedHashtags = hashtags ? hashtags.map((tag) => tag) : [];
+    const hashtags = content.match(/#[^\s]+/g); // Updated regex pattern to include the pound sign (#)
+    const extractedHashtags = hashtags || [];
 
     output = (
-      <Fragment>
+      <div className="markdown">
         {type === "ul" ? <ul>{listItems}</ul> : <ol>{listItems}</ol>}
-        {extractedHashtags.length > 0 && <p>{extractedHashtags.join(" ")}</p>}
-      </Fragment>
+        {extractedHashtags.length > 0 && (
+          <p className="hashtag-container">
+            {extractedHashtags.map((tag, index) => (
+              <a
+                className="hashTag"
+                href={`http://localhost:3000/hashtag/${tag}`}
+                key={`hashtag-${index}`}
+              >
+                {tag}
+              </a>
+            ))}
+          </p>
+        )}
+      </div>
     );
   } else {
-    output = <Fragment>{content}</Fragment>;
+    output = <div className="markdown">{content}</div>;
   }
 
   return output;

@@ -130,7 +130,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
     ) : null;
 
   return (
-    <div className="text-lg">
+    <div className="text-lg markdown">
       {output}
       {hashtagsOutput}
     </div>
@@ -147,6 +147,7 @@ interface CustomListProps {
 const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
   const content = (children as string[])[0];
   let output;
+  const hashtags: string[] = [];
 
   if (content) {
     const items = content
@@ -155,24 +156,48 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       .split("\n")
       .filter((item) => item.trim().length > 0);
 
+    console.log('items:', items);
+
     const listItems = items.map((item, index) => {
-      // Remove hashtags from each list item
-      const listItemText = item.replace(/#\w+/g, "").trim();
+      console.log('item:', item);
+      console.log('hashtags:', hashtags);
+      // Extract hashtags from each list item
+      const listItemText = item
+        .replace(/#\w+/g, (match) => {
+          hashtags.push(match.slice(1));
+          return "";
+        })
+        .trim();
+
+      console.log('listItemText:', listItemText);
+
       return <li key={`list-item-${index}`}>{listItemText}</li>;
     });
 
-    const hashtags = content.match(/#\w+/g);
-    const extractedHashtags = hashtags ? hashtags.map((tag) => tag) : [];
-
     output = (
-      <React.Fragment>
+      <div className="markdown">
         {type === "ul" ? <ul>{listItems}</ul> : <ol>{listItems}</ol>}
-        {extractedHashtags.length > 0 && <p>{extractedHashtags.join(" ")}</p>}
-      </React.Fragment>
+        {hashtags.length > 0 && (
+          <p className="hashtag-container">
+            {hashtags.map((tag, index) => (
+              <a
+                className="hashTag"
+                href={`http://localhost:3000/hashtag/${tag}`}
+                key={`hashtag-${index}`}
+              >
+                {`#${tag}`}
+              </a>
+            ))}
+          </p>
+        )}
+      </div>
     );
   } else {
-    output = <React.Fragment>{content}</React.Fragment>;
+    console.log("else content:", content);
+    output = <div className="markdown">{content}</div>;
   }
+
+  console.log('output:', output);
 
   return output;
 };
@@ -248,7 +273,13 @@ export const BotPostView = (
               </div>
               <span className=" text-lg">
                 <ReactMarkdown
-                  components={{ p: CustomText, ul: CustomList, ol: CustomList } as Components}
+                  components={
+                    {
+                      p: CustomText,
+                      ul: CustomList,
+                      li: CustomText,
+                    } as Components
+                  }
                 >
                   {props.content}
                 </ReactMarkdown>
@@ -344,7 +375,7 @@ export const BotPostView = (
                     {
                       p: CustomText,
                       ul: CustomList,
-                      
+                      li: CustomText,
                     } as Components
                   }
                 >
@@ -448,7 +479,7 @@ export const BotPostView = (
                       {
                         p: CustomText,
                         ul: CustomList,
-                        
+                        li: CustomText,
                       } as Components
                     }
                   >
@@ -481,7 +512,7 @@ export const BotPostView = (
                   {
                     p: CustomText,
                     ul: CustomList,
-                    
+                    li: CustomText,
                   } as Components
                 }
               >
@@ -547,7 +578,7 @@ export const BotPostView = (
 
           <ReactMarkdown
             components={
-              { p: CustomText, ul: CustomList} as Components
+              { p: CustomText, ul: CustomList, li: CustomText} as Components
             }
             // rehypePlugins={[transformSpanToP]}
           >

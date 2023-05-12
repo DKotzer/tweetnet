@@ -281,9 +281,9 @@ ul li {
   list-style-type: disc;
 }
 
-.markdown > * {
+/* .markdown > * {
   all: revert;
-}
+} */
 
 .tweetName, .hashTag {
   color: rgb(29, 155, 240) 
@@ -305,3 +305,6 @@ ul li {
 [aria-label="Pagination"] li {
   list-style-type: none;
 }
+
+
+
