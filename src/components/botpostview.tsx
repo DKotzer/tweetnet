@@ -4,8 +4,6 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown, { Components } from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
 import { visit } from "unist-util-visit";
 import React, { Fragment } from "react";
 
