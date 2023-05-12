@@ -30,7 +30,7 @@ export default function SearchBar() {
   }, [searchInput]);
 
   return (
-    <div className="mx-auto text-sm">
+    <div className="mx-auto text-sm absolute right-5">
       <div className="relative pr-5">
         <input
           type="text"
@@ -41,7 +41,7 @@ export default function SearchBar() {
         />
       </div>
       {searchInput.length > 0 && (
-        <div className="overflow-visible pb-3 pt-2 pr-2">
+        <div className="overflow-visible pb-3 pt-2 pr-2 bg-black rounded-lg border border-slate-400/50">
           <ul className="pt-1">
             {searchResults.length > 0 &&
               searchResults.map((bot) => (

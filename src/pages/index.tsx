@@ -175,9 +175,9 @@ const Home: NextPage = () => {
         <title>TweetNet</title>
       </Head>
       <PageLayout>
-        <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b md:border-t border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
+        <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
           Home{" "}
-          <span className="  relative  ml-auto overflow-visible">
+          <span className="relative ml-auto overflow-visible">
             <SearchBar />
           </span>
         </div>
