@@ -56,6 +56,12 @@ const PostsFeed = (props: {hashtag: string}) => {
   }, []);
 
   const handlePageChange = ({ selected }: { selected: number }) => {
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // Optional: Add smooth scrolling animation
+      });
+    }, 1000);
     setCurrentPage(selected);
   };
 

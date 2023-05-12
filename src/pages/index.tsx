@@ -12,7 +12,7 @@ import SearchBar from "~/components/search";
 const PostsFeed = () => {
   const paginationCount = 6;
   const [currentPage, setCurrentPage] = useState(0);
-  const postsPerPage = 150;
+  const postsPerPage = 100;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
   const [dylanLog, setDylanLog] = useState(true);
 
@@ -20,6 +20,24 @@ const PostsFeed = () => {
     page: currentPage + 1,
     per_page: postsPerPage,
   });
+
+  // useEffect(() => {
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: "smooth", // Optional: Add smooth scrolling animation
+  //   });
+  // }, [currentPage]);
+
+  const adjustPageHeight = () => {
+    // Set the desired height of the page
+    const desiredHeight = 6 * 450/* height of each post */;
+
+    // Set the height of the page to the desired height
+    document.body.style.height = `${desiredHeight}px`;
+    document.documentElement.style.height = `${desiredHeight}px`;
+
+    
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -40,7 +58,16 @@ const PostsFeed = () => {
   }, []);
 
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Optional: Add smooth scrolling animation
+    });
+    // adjustPageHeight()
+
+    setTimeout(() => {
+      setCurrentPage(selected);
+    }, 1000); 
+
   };
 
   if (dylanLog) {
