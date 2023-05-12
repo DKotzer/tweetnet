@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { BiHomeCircle } from "react-icons/bi";
 import { TbRobot } from "react-icons/tb";
+import { HiOutlineArrowLeftOnRectangle } from "react-icons/hi2";
+import {MdOutlineManageAccounts} from "react-icons/md"
 
 export const TopNav = () => {
   const { user, isSignedIn } = useUser();
@@ -30,51 +32,65 @@ export const TopNav = () => {
       </Link>
 
       <div className="flex w-full content-center items-center">
-        {isSignedIn && (
-          <div className="hover:scale105 ml-2 flex w-full content-center items-center">
-            <div className="hover:scale105  block whitespace-nowrap rounded-xl px-3 py-1 ring-slate-100/90 hover:bg-slate-500/30">
+        <div className="hover:scale105 ml-2 flex w-full content-center items-center">
+          <div className="hover:scale105  block whitespace-nowrap rounded-xl px-3 py-1 ring-slate-100/90 hover:bg-slate-900/80">
+            <Link
+              href="/"
+              className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
+            >
+              <BiHomeCircle className="my-auto mr-1" size={21} />
+              Home
+            </Link>
+          </div>
+
+          {isSignedIn && (
+            <div className="hover:scale105   block whitespace-nowrap rounded-xl px-3 py-1 ring-slate-100/90 hover:bg-slate-900/80">
               <Link
-                href="/"
+                href={`/mybots/@${
+                  (user?.username && user?.username) ||
+                  user?.emailAddresses[0]?.emailAddress
+                }`}
                 className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
               >
-                <BiHomeCircle className="my-auto mr-1" size={21} />
-                Home
+                <TbRobot className="my-auto mr-1" size={23} />
+                My-Bots
               </Link>
             </div>
-
-            {isSignedIn && (
-              <div className="hover:scale105   block whitespace-nowrap rounded-xl px-3 py-1 ring-slate-100/90 hover:bg-slate-500/30">
-                <Link
-                  href={`/mybots/@${
-                    (user?.username && user?.username) ||
-                    user?.emailAddresses[0]?.emailAddress
-                  }`}
-                  className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300"
-                >
-                  <TbRobot className="my-auto mr-1" size={23} />
-                  My-Bots
-                </Link>
-              </div>
-            )}
-            {/* <div className="mx-3 text-slate-100">
+          )}
+          {/* <div className="mx-3 text-slate-100">
               Welcome back,{" "}
               {(user?.username && user?.username) ||
                 user?.emailAddresses[0]?.emailAddress.replace("@gmail.com", "")}
             </div> */}
-            <div className="ml-auto hover:scale-105 hover:ring ring-slate-400/50 rounded-full">
-              <UserButton
-                appearance={{
-                  baseTheme: dark,
-                  elements: {
-                    userButtonAvatarBox: { width: 40, height: 40 },
-                  },
-                }}
-              />
+
+          {isSignedIn && (
+            <div className="ml-auto flex flex-row space-x-3">
+              <Link
+                href={`/myprofile`}
+                className="flex flex-row whitespace-nowrap py-1 hover:scale-105 hover:text-gray-300 hover:bg-slate-900/80 p-3 rounded-full"
+              >
+                <MdOutlineManageAccounts className="my-auto" size={23} />
+              </Link>
+              <div className=" rounded-full ring-slate-400/50 hover:scale-105 hover:ring">
+                <UserButton
+                  appearance={{
+                    baseTheme: dark,
+                    elements: {
+                      userButtonAvatarBox: { width: 40, height: 40 },
+                    },
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
         {!isSignedIn && (
-          <div className="ml-auto block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:scale-105 hover:bg-slate-500/30 ">
+          <div className="ml-auto flex flex-row whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:scale-105 hover:bg-slate-900/80 ">
+            <HiOutlineArrowLeftOnRectangle
+              className="my-auto mr-1 rotate-180"
+              size={21}
+            />
             <SignInButton mode="modal" />
           </div>
         )}

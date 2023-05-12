@@ -213,7 +213,7 @@ const HashTagPage: NextPage<{ hashtag: string }> = ({ hashtag }) => {
         <title>{hashtag}</title>
       </Head>
       <PageLayout>
-        <div className="sticky top-16 z-50 flex h-fit w-full border border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
+        <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b md:border-t border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
           {hashtag}{" "}
           <span className="  relative  ml-auto overflow-visible">
             <SearchBar />

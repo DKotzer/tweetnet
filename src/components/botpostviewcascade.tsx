@@ -7,105 +7,174 @@ import Link from "next/link";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
 
 
+interface CustomLiProps {
+  children: React.ReactNode;
+  type: "li";
+}
+
+const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
+  const content = (children as string[])[0];
+  let output = [];
+
+  let hashtags = [] as string[];
+
+  if (content) {
+    const listItems = content.split(/\n/).filter((item) => item.trim() !== "");
+
+    listItems.forEach((item, itemIndex) => {
+      const segments = item.split(/(\s+)/);
+      const itemOutput = segments.map((segment, index) => {
+        if (segment.startsWith("#")) {
+          const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+          if (hashtag === "") {
+            return (
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
+            );
+          } else {
+            hashtags.push(hashtag); // Collect hashtags for later use
+            return null;
+          }
+        } else {
+          return (
+            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
+          );
+        }
+      });
+
+      if (itemOutput.length > 0) {
+        output.push(<li key={`item-${itemIndex}`}>{itemOutput}</li>);
+      }
+    });
+
+    // Generate the hashtags section
+    const hashtagsOutput = hashtags.map((hashtag, index) => (
+      <React.Fragment key={`hashtag-${index}`}>
+        <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+          #{hashtag}
+        </a>{" "}
+      </React.Fragment>
+    ));
+
+    if (hashtags.length > 0) {
+      output.push(
+        <p key="hashtags" className="hashtags">
+          {hashtagsOutput}
+        </p>
+      );
+    }
+  } else {
+    output =
+      content?.trim() !== "" ? [<li key="single-item">{content}</li>] : [];
+  }
+
+  return <span>{output}</span>;
+};
+
 interface CustomTextProps {
   children: React.ReactNode;
+  type: "p" | "span" | "li";
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output;
 
+  let hashtags = [] as string[];
+
   if (content) {
-    const paragraphs = content.split("\n\n"); // Split content into paragraphs
+    const paragraphs = content
+      .split(/\n\n|\r\n\r\n/)
+      .filter((paragraph) => paragraph.trim() !== "");
 
     output = paragraphs.map((paragraph, paragraphIndex) => {
-      if (paragraph.startsWith("<ol>") && paragraph.endsWith("</ol>")) {
-        // Handle ordered list
-        const items = paragraph
-          .replace("<ol>", "")
-          .replace("</ol>", "")
-          .split("\n")
-          .filter((item) => item.trim().length > 0);
-
-        const listOutput = items.map((item, index) => {
-          return <li key={`list-item-${index}`}>{item}</li>;
-        });
-
-        return <ol key={`ordered-list-${paragraphIndex}`}>{listOutput}</ol>;
-      } else if (paragraph.startsWith("<ul>") && paragraph.endsWith("</ul>")) {
-        // Handle unordered list
-        const items = paragraph
-          .replace("<ul>", "")
-          .replace("</ul>", "")
-          .split("\n")
-          .filter((item) => item.trim().length > 0);
-
-        const listOutput = items.map((item, index) => {
-          return <li key={`list-item-${index}`}>{item}</li>;
-        });
-
-        return <ul key={`unordered-list-${paragraphIndex}`}>{listOutput}</ul>;
-      } else {
-        // Handle regular paragraphs
-        const segments = paragraph.split(/(\s+)/); // Split each paragraph on whitespace
-        const paragraphOutput = segments.map((segment, index) => {
-          if (segment.startsWith("@")) {
-            const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-            const username = match ? match[0] : "";
-            if (username === "")
-              return (
-                <Fragment key={`segment-${index}`}>
-                  {segment}
-                </Fragment>
-              );
+      const segments = paragraph.split(/(\s+)/);
+      const paragraphOutput = segments.map((segment, index) => {
+        if (segment.startsWith("#")) {
+          const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const hashtag = hashtagMatch ? hashtagMatch[0] : "";
+          if (hashtag === "") {
             return (
-              <Fragment key={`name-${index}`}>
-                <a className="tweetName" href={`${baseURL}bot/@${username}`}>
-                  {segment}
-                </a>
-              </Fragment>
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
             );
-          } else if (segment.startsWith("#")) {
-            const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-            const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-            if (hashtag === "")
-              return (
-                <Fragment key={`segment-${index}`}>
-                  {segment}
-                </Fragment>
-              );
+          } else {
+            hashtags.push(hashtag); // Collect hashtags for later use
+            return null;
+          }
+        } else if (segment.startsWith("@")) {
+          const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
+          const username = match ? match[0] : "";
+          if (username === "") {
             return (
-              <Fragment key={`hashtag-${index}`}>
-                <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
-                  {segment}
-                </a>
-              </Fragment>
+              <React.Fragment key={`segment-${index}`}>
+                {segment}
+              </React.Fragment>
             );
           } else {
             return (
-              <Fragment key={`segment-${index}`}>
-                {segment}
-              </Fragment>
+              <React.Fragment key={`name-${index}`}>
+                <a className="tweetName" href={`${baseURL}bot/@${username}`}>
+                  {segment}
+                </a>
+              </React.Fragment>
             );
           }
-        });
+        } else {
+          return (
+            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
+          );
+        }
+      });
 
-        return <p key={`paragraph-${paragraphIndex}`}>{paragraphOutput}</p>;
-      }
+      return (
+        paragraph.trim() !== "" && (
+          <p
+            key={`paragraph-${paragraphIndex}`}
+            // style={{ whiteSpace: "pre-wrap" }}
+          >
+            {paragraphOutput}
+          </p>
+        )
+      );
     });
   } else {
-    output = <Fragment>{content}</Fragment>;
+    output = content?.trim() !== "" && (
+      <React.Fragment>{content}</React.Fragment>
+    );
   }
 
-  // Wrap the entire output in a span instead of a fragment
-  return <span className="text-lg">{output}</span>;
+  const hashtagsOutput =
+    hashtags.length > 0 ? (
+      <p className="hashtag-container">
+        {hashtags.map((hashtag, index) => (
+          <React.Fragment key={`hashtag-${index}`}>
+            {index > 0 && " "} {/* Add space between hashtags */}
+            <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+              #{hashtag}
+            </a>{" "}
+            {/* Include "#" symbol and make it a link */}
+          </React.Fragment>
+        ))}
+      </p>
+    ) : null;
+
+  return (
+    <div className="markdown text-lg">
+      {output}
+      {hashtagsOutput}
+    </div>
+  );
 };
 
 interface CustomListProps {
@@ -116,6 +185,7 @@ interface CustomListProps {
 const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
   const content = (children as string[])[0];
   let output;
+  const hashtags: string[] = [];
 
   if (content) {
     const items = content
@@ -124,27 +194,36 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       .split("\n")
       .filter((item) => item.trim().length > 0);
 
+    console.log("items:", items);
+
     const listItems = items.map((item, index) => {
-      // Remove hashtags from each list item
-      const listItemText = item.replace(/#\w+/g, "").trim();
+      console.log("item:", item);
+      console.log("hashtags:", hashtags);
+      // Extract hashtags from each list item
+      const listItemText = item
+        .replace(/#\w+/g, (match) => {
+          hashtags.push(match.slice(1));
+          return "";
+        })
+        .trim();
+
+      console.log("listItemText:", listItemText);
+
       return <li key={`list-item-${index}`}>{listItemText}</li>;
     });
-
-    const hashtags = content.match(/#[^\s]+/g); // Updated regex pattern to include the pound sign (#)
-    const extractedHashtags = hashtags || [];
 
     output = (
       <div className="markdown">
         {type === "ul" ? <ul>{listItems}</ul> : <ol>{listItems}</ol>}
-        {extractedHashtags.length > 0 && (
+        {hashtags.length > 0 && (
           <p className="hashtag-container">
-            {extractedHashtags.map((tag, index) => (
+            {hashtags.map((tag, index) => (
               <a
                 className="hashTag"
                 href={`http://localhost:3000/hashtag/${tag}`}
                 key={`hashtag-${index}`}
               >
-                {tag}
+                {`#${tag}`}
               </a>
             ))}
           </p>
@@ -152,10 +231,19 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       </div>
     );
   } else {
+    console.log("else content:", content);
     output = <div className="markdown">{content}</div>;
   }
 
+  console.log("output:", output);
+
   return output;
+};
+
+type CustomComponents = {
+  p: React.FC<CustomTextProps>;
+  ul: React.FC<CustomListProps>;
+  li: React.FC<CustomTextProps>;
 };
 
 type Post = {
@@ -231,12 +319,13 @@ export const BotPostViewCascade = (
               </div>
               <span className=" text-lg">
                 <ReactMarkdown
+                  // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
-                      
-                    } as Components
+                      li: CustomLi,
+                    } as CustomComponents
                   }
                 >
                   {props.content}
@@ -329,12 +418,13 @@ export const BotPostViewCascade = (
 
               <span className=" text-xl">
                 <ReactMarkdown
+                  // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
-                      
-                    } as Components
+                      li: CustomLi,
+                    } as CustomComponents
                   }
                 >
                   {props.content}
@@ -432,13 +522,18 @@ export const BotPostViewCascade = (
                   </span>
                 </div>
                 <span className=" text-lg">
-                  <ReactMarkdown components={
-                  {
-                    p: CustomText,
-                    ul: CustomList,
-                    
-                  } as Components
-                }>{data.content}</ReactMarkdown>
+                  <ReactMarkdown
+                    // @ts-ignore
+                    components={
+                      {
+                        p: CustomText,
+                        ul: CustomList,
+                        li: CustomLi,
+                      } as CustomComponents
+                    }
+                  >
+                    {data.content}
+                  </ReactMarkdown>
                 </span>
                 <div>
                   {data.postImage && data.postImage !== "" && (
@@ -462,12 +557,13 @@ export const BotPostViewCascade = (
             </div>
             <span className=" text-lg">
               <ReactMarkdown
+                // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
-                    
-                  } as Components
+                    li: CustomLi,
+                  } as CustomComponents
                 }
               >
                 {props.content}
@@ -546,12 +642,13 @@ export const BotPostViewCascade = (
             </div>
             <span className="text-lg">
               <ReactMarkdown
+                // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
-                    
-                  } as Components
+                    li: CustomLi,
+                  } as CustomComponents
                 }
               >
                 {props.content}

@@ -106,7 +106,8 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
       );
     }
   } else {
-    output = content?.trim() !== "" && <li>{content}</li>;
+    output =
+      content?.trim() !== "" ? [<li key="single-item">{content}</li>] : [];
   }
 
   return <span>{output}</span>;

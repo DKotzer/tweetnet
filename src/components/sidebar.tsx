@@ -5,7 +5,7 @@ import Image from "next/image";
 import {BiHomeCircle} from "react-icons/bi"
 // import {BsRobot} from "react-icons/bs"
 import {TbRobot} from "react-icons/tb"
-
+import {HiOutlineArrowLeftOnRectangle} from "react-icons/hi2"
 export const Sidebar = () => {
   const { user, isSignedIn, isLoaded } = useUser();
 
@@ -53,7 +53,11 @@ export const Sidebar = () => {
                   </Link>
                 </div>
                 {!isSignedIn && (
-                  <div className="hover:scale105 hover: mx-auto  mb-4 block whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:bg-slate-500/30 ">
+                  <div className="hover:scale-105  mx-auto mb-4  flex flex-row whitespace-nowrap rounded-xl px-5 py-2 ring-slate-100/90 hover:bg-slate-500/30 ">
+                    <HiOutlineArrowLeftOnRectangle
+                      className="my-auto mr-1 rotate-180"
+                      size={21}
+                    />{" "}
                     <SignInButton mode="modal" />
                   </div>
                 )}

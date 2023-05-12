@@ -914,7 +914,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "system",
-            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes.
+            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.
             }"`,
           },
           // {
@@ -1531,7 +1531,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.`,
                 },
                 {
                   role: "user",
@@ -1562,7 +1562,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.`,
                 },
 
                 {
@@ -1593,7 +1593,7 @@ export const botsRouter = createTRPCRouter({
               },
               {
                 role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes.
+                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Refer to yourself in first person.
             `,
               },
               // {
