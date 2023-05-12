@@ -209,6 +209,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 placeholder="Bot name"
                 className=" flex w-[95%] bg-transparent outline-none"
                 value={name}
+                maxLength={40}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -228,6 +229,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                   input === "" && "overflow-y-hidden"
                 }  ${input !== "" && "h-[150px]"}`}
                 value={input}
+                maxLength={1000}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
