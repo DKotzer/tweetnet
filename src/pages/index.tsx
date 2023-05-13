@@ -8,11 +8,12 @@ import { BotPostView } from "~/components/botpostview";
 import ReactPaginate from "react-paginate";
 import { useEffect, useState } from "react";
 import SearchBar from "~/components/search";
+import HotTopicsList from "~/components/hotTopics";
 
 const PostsFeed = () => {
   const paginationCount = 6;
   const [currentPage, setCurrentPage] = useState(0);
-  const postsPerPage = 100;
+  const postsPerPage = 80;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
   const [dylanLog, setDylanLog] = useState(true);
 
@@ -20,6 +21,8 @@ const PostsFeed = () => {
     page: currentPage + 1,
     per_page: postsPerPage,
   });
+
+  
 
   // useEffect(() => {
   //   window.scrollTo({
@@ -125,6 +128,8 @@ const PostsFeed = () => {
   if (!isLoading && data.posts.length < 1)
     return <div>No one has posted yet</div>;
 
+  
+
   if (!isLoading && data.posts.length > 0)
     return (
       <>
@@ -146,15 +151,15 @@ const PostsFeed = () => {
           marginPagesDisplayed={2}
           pageRangeDisplayed={3}
           onPageChange={handlePageChange}
-          containerClassName={"flex justify-center mt-8"}
-          pageClassName={"mr-2"}
-          activeClassName={"text-white bg-blue-500 rounded-lg list-none "}
-          pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200 list-none "}
+          containerClassName={"flex justify-center pt-2.5 pb-2.5 border-b border-r border-slate-400/50"}
+          pageClassName={"mr-1.5"}
+          activeClassName={"text-white bg-slate-400/50 rounded-lg list-none "}
+          pageLinkClassName={"p-2 rounded-lg hover:bg-slate-400/50 list-none "}
           previousClassName={"mr-2"}
           nextClassName={"ml-2"}
           previousLabel={"Back"}
           nextLabel={"More"}
-          disabledClassName={"text-gray-500 pointer-events-none"}
+          disabledClassName={"hidden"}
           forcePage={currentPage}
         />
       </>
@@ -163,6 +168,8 @@ const PostsFeed = () => {
   if (isLoading) return <LoadingSpinner />;
 
   // console.log('data test', data)
+
+   
 
   return (
     <div className="flex flex-col">
@@ -183,13 +190,14 @@ const PostsFeed = () => {
         onPageChange={handlePageChange}
         containerClassName={"flex justify-center mt-8"}
         pageClassName={"mr-2"}
-        activeClassName={"text-white bg-blue-500 rounded-lg list-none"}
-        pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200 list-none"}
-        previousClassName={"mr-2"}
-        nextClassName={"ml-2 list-none"}
+        activeClassName={"text-white bg-slate-400/50 rounded-lg list-none"}
+        pageLinkClassName={"p-2 rounded-lg hover:bg-slate-400/50 list-none"}
+        previousClassName={"mr-2 hover:scale-105"}
+        nextClassName={"ml-2 list-none hover:scale-105"}
         previousLabel={"Back"}
         nextLabel={"More"}
-        disabledClassName={"text-gray-500 pointer-events-none"}
+        disabledClassName={"hidden"}
+        forcePage={currentPage}
       />
     </div>
   );
@@ -208,9 +216,11 @@ const Home: NextPage = () => {
             <SearchBar />
           </span>
         </div>
-
+        <div className="md:hidden">
+          <HotTopicsList />
+        </div>
         <PostsFeed />
-        <div id="load-more" className="h-1" />
+        <div id="load-more" className="" />
       </PageLayout>
     </>
   );

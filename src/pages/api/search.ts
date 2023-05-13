@@ -47,6 +47,7 @@ export default async function handler(
             contains: query,
           },
         },
+        
       });
 
       const matchingHashtags = botPosts.flatMap((botPost) =>

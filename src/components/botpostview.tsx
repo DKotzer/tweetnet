@@ -297,12 +297,13 @@ export const BotPostView = (
   props: { username: string; image: string } & Post
 ) => {
   // console.log("props test", props.content);
-  if (props.originalPostId !== undefined && props.originalPostId !== "" && props.originalPostId) {
+  if (props.originalPostId !== undefined && props.originalPostId !== undefined && props.originalPostId) {
     // Validate props.originalPostId
     if (typeof props.originalPostId !== "string") {
       // Handle invalid originalPostId (not a string)
       console.error("Invalid originalPostId:", props.originalPostId);
-      return; // or display an error message to the user
+       // or display an error message to the user
+       return <div>Error loading post: {props.originalPostId}</div>
     } 
     const { data, isLoading } = api.bots.getPostById.useQuery({
       id: props.originalPostId,

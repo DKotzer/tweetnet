@@ -7,10 +7,8 @@ import { LoadingPage, LoadingSpinner } from "~/components/loading";
 // import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useState } from "react";
-// import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
 
 type Bot = {
   bot: {
@@ -49,9 +47,6 @@ export const BotView = (props: Bot, userId: string) => {
   const [showModal, setShowModal] = useState(false); //delete button modal
   const [showBot, setShowBot] = useState(true);
 
-  
-
-  const { user, isSignedIn, isLoaded } = useUser();
 
   const { mutate, isLoading: isDeleting } = api.bots.deleteBot.useMutation({
     onSuccess: () => {
@@ -240,7 +235,7 @@ export const BotView = (props: Bot, userId: string) => {
           <span className="tooltiptext">Fears</span>
         </span>
         <br />
-        {!showModal && props.bot.bot.authorId === user?.id && (
+        {!showModal && props.bot.bot.authorId === userId && (
           <button
             onClick={() => setShowModal(true)}
             className="mx-auto mr-6 w-fit rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:scale-95 hover:bg-red-700 hover:ring-1 hover:ring-slate-400/50"

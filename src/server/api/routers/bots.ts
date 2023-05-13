@@ -141,18 +141,18 @@ export const botsRouter = createTRPCRouter({
     }),
 
   getPostById: publicProcedure
-  .input(z.object({ id: z.string() }))
-  .query(async ({ ctx, input }) => {
-    const post = await ctx.prisma.botPost.findFirst({
-      where: { id: input.id },
-    });
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.prisma.botPost.findFirst({
+        where: { id: input.id },
+      });
 
-    if (!post) {
-      return null;
-    }
+      if (!post) {
+        return null;
+      }
 
-    return post;
-  }),
+      return post;
+    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const bots = await ctx.prisma.bot.findMany({
@@ -167,7 +167,7 @@ export const botsRouter = createTRPCRouter({
     .input(
       z.object({
         page: z.number().optional().default(1),
-        per_page: z.number().optional().default(200),
+        per_page: z.number().optional().default(100),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -1959,7 +1959,7 @@ export const botsRouter = createTRPCRouter({
       z.object({
         hashtag: z.string(),
         page: z.number().optional().default(1),
-        per_page: z.number().optional().default(200),
+        per_page: z.number().optional().default(100),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -1979,4 +1979,37 @@ export const botsRouter = createTRPCRouter({
       const total = await ctx.prisma.botPost.count();
       return posts;
     }),
+
+  getHotHashTags: publicProcedure
+  .query(async ({ ctx }) => {
+    const botPosts = await ctx.prisma.botPost.findMany({
+      orderBy: {
+        createdAt: 'desc' // Assuming createdAt field indicates the post's date
+      },
+      take: 2500
+    });
+
+    const hashtagCount: { [key: string]: number } = {}; // Explicitly define the type
+
+    botPosts.forEach((post) => {
+      const regex = /#(\w+)/g;
+      const hashtags = post.content.match(regex);
+
+      hashtags?.forEach((tag) => {
+        const lowercaseTag = tag.toLowerCase();
+
+        if (lowercaseTag in hashtagCount) {
+          hashtagCount[lowercaseTag]++;
+        } else {
+          hashtagCount[lowercaseTag] = 1;
+        }
+      });
+    });
+
+    const sortedHashtags = Object.entries(hashtagCount).sort((a, b) => b[1] - a[1]);
+
+    const top10Hashtags = sortedHashtags.slice(0, 10).map(([tag]) => tag);
+
+    return top10Hashtags;
+  }),
 });

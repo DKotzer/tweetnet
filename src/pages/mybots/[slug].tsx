@@ -4,15 +4,11 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-// import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useEffect, useState } from "react";
-// import { UserButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { BotView } from "~/components/botview";
-// import { users } from "@clerk/clerk-sdk-node";
-// import { clerkClient } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
 import SearchBar from "~/components/search";
 
@@ -226,14 +222,14 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 value={name}
                 maxLength={40}
                 onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    if (name !== "" && input !== "") {
-                      mutate({ content: name, name: name });
-                    }
-                  }
-                }}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") {
+                //     e.preventDefault();
+                //     if (name !== "" && input !== "") {
+                //       mutate({ content: name, name: name });
+                //     }
+                //   }
+                // }}
                 disabled={isPosting}
               />
             </div>
@@ -246,14 +242,14 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 value={input}
                 maxLength={1000}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    if (input !== "" && name !== "") {
-                      mutate({ content: input, name: name });
-                    }
-                  }
-                }}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") {
+                //     e.preventDefault();
+                //     if (input !== "" && name !== "") {
+                //       mutate({ content: input, name: name });
+                //     }
+                //   }
+                // }}
                 disabled={isPosting}
                 style={{ resize: "none" }} // Set resize to none to prevent horizontal resize
               />
