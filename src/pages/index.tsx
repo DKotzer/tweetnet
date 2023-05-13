@@ -66,7 +66,7 @@ const PostsFeed = () => {
 
     setTimeout(() => {
       setCurrentPage(selected);
-    }, 100); 
+    }, 1000); 
 
   };
 

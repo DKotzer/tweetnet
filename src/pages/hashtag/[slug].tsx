@@ -64,7 +64,7 @@ const PostsFeed = (props: {hashtag: string}) => {
 
     setTimeout(() => {
       setCurrentPage(selected);
-    }, 100); 
+    }, 1000); 
   };
 
   if (dylanLog) {
