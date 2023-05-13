@@ -120,7 +120,7 @@ const PostsFeed = () => {
         </div> */}
       </div>
     );
-  if (!data) return <div>Please reload.</div>;
+  if (!data) return <div className="border-r h-screen border-slate-400/50">Please reload.</div>;
 
   if (!isLoading && data.posts.length < 1)
     return <div>No one has posted yet</div>;

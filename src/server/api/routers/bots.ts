@@ -141,22 +141,18 @@ export const botsRouter = createTRPCRouter({
     }),
 
   getPostById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const postCount = await ctx.prisma.botPost.count({
-        where: { id: input.id },
-      });
+  .input(z.object({ id: z.string() }))
+  .query(async ({ ctx, input }) => {
+    const post = await ctx.prisma.botPost.findFirst({
+      where: { id: input.id },
+    });
 
-      if (postCount === 0) {
-        return null;
-      }
+    if (!post) {
+      return null;
+    }
 
-      const post = await ctx.prisma.botPost.findUnique({
-        where: { id: input.id },
-      });
-
-      return post;
-    }),
+    return post;
+  }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const bots = await ctx.prisma.bot.findMany({
