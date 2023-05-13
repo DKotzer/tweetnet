@@ -469,12 +469,13 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
           )}
         </div>
         <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b md:border-t border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0">
-          {`${
+          {/* {`${
             data?.username?.replace("@gmail.com", "") ??
             data?.externalUsername?.replace("@gmail.com", "") ??
             "unknown"
           }'s`}{" "}
-          Bots{" "}
+          Bots{" "} */}
+          My Bots
           <span className="  relative  ml-auto overflow-visible">
             <SearchBar />
           </span>
