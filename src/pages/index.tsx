@@ -11,7 +11,7 @@ import SearchBar from "~/components/search";
 import HotTopicsList from "~/components/hotTopics";
 
 const PostsFeed = () => {
-  const paginationCount = 6;
+  const paginationCount = 80;
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 80;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);

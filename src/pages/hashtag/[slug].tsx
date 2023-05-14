@@ -15,7 +15,7 @@ import { BotPostView } from "~/components/botpostview";
 import SearchBar from "~/components/search";
 
 const PostsFeed = (props: {hashtag: string}) => {
-  const paginationCount = 6;
+  const paginationCount = 75;
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 150;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
