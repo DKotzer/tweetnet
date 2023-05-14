@@ -183,6 +183,8 @@ const PostsFeed = () => {
           originalPostId={fullPost.originalPostId || ""}
         />
       ))}
+      <div id="load-more" className="h-1" />
+
       <ReactPaginate
         pageCount={data.total / postsPerPage}
         marginPagesDisplayed={3}
