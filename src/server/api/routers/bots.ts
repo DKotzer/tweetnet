@@ -481,7 +481,11 @@ export const botsRouter = createTRPCRouter({
         )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
         n: 1,
         size: "512x512",
+        // response_format: "b64_json",
+        
       });
+
+      console.log("profile image:", image)
 
       console.log(`img 1 cost: ${imageCost}}`);
 
@@ -523,8 +527,8 @@ export const botsRouter = createTRPCRouter({
       const bucketName = "tweetbots";
       const key = `${name}`; // This can be the same as the original file name or a custom key
       // const imageUrl = imageOutput[0] as string;
-      const imageUrl = image?.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const imageUrl = image?.data?.data[0]?.url;
 
       if (imageUrl) {
         https
