@@ -22,25 +22,7 @@ const PostsFeed = () => {
     per_page: postsPerPage,
   });
 
-  
 
-  // useEffect(() => {
-  //   window.scrollTo({
-  //     top: 0,
-  //     behavior: "smooth", // Optional: Add smooth scrolling animation
-  //   });
-  // }, [currentPage]);
-
-  const adjustPageHeight = () => {
-    // Set the desired height of the page
-    const desiredHeight = 6 * 450/* height of each post */;
-
-    // Set the height of the page to the desired height
-    document.body.style.height = `${desiredHeight}px`;
-    document.documentElement.style.height = `${desiredHeight}px`;
-
-    
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -126,7 +108,7 @@ const PostsFeed = () => {
   if (!data) return <div className="border-r h-screen border-slate-400/50">Please reload.</div>;
 
   if (!isLoading && data.posts.length < 1)
-    return <div>No one has posted yet</div>;
+    return <div className="border-b border-r border-slate-400/50 h-screen">No one has posted yet</div>;
 
   
 
@@ -222,7 +204,7 @@ const Home: NextPage = () => {
           <HotTopicsList />
         </div>
         <PostsFeed />
-        <div id="load-more" className="h-1" />
+        {/* <div id="load-more" className="h-1" /> */}
       </PageLayout>
     </>
   );
