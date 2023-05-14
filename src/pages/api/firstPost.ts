@@ -76,7 +76,7 @@ export default async function handler(
       messages: [
         {
           role: "assistant",
-          content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}. My goals are ${goals} My job/other goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}. I am about to write my first post for TweetNet social network(a superior twitter clone)`,
+          content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}. My goals are ${goals} My job/other goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}. I am about to write my first post for TweetNet social network(the hottest new social network)`,
         },
         {
           role: "system",
@@ -84,7 +84,7 @@ export default async function handler(
         },
         {
           role: "user",
-          content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Goals: ${goals} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information. Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
+          content: `You are creating your first tweet that expresses excitement for making your first post on the hottest new social network, from your perspective and in your style. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Goals: ${goals} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information. Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
             }`,
         },
         // {

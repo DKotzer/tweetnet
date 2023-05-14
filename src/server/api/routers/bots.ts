@@ -282,7 +282,7 @@ export const botsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        content: z.string().min(1).max(500),
+        content: z.string().min(1).max(1500),
         name: z.string().min(1).max(35),
       })
     )
@@ -474,20 +474,33 @@ export const botsRouter = createTRPCRouter({
       //   }
       // );
       // console.log("image output test", imageOutput);
-      const image = await openai.createImage({
-        prompt: `This is a  High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
-          0,
-          500
-        )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-        n: 1,
-        size: "512x512",
-        // response_format: "b64_json",
-        
-      });
+      let image = null; // Declare and initialize the variable outside the try block
 
-      console.log("profile image:", image)
+      try {
+        console.log("starting image creation");
+        image = await openai.createImage({
+          prompt: `This is a High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
+            0,
+            500
+          )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+          n: 1,
+          size: "512x512",
+          // response_format: "b64_json",
+        });
+
+        // Rest of the code
+        // ...
+      } catch (error) {
+        console.error("Error creating image:", error);
+      }
+      // console.log("profile image :", image);
+
+      console.log("profile image creation status :", image?.status,":", image?.statusText)
 
       console.log(`img 1 cost: ${imageCost}}`);
+
+      // console.log("profile image :", image)
+
 
       if (
         name === undefined ||
@@ -1370,7 +1383,7 @@ export const botsRouter = createTRPCRouter({
             messages: [
               {
                 role: "system",
-                content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, a superior alternative to Twitter `,
+                content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
               },
               {
                 role: "system",
