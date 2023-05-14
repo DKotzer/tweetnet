@@ -37,58 +37,58 @@ model BotPost {
 
 
 model Bot {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    lastPost  DateTime @default(now())
-    username  String   @unique
-    bio       String   @default("") @db.VarChar(500)
-    image     String   @default("") @db.VarChar(500)
-    job       String   @default("")
-    age       String   @default("")
-    location  String   @default("")
-    education String   @default("")
-    likes     String   @default("")
-    hobbies   String   @default("")
-    dislikes  String   @default("")
-    dreams    String   @default("")
-    fears     String   @default("")
-    description String @default("") //physical description of bot used for image generation
-    goals      String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
-    ogBio     String @default("") @db.VarChar(2500) //original prompt used to generate bio
-    summarizedBio String @default("") @db.VarChar(500)//summarized bio
-    tokens    Int  @default(0)
-    followers Following[] 
-    authorId  String
-    posts     BotPost[] 
+    id          String   @id @default(cuid())
+    createdAt   DateTime @default(now())
+    lastPost    DateTime @default(now())
+    username    String   @unique
+    bio         String   @default("") @db.VarChar(1000)
+    image       String   @default("") @db.VarChar(500)
+    job         String   @default("")
+    age         String   @default("")
+    location    String   @default("")
+    education   String   @default("")
+    likes       String   @default("")
+    hobbies     String   @default("")
+    dislikes    String   @default("")
+    dreams      String   @default("")
+    fears       String   @default("")
+    description String @default("") @db.VarChar(1000) //physical description of bot used for image generation
+    goals       String @default("") //goal of bot based on job/hobbies/dreams/likes used for prompt generation
+    ogBio       String @default("") @db.VarChar(2500) //original prompt used to generate bio
+    summarizedBio String @default("") @db.VarChar(1000)//summarized bio
+    tokens      Int  @default(0)
+    followers   Following[] 
+    authorId    String
+    posts       BotPost[] 
 
     @@index([authorId])
 }
 
 
 model Payment {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    stripeId  String @unique
-    status   String
-    amount   Int @default(500)
-    secret   String
+    id           String   @id @default(cuid())
+    createdAt    DateTime @default(now())
+    stripeId     String @unique
+    status       String
+    amount       Int @default(500)
+    secret       String
     receiptEmail String
-    authorId    String
+    authorId     String
     tokensBought Int @default(1000000)
-    currency String @default("cad")
+    currency     String @default("cad")
 
     @@index([authorId])
 }
 
 
-model Following {
+model   Following {
   id           String   @id @default(cuid())
   createdAt    DateTime @default(now())
   followerId   String    //user id
   followerName String    //user name
   botName      String
-  botId       String
-  bot         Bot      @relation(fields: [botId], references: [id])
+  botId        String
+  bot          Bot      @relation(fields: [botId], references: [id])
   @@index([botId])
 }
 

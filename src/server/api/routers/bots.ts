@@ -530,6 +530,12 @@ export const botsRouter = createTRPCRouter({
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const imageUrl = image?.data?.data[0]?.url;
 
+      if(!imageUrl) {
+        console.log("image creation failed, cancelling profile creation")
+        return
+      }
+
+
       if (imageUrl) {
         https
           .get(imageUrl, (response) => {
@@ -571,24 +577,7 @@ export const botsRouter = createTRPCRouter({
 
       console.log("profile creation cost + image:", totalCost);
 
-      // const dataTest = {
-      //   age: String(age).trim(),
-      //   bio,
-      //   job,
-      //   authorId,
-      //   location,
-      //   education,
-      //   likes,
-      //   hobbies,
-      //   dislikes,
-      //   dreams,
-      //   fears,
-      //   username: name.replace(/ /g, "_").substring(0, 20),
-      //   image: `${bucketPath}${name.replace(/ /g, "_")}`,
-      //   tokens: Number(totalCost),
-      // };
 
-      // console.log(dataTest, "data test");
 
       const bot = await ctx.prisma.bot.create({
         data: {
@@ -625,233 +614,6 @@ export const botsRouter = createTRPCRouter({
       });
 
       console.log("new bot", bot);
-      ////////////////////
-      // const updatedUser = await users.getUser(ctx.userId);
-      // console.log(
-      //   "created User tokens pre update:",
-      //   user.publicMetadata.tokensUsed
-      // );
-      // //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
-      // await users.updateUser(authorId, {
-      //   publicMetadata: {
-      //     ...updatedUser.publicMetadata,
-      //     tokensUsed:
-      //       Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost),
-      //   },
-      // });
-      // console.log(
-      //   "updated user tokens pre update:",
-      //   Number(updatedUser.publicMetadata.tokensUsed)
-      // );
-      // console.log(
-      //   "updated user tokens post update:",
-      //   Number(updatedUser.publicMetadata.tokensUsed) + Number(totalCost)
-      // );
-
-      // //create first post here, can mostly just copy the code for post create
-
-      // const botname = name;
-      // const id = bot.id;
-      // const botImage = bot.image;
-
-      // const newPost = await openai.createChatCompletion({
-      //   model: "gpt-3.5-turbo",
-      //   temperature: 0.8,
-      //   max_tokens: 200,
-      //   messages: [
-      //     {
-      //       role: "system",
-      //       content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}  . I am about to write my first post for TweetNet social network(a superior twitter clone)`,
-      //     },
-      //     {
-      //       role: "user",
-      //       content: `You are creating your first tweet that expresses excitement for making your first post on a new social network superior to the old twitter from your perspective. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
-      //     },
-      //     {
-      //       role: "system",
-      //       content: `Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
-      //       }`,
-      //     },
-      //     // {
-      //     //   role: "system",
-      //     //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
-      //     //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
-      //     //   }"`,
-      //     // },
-      //   ],
-      // });
-
-      // console.log(
-      //   "new tweet text",
-      //   newPost?.data?.choices[0]?.message?.content
-      // );
-
-      // const firstTweetCost = Number(newPost?.data?.usage?.total_tokens) || 0;
-
-      // console.log("first tweet cost", firstTweetCost);
-
-      // const formattedRes =
-      //   newPost?.data?.choices[0]?.message?.content ||
-      //   "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
-
-      // // console.log("checkpoint");
-
-      // const firstPostImage: any = await replicate.run(
-      //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-      //   {
-      //     input: {
-      //       prompt: `An photograph representation of: ${formattedRes.slice(
-      //         0,
-      //         500
-      //       )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-      //       image_dimensions: "512x512",
-      //       negative_prompt: "No unentered portraits. No cut off foreheads.",
-      //     },
-      //   }
-      // );
-
-      // // const firstPostImageold = await openai.createImage({
-      // //   prompt: `An photograph representation of: ${formattedRes.slice(
-      // //     0,
-      // //     500
-      // //   )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-      // //   n: 1,
-      // //   size: "512x512",
-      // // });
-
-      // console.log(`img 2 cost: ${imageCost}`);
-
-      // if (
-      //   botname === undefined ||
-      //   age === undefined ||
-      //   job === undefined ||
-      //   likes === undefined ||
-      //   hobbies === undefined ||
-      //   dislikes === undefined ||
-      //   dreams === undefined ||
-      //   fears === undefined ||
-      //   education === undefined ||
-      //   location === undefined
-      // ) {
-      //   console.error("One or more variables are missing");
-      //   return;
-      // }
-
-      // // console.log("name:", botname);
-      // // console.log("bio:", bio || "no bio");
-      // // console.log("age:", age);
-      // // console.log("job:", job);
-      // // console.log("likes:", likes);
-      // // console.log("hobbies:", hobbies);
-      // // console.log("dislikes:", dislikes);
-      // // console.log("dreams:", dreams);
-      // // console.log("fears:", fears);
-      // // console.log("education:", education);
-      // // console.log("location:", location);
-      // // console.log("bot image:", botImage);
-      // // console.log("new tweet text:", formattedString);
-      // // console.log(image?.data?.data[0]?.url);
-
-      // // const authorId = ctx.userId;
-
-      // const { success } = await ratelimit.limit(authorId);
-      // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      // // console.log("checkpoint 2");
-      // //generate random uid key
-      // let randomKey = Math.random().toString(36).substring(2, 15);
-
-      // const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      // const postImageUrl = firstPostImage[0];
-      // const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
-      // const postImage = postImageBucketPath + postImageKey;
-
-      // if (postImageUrl) {
-      //   https
-      //     .get(postImageUrl, (response) => {
-      //       let body = "";
-      //       response.setEncoding("binary");
-      //       response.on("data", (chunk: string) => {
-      //         body += chunk;
-      //       });
-      //       response.on("end", () => {
-      //         const options = {
-      //           Bucket: bucketName,
-      //           Key: postImageKey,
-      //           Body: Buffer.from(body, "binary"),
-      //           ContentType: response.headers["content-type"],
-      //         };
-      //         s3.putObject(
-      //           options,
-      //           (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-      //             if (err) {
-      //               console.error("Error saving image to S3", err);
-      //             } else {
-      //               console.log("Image saved to S3", data);
-      //             }
-      //           }
-      //         );
-      //       });
-      //     })
-      //     .on("error", (err: Error) => {
-      //       console.error("Error downloading image", err);
-      //     });
-      // }
-
-      // // Download the image from the url
-
-      // const botPost = await ctx.prisma.botPost.create({
-      //   data: {
-      //     content: formattedRes,
-      //     botId: id,
-      //     authorImage: botImage,
-      //     authorName: botname,
-      //     postImage: postImage,
-      //     // bot: { connect: { id: id } },
-      //   },
-      // });
-      // const increment = Number(firstTweetCost) + imageCost;
-      // console.log("first post:", botPost);
-
-      // console.log(
-      //   "increment",
-      //   increment,
-      //   "total",
-      //   Number(updatedUser.publicMetadata.tokensUsed) + increment
-      // );
-
-      // console.log(
-      //   "increment + tokensUsed",
-      //   Number(updatedUser.publicMetadata.tokensUsed),
-      //   "+",
-      //   increment,
-      //   "=",
-      //   Number(updatedUser.publicMetadata.tokensUsed) + increment
-      // );
-      // await users.updateUser(authorId, {
-      //   publicMetadata: {
-      //     ...updatedUser.publicMetadata,
-      //     tokensUsed:
-      //       Number(updatedUser.publicMetadata.tokensUsed) +
-      //       increment +
-      //       Number(totalCost),
-      //   },
-      // });
-      // console.log(
-      //   "created User tokens post update:",
-      //   updatedUser.publicMetadata.tokensUsed
-      // );
-
-      // await ctx.prisma.bot.update({
-      //   where: {
-      //     id: id,
-      //   },
-      //   data: {
-      //     tokens: {
-      //       increment: increment,
-      //     },
-      //   },
-      // });
-      // //  console.log('first post cost': totalCost)
 
       return bot;
     }),
