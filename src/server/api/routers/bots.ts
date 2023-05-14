@@ -45,7 +45,7 @@ function getRandomHolidayWithinRange() {
     { name: "Valentine's Day", date: "February 14" },
     { name: "St. Patrick's Day", date: "March 17" },
     { name: "Easter", date: "April 4" },
-    { name: "Mother's Day", date: "May 9" },
+    { name: "Mother's Day", date: "May 14" },
     { name: "Father's Day", date: "June 20" },
     { name: "Independence Day", date: "July 4" },
     { name: "Halloween", date: "October 31" },
@@ -92,9 +92,15 @@ function getRandomHolidayWithinRange() {
    const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
    return holidaysInRange[randomIndex];
  } else {
-  //return random holiday if no holidays in range
-  const randomIndex = Math.floor(Math.random() * holidays.length);
-  return holidays[randomIndex];
+  //return the closest holiday if no holidays in range
+  const closestHoliday = holidays.reduce((a, b) => {
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
+    const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
+    const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
+    return aDiff < bDiff ? a : b;
+  });
+  return closestHoliday;
  }
 
 }
@@ -1006,14 +1012,30 @@ export const botsRouter = createTRPCRouter({
 
         const basicTemplate = `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`;
 
+        const holiday = getRandomHolidayWithinRange();
+
+        //check of holiday is today
+        let holidayAlert = false
+        if (holiday?.date === new Date().toISOString().slice(0, 10)) {
+          console.log("holiday is today, increase change of using holidays template");
+          holidayAlert = true
+        }
+
+        const holidaysTemplates = [
+          `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
+          `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
+          `<Message related to time between(either its coming up soon or just passed or currently is) ${holiday?.name} ${holiday?.date} relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${holiday?.name} depending on if its in the past, future, or present>`,
+        ]
+
+
         const tweetTemplateStrings = [
           `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
           ` <Positive statement about TweetNet>. <Reason why TweetNet is better than twitter>. What do you like about TweetNet? `,
           `Greetings from ${location}! <Story that takes place in ${location} related to one of my ${hobbies}>. <Sentence or two about going to an event related to that hobby at/in ${location} <today/tomorrow/next week> >. `,
           `I'm feeling grateful for < something related to ${likes} or ${dreams} > today!  What are you grateful for? `,
-          `Happy ${getRandomHolidayWithinRange()}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
-          `Happy ${getRandomHolidayWithinRange()}! <Personal story about the holiday>. <Commentary on the holiday >. `,
-
+          `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
+          `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
+          `<Message related to time between(either its coming up soon or just passed or currently is) ${holiday?.name} ${holiday?.date} relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${holiday?.name} depending on if its in the past, future, or present>`,
           `Share a funny or inspiring quote you would find interesting related to your < ${likes}, ${hobbies} or ${dreams} > and add some commentary or a question.`,
           `Write a short story about one of your goals based on your ${likes}, ${dreams} and ${job}`,
           `List three things you like (you like ${likes}) and three things you dislike (you dislike ${dislikes}) and challenge your followers to do the same.`,
@@ -1209,10 +1231,23 @@ export const botsRouter = createTRPCRouter({
         ];
 
         //create 20 copies of basic Template and combine with templateStrings array
-        const tweetTemplates = [
+        let tweetTemplates = [
           ...Array(20).fill(basicTemplate),
           ...tweetTemplateStrings,
         ];
+
+        if(holidayAlert) {
+          console.log('holiday alert is true')
+
+          tweetTemplates = [
+            ...Array(20).fill(basicTemplate),
+            ...Array(20).flatMap(() => holidaysTemplates),
+            ...tweetTemplateStrings,
+          ];
+
+          console.log(tweetTemplates)
+
+        }
 
         const randomNumber = Math.floor(Math.random() * 6) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
