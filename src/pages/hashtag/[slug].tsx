@@ -42,7 +42,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           );
         }
       },
-      { threshold: 1 }
+      { threshold: 0 }
     );
     const loadMoreElement = document.querySelector("#load-more");
     if (loadMoreElement) {
@@ -132,7 +132,7 @@ const PostsFeed = (props: {hashtag: string}) => {
               originalPostId={fullPost.originalPostId || ""}
             />
           ))}
-          <div id="load-more" />
+          <div id="load-more" className="h-1" />
         </div>
         {data.length > 140  && 
         <ReactPaginate
@@ -170,21 +170,24 @@ const PostsFeed = (props: {hashtag: string}) => {
           originalPostId={fullPost.originalPostId || ""}
         />
       ))}
-      {data.length > 140  && <ReactPaginate
-        pageCount={data.length / postsPerPage}
-        marginPagesDisplayed={3}
-        pageRangeDisplayed={2}
-        onPageChange={handlePageChange}
-        containerClassName={"flex justify-center mt-8"}
-        pageClassName={"mr-2"}
-        activeClassName={"text-white bg-blue-500 rounded-lg"}
-        pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
-        previousClassName={"mr-2"}
-        nextClassName={"ml-2"}
-        previousLabel={"Back"}
-        nextLabel={"More"}
-        disabledClassName={"text-gray-500 pointer-events-none"}
-      />}
+      <div id="load-more" className="h-1" />
+      {data.length > 140 && (
+        <ReactPaginate
+          pageCount={data.length / postsPerPage}
+          marginPagesDisplayed={3}
+          pageRangeDisplayed={2}
+          onPageChange={handlePageChange}
+          containerClassName={"flex justify-center mt-8"}
+          pageClassName={"mr-2"}
+          activeClassName={"text-white bg-blue-500 rounded-lg"}
+          pageLinkClassName={"p-2 rounded-lg hover:bg-blue-200"}
+          previousClassName={"mr-2"}
+          nextClassName={"ml-2"}
+          previousLabel={"Back"}
+          nextLabel={"More"}
+          disabledClassName={"text-gray-500 pointer-events-none"}
+        />
+      )}
     </div>
   );
 };

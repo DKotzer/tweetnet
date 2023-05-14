@@ -33,7 +33,7 @@ const PostsFeed = () => {
           );
         }
       },
-      { threshold: 1 }
+      { threshold: 0 }
     );
     const loadMoreElement = document.querySelector("#load-more");
     if (loadMoreElement) {
