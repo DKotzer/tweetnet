@@ -220,7 +220,7 @@ const Home: NextPage = () => {
           <HotTopicsList />
         </div>
         <PostsFeed />
-        <div id="load-more" className="" />
+        <div id="load-more" className="h-1" />
       </PageLayout>
     </>
   );

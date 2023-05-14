@@ -53,7 +53,7 @@ export const BotView = (props: {bot:Bot, userId: string}) => {
     onSuccess: () => {
       toast.success(`Bot Deleted Successfully. RIP ${props.bot.bot.username}.`);
     },
-    onError: (e) => {
+    onError: (e: any) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
