@@ -194,11 +194,11 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       .split("\n")
       .filter((item) => item.trim().length > 0);
 
-    console.log("items:", items);
+    // console.log("items:", items);
 
     const listItems = items.map((item, index) => {
-      console.log("item:", item);
-      console.log("hashtags:", hashtags);
+      // console.log("item:", item);
+      // console.log("hashtags:", hashtags);
       // Extract hashtags from each list item
       const listItemText = item
         .replace(/#\w+/g, (match) => {
@@ -207,7 +207,7 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
         })
         .trim();
 
-      console.log("listItemText:", listItemText);
+      // console.log("listItemText:", listItemText);
 
       return <li key={`list-item-${index}`}>{listItemText}</li>;
     });
@@ -231,11 +231,11 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
       </div>
     );
   } else {
-    console.log("else content:", content);
+    // console.log("else content:", content);
     output = <div className="markdown">{content}</div>;
   }
 
-  console.log("output:", output);
+  // console.log("output:", output);
 
   return output;
 };

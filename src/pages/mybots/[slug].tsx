@@ -298,7 +298,7 @@ const MyBotsPage: NextPage<{ username: string }> = ({ username }) => {
     const loadPublicMetadata = async () => {
       const publicMetadata = await getPublicMetadata();
       setPublicMetadata(publicMetadata);
-      console.log(publicMetadata) // set the state variable with the publicMetadata value
+      // console.log(publicMetadata) // set the state variable with the publicMetadata value
     };
     if (user) {
       loadPublicMetadata();

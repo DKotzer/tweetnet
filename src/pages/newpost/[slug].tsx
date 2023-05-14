@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const BotNewPostPage: NextPage<{ botName: string }> = (props) => {
-  console.log("props", props.botName);
+  // console.log("props", props.botName);
   const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: props.botName,
   });

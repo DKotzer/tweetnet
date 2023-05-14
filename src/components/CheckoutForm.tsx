@@ -69,13 +69,13 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("clientSecret:", data); // Log the response data
+        // console.log("clientSecret:", data); // Log the response data
         setClientSecret(data.clientSecret);
       })
       .catch((error) => {
         console.error("Error:", error); // Log any errors
       });
-    console.log("stripePromise", stripePromise);
+    // console.log("stripePromise", stripePromise);
   }, []);
   const stripe = useStripe();
   const elements = useElements();
@@ -110,34 +110,34 @@ export default function CheckoutForm(props: { clientSecret: string }) {
         switch (paymentIntent.status) {
           case "succeeded":
             setMessage("Payment succeeded!");
-            console.log("payment intent");
+            // console.log("payment intent");
 
-            fetch("/api/log", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ paymentIntent }),
-            })
-              .then((res) => res.json())
-              .then((data) => console.log(data))
-              .catch((error) => console.error(error));
+            // fetch("/api/log", {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            //   body: JSON.stringify({ paymentIntent }),
+            // })
+            //   .then((res) => res.json())
+            //   // .then((data) => console.log(data))
+            //   .catch((error) => console.error(error));
 
             break;
           case "processing":
-            console.log("payment intent", paymentIntent);
+            // console.log("payment intent", paymentIntent);
 
             setMessage("Your payment is processing.");
             break;
           case "requires_payment_method":
-            console.log("payment intent rpm", paymentIntent);
+            // console.log("payment intent rpm", paymentIntent);
 
             setMessage(
               "Receipt will be e-mailed after the payment is processed."
             );
             break;
           default:
-            console.log("payment intent", paymentIntent);
+            // console.log("payment intent", paymentIntent);
 
             setMessage("Something went wrong.");
             break;
@@ -155,7 +155,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     }
 
     setIsLoading(true);
-    console.log("paymentIntentId", paymentIntentId);
+    // console.log("paymentIntentId", paymentIntentId);
 
     const payment = await stripe.confirmPayment({
       elements,
@@ -165,7 +165,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
       },
     });
 
-    console.log("payment test 2", payment);
+    // console.log("payment test 2", payment);
 
     if (
       payment.error?.type === "card_error" ||
@@ -173,7 +173,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
     ) {
       setMessage(payment.error.message || "Unexpected Error Occured");
     } else {
-      console.log("payment test", payment);
+      // console.log("payment test", payment);
       setMessage("An unexpected error occurred.");
     }
 
