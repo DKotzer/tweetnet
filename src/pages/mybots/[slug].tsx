@@ -59,7 +59,7 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <BotView bot={bot} key={bot.bot.username} />
+        <BotView bot={bot} key={bot.bot.username} userId={props.userId}/>
       ))}
     </div>
   );

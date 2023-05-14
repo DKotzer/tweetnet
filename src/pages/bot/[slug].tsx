@@ -138,7 +138,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
-        {data[0] && <BotView bot={data[0]} />}
+        {data[0] && <BotView bot={data[0]} key={data[0].bot.username} userId={""} />}
 
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}
