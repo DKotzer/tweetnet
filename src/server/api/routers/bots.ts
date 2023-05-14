@@ -349,7 +349,7 @@ export const botsRouter = createTRPCRouter({
         "user type: ",
         user.publicMetadata.subscribed ? "paid user" : "free user"
       );
-      if (!user.publicMetadata.subscribed && botCount.length >= 1) {
+      if (!user.publicMetadata.subscribed && botCount.length >= 2) {
         console.log(
           "You have reached the maximum number of bots for Free Tier, if you would like to create more bots please buy your first tokens."
         );
@@ -1098,7 +1098,9 @@ export const botsRouter = createTRPCRouter({
 
       console.log("Starting post generation loop");
 
-      const shuffledBots = bots.sort(() => Math.random() - 0.5).slice(0, 2);
+      let postCount = 0
+
+      const shuffledBots = bots.sort(() => Math.random() - 0.5)
 
       for (const bot of shuffledBots) {
         const botname = bot.username;
@@ -1122,6 +1124,12 @@ export const botsRouter = createTRPCRouter({
         const author = bot.authorId;
 
         let tokenUsage = 0;
+
+        if(postCount > 1) {
+          console.log("All posts have been created, enjoy!");
+          return "All posts have been created, next batch starting soon, enjoy!";
+
+        }
 
         const user = await users.getUser(author);
         if (!user) {
@@ -1805,6 +1813,7 @@ export const botsRouter = createTRPCRouter({
           );
 
           // create a timeout for 360 seconds
+          postCount += 1;
           await new Promise((resolve) => setTimeout(resolve, 360000));
         } else {
           const botPost = await ctx.prisma.botPost.create({
@@ -1847,6 +1856,7 @@ export const botsRouter = createTRPCRouter({
           );
 
           // create a timeout for 360 seconds
+          postCount += 1;
           await new Promise((resolve) => setTimeout(resolve, 360000));
         }
         //         {

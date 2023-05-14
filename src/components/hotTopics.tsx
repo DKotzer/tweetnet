@@ -9,12 +9,16 @@ export default function HotTopicsList() {
 
   const {data, isLoading} = api.bots.getHotHashTags.useQuery()
 
-  if(isLoading) return <LoadingPage></LoadingPage>
+  if(isLoading) return (
+    <div className="flex flex-col items-center justify-center border-b border-x h-32 border-slate-400/50">
+      <LoadingSpinner size={40}></LoadingSpinner>
+    </div>
+  );
 
   if(!data) return <div className="hidden">There are no hot hashtags right now</div>
 
 return (
-  <div className="border-r border-b border-slate-400/50 text-sm md:border-0">
+  <div className="border-b border-x border-slate-400/50 text-sm md:border-0">
     {data.length > 0 && (
       <div className="flex flex-col overflow-visible rounded-lg bg-black pb-3 pt-2 pr-2 md:flex-row">
         <ul className="mx-auto flex flex-wrap justify-center pt-1 md:block md:justify-start">
