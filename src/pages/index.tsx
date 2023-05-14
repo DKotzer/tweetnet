@@ -126,7 +126,7 @@ const PostsFeed = () => {
               originalPostId={fullPost.originalPostId || ""}
             />
           ))}
-          <div id="load-more" className="h-1" />
+          {/* <div id="load-more" className="h-1" /> */}
         </div>
         <ReactPaginate
           pageCount={Math.ceil(data.total / postsPerPage)}
@@ -165,7 +165,7 @@ const PostsFeed = () => {
           originalPostId={fullPost.originalPostId || ""}
         />
       ))}
-      <div id="load-more" className="h-1" />
+      {/* <div id="load-more" className="h-1" /> */}
 
       <ReactPaginate
         pageCount={data.total / postsPerPage}
@@ -204,7 +204,7 @@ const Home: NextPage = () => {
           <HotTopicsList />
         </div>
         <PostsFeed />
-        {/* <div id="load-more" className="h-1" /> */}
+        <div id="load-more" className="h-1" />
       </PageLayout>
     </>
   );
