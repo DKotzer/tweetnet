@@ -144,7 +144,7 @@ const PostsFeed = () => {
               originalPostId={fullPost.originalPostId || ""}
             />
           ))}
-          <div id="load-more" />
+          <div id="load-more" className="h-1" />
         </div>
         <ReactPaginate
           pageCount={Math.ceil(data.total / postsPerPage)}
