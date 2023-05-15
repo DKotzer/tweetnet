@@ -39,53 +39,34 @@ export const AdminBotView = (props: { user: User; password: string }) => {
   const [showModal, setShowModal] = useState(false); //delete button modal
   const [showBot, setShowBot] = useState(true);
 
-//   const { mutate, isLoading: isDeleting } = api.bots.deleteBot.useMutation({
-//     onSuccess: () => {
-//       toast.success(`Bot Deleted Successfully. RIP ${props.bot.bot.username}.`);
-//     },
-//     onError: (e: any) => {
-//       const errorMessage = e.data?.zodError?.fieldErrors.content;
-//       if (errorMessage && errorMessage[0]) {
-//         toast.error(errorMessage[0]);
-//       } else {
-//         toast.error("Failed to delete bot! Please try again later.");
-//       }
-//     },
-//   });
-  // console.log("tokens test", props.bot.bot.tokens);
-
-//   const handleDelete = (id: string, name: string) => {
-//     // Handle bot deletion logic here
-//     console.log(`Deleting bot: ${props.bot.bot.username}...`);
-//     // toast.success(`Deleting bot: ${props.bot.bot.username}...`);
-//     // Close the modal after deletion is complete
-//     setShowBot(false);
-//     setShowModal(false);
-//     mutate({ id: id, name: name });
-//     // api.bots.deleteBot.useQuery({ id });
-//   };
-  //   console.log("bot test", props.bot.bot);
   return (
     <div
-      className={`flex flex-col border-x border-b border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
+      className={`flex min-w-fit flex-col border border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
         !showBot && "hidden"
       }`}
-      key={props.user.username}
+      key={
+        props.user.username ||
+        (props.user.emailAddresses[0]?.emailAddress &&
+          props.user.emailAddresses[0].emailAddress.split("@")[0])
+      }
     >
+      <Image
+        src={props.user.profileImageUrl}
+        width={66}
+        height={66}
+        alt={"Profile Image"}
+        className="my-auto self-center rounded-full hover:scale-105 hover:ring"
+        quality={80}
+      />
       <div className="my-auto flex   ">
         {/* <Link href={`/bot/@${props.user.username}`}> */}
-        <Image
-          src={props.user.profileImageUrl}
-          width={46}
-          height={46}
-          alt={"Profile Image"}
-          className="my-auto self-center rounded-full hover:scale-105 hover:ring"
-          quality={80}
-        />
+
         {/* </Link> */}
 
         <div className="hoverUnderline my-auto ml-1.5 text-2xl font-bold text-slate-100 hover:scale-105">
-          {props.user.username}
+          {(props.user.emailAddresses[0]?.emailAddress &&
+            props.user.emailAddresses[0].emailAddress.split("@")[0]) ||
+            props.user.username}
         </div>
         <span className=" my-auto"></span>
       </div>
@@ -103,142 +84,42 @@ export const AdminBotView = (props: { user: User; password: string }) => {
             className="mr-1 inline hover:scale-105"
           />
         ) || "🪙"}
-        {props.user.publicMetadata.tokensLimit && props.user.publicMetadata.tokensLimit.toLocaleString(
-          "en",
-          {
+        {(props.user.publicMetadata.tokensLimit &&
+          props.user.publicMetadata.tokensUsed &&
+          (
+            props.user.publicMetadata.tokensLimit -
+            props.user.publicMetadata.tokensUsed
+          ).toLocaleString("en", {
             useGrouping: true,
-          }
-        ) || "150,000"}
+          })) ||
+          "150,000"}
+      </span>
+      <span className="mr-3 text-red-700 hover:scale-105">
+        {" "}
+        {(
+          <Image
+            src="/token.ico"
+            width={21}
+            height={21}
+            alt={"tokens"}
+            className="mr-1 inline hover:scale-105"
+          />
+        ) || "🪙"}
+        {(props.user.publicMetadata.tokensUsed &&
+          props.user.publicMetadata.tokensUsed.toLocaleString("en", {
+            useGrouping: true,
+          })) ||
+          "0"}
       </span>
       <span>
         💸
-        {`$${((Number(props.user.publicMetadata.tokensUsed || 0) / 1000) * 0.002 * 2.5).toFixed(2)}`}
+        {`$${(
+          (Number(props.user.publicMetadata.tokensUsed || 0) / 1000) *
+          0.002 *
+          2.5
+        ).toFixed(2)}`}
       </span>
       <div className="h-1"></div>
-      
-      {/* <div className="flex flex-col gap-1">
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
-            🎂
-          </span>{" "}
-          {props.bot.bot.age}
-          <span className="tooltiptext">Age</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            💼
-          </span>{" "}
-          {props.bot.bot.job}
-          <span className="tooltiptext">Job</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            🎓
-          </span>{" "}
-          {props.bot.bot.education}
-          <span className="tooltiptext">Education</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            🗺️
-          </span>{" "}
-          {props.bot.bot.location}
-          <span className="tooltiptext">Location</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            📈
-          </span>{" "}
-          {props.bot.bot.goals}
-          <span className="tooltiptext">Goals</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            👍
-          </span>{" "}
-          {props.bot.bot.likes}
-          <span className="tooltiptext">Likes</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100 ">
-            🎨
-          </span>{" "}
-          {props.bot.bot.hobbies}
-          <span className="tooltiptext">Hobbies</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default">
-          <span className=" rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100 ">
-            👎
-          </span>{" "}
-          {props.bot.bot.dislikes}
-          <span className="tooltiptext">Dislikes</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default ">
-          <span className="rounded-full bg-slate-400 p-1 hover:ring-2 hover:ring-slate-100  ">
-            🛌
-          </span>{" "}
-          {props.bot.bot.dreams}
-          <span className="tooltiptext">Dreams</span>
-        </span>
-        <br />
-
-        <span className="tooltip text-lg hover:scale-105 hover:cursor-default ">
-          <span className=" rounded-full bg-slate-400 p-1  hover:ring-2 hover:ring-slate-100  ">
-            😱
-          </span>{" "}
-          {props.bot.bot.fears}
-          <span className="tooltiptext">Fears</span>
-        </span>
-        <br /> */}
-        {/* {!showModal && (
-          <button
-            onClick={() => setShowModal(true)}
-            className="mx-auto mr-6 w-fit rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:scale-95 hover:bg-red-700 hover:ring-1 hover:ring-slate-400/50"
-          >
-            Delete Bot
-          </button>
-          // <span className="float-right rounded-xl p-2 ring ring-red-800 hover:scale-105 hover:cursor-not-allowed hover:bg-red-600">{`Delete ${props.bot.bot.username} `}</span>
-        )}
-        {showModal && (
-          <div className="flex flex-col">
-            <span className="float-right rounded-xl bg-red-500 p-2 text-center font-bold ring ring-red-800 hover:scale-105 hover:cursor-not-allowed hover:bg-red-600">
-              Confirm deletion of {props.bot.bot.username}{" "}
-            </span>
-            <div className="mx-auto flex flex-row pt-2">
-              <button
-                onClick={() =>
-                  handleDelete(props.bot.bot.id, props.bot.bot.username)
-                }
-                className="rounded-full bg-red-500 py-2 px-4 font-bold text-slate-100 hover:bg-red-700"
-              >
-                Delete
-              </button>{" "}
-              <button
-                onClick={() => setShowModal(false)}
-                className="rounded-full bg-blue-500 py-2 px-4 font-bold text-slate-100 hover:bg-blue-700"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        )} */}
-      {/* </div> */}
     </div>
   );
 };

@@ -10,17 +10,9 @@ export default function HotTopicsList() {
   const {data, isLoading} = api.bots.getHotHashTags.useQuery()
 
   if(isLoading) return (
-      <div className="border-b border-x border-slate-400/50 text-sm md:border-0">
-      <div className="flex flex-col overflow-visible rounded-lg bg-black pb-3 pt-2 pr-2 md:flex-row">
-        <ul className="mx-auto flex flex-wrap justify-center pt-1 md:block md:justify-start">
-          <li className="flex list-none whitespace-nowrap p-4 py-2 text-lg font-semibold capitalize text-white">
-            🔥️Topics🔥️
-          </li>
-        </ul>
-      <LoadingSpinner size={40}></LoadingSpinner>
-
-      </div>
-  </div>
+    <div className="mx-auto my-auto h-24 border-x  border-b border-slate-400/50 text-sm md:border-0">
+    
+    </div>
   );
 
   if(!data) return <div className="hidden"></div>

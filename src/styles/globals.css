@@ -328,3 +328,18 @@ ol p {
 }
 
 
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 1rem;
+  }
+
+  .user-grid .user-card {
+    word-wrap: break-word;
+  }
+
+  @media (max-width: 600px) {
+    .user-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }

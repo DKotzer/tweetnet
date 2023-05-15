@@ -14,131 +14,59 @@ import AdminBotView from "~/components/AdminBotView";
 import { InfoBox } from "~/components/info";
 import AdminUserView from "~/components/AdminUserView";
 
-const BotFeed = (props: { password: string }) => {
-  const { data: bots, isLoading } = api.bots.getAllBotsAdmin.useQuery({password: props.password});
+const BotFeed = (props: { password: string, bots: any }) => {
 
-  if (isLoading)
-    return (
-      <div className="w-screen md:w-[672px]">
-        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
 
-      </div>
-    );
-
-  if (!bots || bots.length === 0)
+  if (!props.bots || props.bots.length === 0)
     return (
       <div className="h-screen w-full border-x border-slate-400/50 md:w-[628px]">
         No bots found
       </div>
     );
 
-  // console.log("bots", bots);
+  // console.log("props.bots", props.bots);
 
   return (
     <div className="flex flex-col">
-      {bots.map((bot) => (
-        <AdminBotView bot={bot} key={bot.bot.username} password={props.password} />
+      {props.bots.map((bot: any) => (
+        <AdminBotView bot={bot} key={bot.username} password={props.password} />
       ))}
     </div>
   );
 };
 
-const AccountInfo = (props: { publicMetadata: any }) => {
+
+const UserFeed = (props: { password: string, users:any}) => {
+
+
+
+  if(!props.users)
   return (
-    <div className=" border-x border-slate-400/50  bg-slate-900/80">
-      <div className="flex flex-row justify-center gap-5 pl-5 pb-3 text-2xl">
-        <span className="whitespace-nowrap">
-          {" "}
-          Spent:{" "}
-          {(
-            <Image
-              src="/token.ico"
-              width={35}
-              height={35}
-              alt={"tokens"}
-              className="mr-1 inline hover:scale-110"
-            />
-          ) || "🪙"}{" "}
-          {props.publicMetadata.tokensUsed
-            ? props.publicMetadata.tokensUsed.toLocaleString("en", {
-                useGrouping: true,
-              })
-            : 0}
-        </span>
-        <span className="mr-16 hover:scale-105">
-          {" "}
-          {props.publicMetadata.tokensUsed && "💸"}
-          {props.publicMetadata.tokensUsed &&
-            `$${(
-              (Number(props.publicMetadata.tokensUsed) / 1000) *
-              0.002 *
-              2.5
-            ).toFixed(2)}`}
-        </span>
-        {/* <span>
-          Max 🪙:{" "}
-          {props.publicMetadata.tokensLimit.toLocaleString("en", {
-            useGrouping: true,
-          })}
-        </span> */}
-      </div>
-      <div className="pl-5 text-2xl"></div>
-      <Link href="/pay">
-        <button
-          className="checkoutButton bg-green-600 hover:scale-95 hover:bg-green-400 "
-          id="submit"
-        >
-          <span id="button-text">Buy Tokens</span>
-        </button>
-      </Link>
-      {/* <div className="pl-5 text-2xl">
-        Remaining 🪙:{" "}
-        {(
-          props.publicMetadata.tokensLimit - props.publicMetadata.tokensUsed
-        ).toLocaleString("en", {
-          useGrouping: true,
-        })}
-      </div> */}
-      {/* <div className="pl-5 text-2xl">
-        Account:{" "}
-        {(props?.publicMetadata?.subscribed && "Activated") || "Free Mode"}
-      </div> */}
-    </div>
-  );
-};
-
-const UserFeed = (props: { password: string }) => {
-  const { data: users, isLoading } = api.profile.getUsersList.useQuery({password:props.password})
-
-  if (isLoading)
-    return (
-      <div className="w-screen md:w-[672px]">
-        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
+    <div className="w-screen md:w-[672px]">
+        <div className="flex h-[340px] items-center justify-center border border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
       </div>
     );
-
-  if (!users || users.length === 0)
+    
+    if (!props.users || props.users.length === 0)
     return (
       <div className="h-screen w-full border-x border-slate-400/50 md:w-[628px]">
         No users found
       </div>
     );
-
-  // console.log("users", users);
-
-  return (
-    <div className="flex flex-col">
-      {users.map((user) => (
+    
+    // console.log("users", users);
+    
+    return (
+      <div className="user-grid">
+      {props.users.map((user: any) => (
         <AdminUserView
-          user={user}
-          key={user.username}
-          password={props.password}
+        user={user}
+        key={user.username}
+        password={props.password}
         />
-      ))}
+        ))}
     </div>
   );
 };
@@ -146,35 +74,30 @@ const UserFeed = (props: { password: string }) => {
 
 
 
-
-
-const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
-  
+const AdminPage: NextPage<{ password: string }> = ({ password }) => {
   const { user } = useUser();
-  const [publicMetadata, setPublicMetadata] = useState<any>(null);
+  const [isUserFeedMinimized, setUserFeedMinimized] = useState(false);
+  const [isBotFeedMinimized, setBotFeedMinimized] = useState(false);
+const [filterText, setFilterText] = useState("");
+const { data: users, isLoading } = api.profile.getUsersList.useQuery({
+  password: password,
+});
 
+  const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
+    password: password,
+  });
 
-  useEffect(() => {
-    const getPublicMetadata = async () => {
-      const publicMetadata = user?.publicMetadata;
+  
+  if (isLoading) {
+    // Handle loading state
+    return <LoadingPage />;
+  }
 
-   
-
-      return publicMetadata;
-    };
-    const loadPublicMetadata = async () => {
-      const publicMetadata = await getPublicMetadata();
-      setPublicMetadata(publicMetadata);
-      // console.log(publicMetadata) // set the state variable with the publicMetadata value
-    };
-    if (user) {
-      loadPublicMetadata();
-    }
-  }, [user]);
-
-  if (!user) return <LoadingPage />;
-
-  if (user.username && !user?.username.toLowerCase().includes('kotzer') ) {
+  if (
+    !user ||
+    (user?.username && !user?.username.toLowerCase().includes("kotzer"))
+  ) {
+    // Handle user not found or unauthorized
     return (
       <PageLayout>
         <div>You are not the admin, go away.</div>
@@ -182,37 +105,76 @@ const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
     );
   }
 
+  const toggleUserFeed = () => {
+    setUserFeedMinimized((prevValue) => !prevValue);
+  };
+
+  const toggleBotFeed = () => {
+    setBotFeedMinimized((prevValue) => !prevValue);
+  };
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterText(event.target.value);
+  };
+
+  const filteredUsers = users && users.filter((user) =>
+
+
+    (user.emailAddresses[0]?.emailAddress || user.username || "").toLowerCase().includes(filterText.toLowerCase())
+  );
 
   return (
     <>
-      <Head>
-        <title>Admin Page</title>
-      </Head>
-      <PageLayout>
-        <div className="flex w-full border-x border-slate-400/50 bg-slate-900/80">
-          <div className="flex w-full flex-col justify-center">
-            <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
-              {/* {`${
-            data?.username?.replace("@gmail.com", "") ??
-            data?.externalUsername?.replace("@gmail.com", "") ??
-            "unknown"
-          }'s`}{" "}
-          Bots{" "} */}
-              Admin
-              <span className="  relative  ml-auto overflow-visible">
-                <SearchBar />
-              </span>
-            </div>
-          </div>
+      {/* ... */}
+      {/* <InfoBox password={password} /> */}
+
+      {/* UserFeed Section */}
+      <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
+        Admin{" "}
+        <span className="relative ml-auto overflow-visible">
+          <SearchBar />
+        </span>
+      </div>
+      <div className="">
+        <div className="flex items-center">
+          <h2 className="text-xl font-semibold">Users</h2>
+          <button
+            onClick={toggleUserFeed}
+            className="ml-2 text-gray-500 hover:text-gray-700"
+          >
+            {isUserFeedMinimized ? "Expand" : "Minimize"}
+          </button>
+          <input
+            type="text"
+            value={filterText}
+            onChange={handleFilterChange}
+            placeholder="Filter by name"
+            className="ml-2 rounded-md border border-gray-300 px-2 py-1"
+          />
         </div>
-        <InfoBox password={password} />
-        <UserFeed password={password} />
-        <BotFeed password={password} />
-      </PageLayout>
+        {!isUserFeedMinimized && (
+          <UserFeed password={password} users={filteredUsers} />
+        )}
+      </div>
+
+      {/* BotFeed Section */}
+      <div className="">
+        <div className="flex items-center">
+          <h2 className="text-xl font-semibold">Bots</h2>
+          <button
+            onClick={toggleBotFeed}
+            className="ml-2 text-gray-500 hover:text-gray-700"
+          >
+            {isBotFeedMinimized ? "Expand" : "Minimize"}
+          </button>
+        </div>
+        {!isBotFeedMinimized && (
+          <BotFeed password={password} bots={bots} />
+        )}
+      </div>
     </>
   );
 };
-
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper();
 
@@ -233,4 +195,4 @@ export const getStaticPaths = () => {
   return { paths: [], fallback: "blocking" };
 };
 
-export default MyBotsPage;
+export default AdminPage;
