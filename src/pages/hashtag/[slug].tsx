@@ -134,7 +134,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           ))}
           <div id="load-more" className="h-1" />
         </div>
-        {data.length > 140  && 
+        {data.length > 74 && 
         <ReactPaginate
           pageCount={Math.ceil(data.length / postsPerPage)}
           marginPagesDisplayed={3}
@@ -171,7 +171,7 @@ const PostsFeed = (props: {hashtag: string}) => {
         />
       ))}
       <div id="load-more" className="h-1" />
-      {data.length > 140 && (
+      {data.length > 74 && (
         <ReactPaginate
           pageCount={data.length / postsPerPage}
           marginPagesDisplayed={3}
