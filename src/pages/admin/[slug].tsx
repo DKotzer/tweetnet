@@ -8,7 +8,6 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { BotView } from "~/components/botview";
 import { useUser } from "@clerk/nextjs";
 import SearchBar from "~/components/search";
 import AdminBotView from "~/components/AdminBotView";
@@ -17,7 +16,6 @@ import AdminUserView from "~/components/AdminUserView";
 
 const BotFeed = (props: { password: string }) => {
   const { data: bots, isLoading } = api.bots.getAllBotsAdmin.useQuery({password: props.password});
-  const [showModal, setShowModal] = useState(false);
 
   if (isLoading)
     return (
@@ -25,25 +23,7 @@ const BotFeed = (props: { password: string }) => {
         <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
-        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
-        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
-        <div className="flex h-[360px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
-        <div className=" flex  h-[355px] items-center justify-center border-x border-b border-slate-400/50">
-          <LoadingSpinner size={60} />
-        </div>
 
-        {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
-          
-        </div> */}
       </div>
     );
 
@@ -210,7 +190,7 @@ const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
       </Head>
       <PageLayout>
         <div className="flex w-full border-x border-slate-400/50 bg-slate-900/80">
-          <div className="flex flex-col w-full justify-center">
+          <div className="flex w-full flex-col justify-center">
             <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
               {/* {`${
             data?.username?.replace("@gmail.com", "") ??
@@ -222,11 +202,11 @@ const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
               <span className="  relative  ml-auto overflow-visible">
                 <SearchBar />
               </span>
-              <InfoBox password={password} />
             </div>
           </div>
         </div>
-
+        <InfoBox password={password} />
+        <UserFeed password={password} />
         <BotFeed password={password} />
       </PageLayout>
     </>
