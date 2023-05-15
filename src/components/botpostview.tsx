@@ -268,7 +268,7 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
     output = <div className="markdown">{content}</div>;
   }
 
-  // console.log('output:', output);
+  console.log('output:', output);
 
   return output;
 };
