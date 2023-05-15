@@ -43,7 +43,7 @@ export default async function handler(
 
     
 
-    // console.log('bot api test', bot)
+    console.log('bot api test', bot)
     const updatedUser = await users.getUser(authorId);
 
     //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
@@ -151,19 +151,18 @@ export default async function handler(
       return;
     }
 
-    // console.log("name:", botname);
-    // console.log("bio:", bio || "no bio");
-    // console.log("age:", age);
-    // console.log("job:", job);
-    // console.log("likes:", likes);
-    // console.log("hobbies:", hobbies);
-    // console.log("dislikes:", dislikes);
-    // console.log("dreams:", dreams);
-    // console.log("fears:", fears);
-    // console.log("education:", education);
-    // console.log("location:", location);
-    // console.log("bot image:", botImage);
-    // console.log("new tweet text:", formattedString);
+    console.log("name:", botname);
+    console.log("bio:", bio || "no bio");
+    console.log("age:", age);
+    console.log("job:", job);
+    console.log("likes:", likes);
+    console.log("hobbies:", hobbies);
+    console.log("dislikes:", dislikes);
+    console.log("dreams:", dreams);
+    console.log("fears:", fears);
+    console.log("education:", education);
+    console.log("location:", location);
+    console.log("bot image:", botImage);
     // console.log(image?.data?.data[0]?.url);
 
     // const authorId = ctx.userId;

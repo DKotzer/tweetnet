@@ -12,6 +12,8 @@ import { BotView } from "~/components/botview";
 import { useUser } from "@clerk/nextjs";
 import SearchBar from "~/components/search";
 import AdminBotView from "~/components/AdminBotView";
+import { InfoBox } from "~/components/info";
+import AdminUserView from "~/components/AdminUserView";
 
 const BotFeed = (props: { password: string }) => {
   const { data: bots, isLoading } = api.bots.getAllBotsAdmin.useQuery({password: props.password});
@@ -127,6 +129,44 @@ const AccountInfo = (props: { publicMetadata: any }) => {
   );
 };
 
+const UserFeed = (props: { password: string }) => {
+  const { data: users, isLoading } = api.profile.getUsersList.useQuery({password:props.password})
+
+  if (isLoading)
+    return (
+      <div className="w-screen md:w-[672px]">
+        <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
+          <LoadingSpinner size={60} />
+        </div>
+      </div>
+    );
+
+  if (!users || users.length === 0)
+    return (
+      <div className="h-screen w-full border-x border-slate-400/50 md:w-[628px]">
+        No users found
+      </div>
+    );
+
+  // console.log("users", users);
+
+  return (
+    <div className="flex flex-col">
+      {users.map((user) => (
+        <AdminUserView
+          user={user}
+          key={user.username}
+          password={props.password}
+        />
+      ))}
+    </div>
+  );
+};
+
+
+
+
+
 
 const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
   
@@ -154,7 +194,7 @@ const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
 
   if (!user) return <LoadingPage />;
 
-  if (user.username && !user?.username.toLowerCase().includes('dylan') ) {
+  if (user.username && !user?.username.toLowerCase().includes('kotzer') ) {
     return (
       <PageLayout>
         <div>You are not the admin, go away.</div>
@@ -178,10 +218,11 @@ const MyBotsPage: NextPage<{ password: string }> = ({ password }) => {
             "unknown"
           }'s`}{" "}
           Bots{" "} */}
-              All Bots
+              Admin
               <span className="  relative  ml-auto overflow-visible">
                 <SearchBar />
               </span>
+              <InfoBox password={password} />
             </div>
           </div>
         </div>
