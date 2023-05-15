@@ -29,7 +29,8 @@ const BotFeed = (props: { password: string, bots: any }) => {
   return (
     <div className="flex flex-col">
       {props.bots.map((bot: any) => (
-        <AdminBotView bot={bot} key={bot.username} password={props.password} />
+        <div>{bot.username}</div>
+        // <AdminBotView bot={bot} key={bot.username} password={props.password} />
       ))}
     </div>
   );
@@ -125,10 +126,6 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
 
   return (
     <>
-      {/* ... */}
-      {/* <InfoBox password={password} /> */}
-
-      {/* UserFeed Section */}
       <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
         Admin{" "}
         <span className="relative ml-auto overflow-visible">
