@@ -222,7 +222,26 @@ export const botsRouter = createTRPCRouter({
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const bots = await ctx.prisma.bot.findMany({
-      take: 100,
+      take: 500,
+      orderBy: [{ createdAt: "desc" }],
+    });
+
+    return addUserDataToPosts(bots);
+  }),
+
+  getAllBotsAdmin: publicProcedure.input(
+      z.object({
+        password: z.string(),
+      })
+    ).query(async ({ ctx, input }) => {
+      
+      if(input.password !== process.env.ADMIN_PASSWORD) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Incorrect Admin Password",
+        })
+    }
+    const bots = await ctx.prisma.bot.findMany({
       orderBy: [{ createdAt: "desc" }],
     });
 
@@ -561,12 +580,16 @@ export const botsRouter = createTRPCRouter({
       }
       // console.log("profile image :", image);
 
-      console.log("profile image creation status :", image?.status,":", image?.statusText)
+      console.log(
+        "profile image creation status :",
+        image?.status,
+        ":",
+        image?.statusText
+      );
 
       console.log(`img 1 cost: ${imageCost}}`);
 
       // console.log("profile image :", image)
-
 
       if (
         name === undefined ||
@@ -609,11 +632,10 @@ export const botsRouter = createTRPCRouter({
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const imageUrl = image?.data?.data[0]?.url;
 
-      if(!imageUrl) {
-        console.log("image creation failed, cancelling profile creation")
-        return
+      if (!imageUrl) {
+        console.log("image creation failed, cancelling profile creation");
+        return;
       }
-
 
       if (imageUrl) {
         https
@@ -655,8 +677,6 @@ export const botsRouter = createTRPCRouter({
       const totalCost = Number(imageCost) + Number(tokenUsage);
 
       console.log("profile creation cost + image:", totalCost);
-
-
 
       const bot = await ctx.prisma.bot.create({
         data: {
@@ -943,9 +963,9 @@ export const botsRouter = createTRPCRouter({
 
       console.log("Starting post generation loop");
 
-      let postCount = 0
+      let postCount = 0;
 
-      const shuffledBots = bots.sort(() => Math.random() - 0.5)
+      const shuffledBots = bots.sort(() => Math.random() - 0.5);
 
       for (const bot of shuffledBots) {
         const botname = bot.username;
@@ -970,10 +990,9 @@ export const botsRouter = createTRPCRouter({
 
         let tokenUsage = 0;
 
-        if(postCount > 1) {
+        if (postCount > 1) {
           console.log("All posts have been created, enjoy!");
           return "All posts have been created, next batch starting soon, enjoy!";
-
         }
 
         const user = await users.getUser(author);
@@ -1015,18 +1034,25 @@ export const botsRouter = createTRPCRouter({
         const holiday = getRandomHolidayWithinRange();
 
         //check of holiday is today
-        let holidayAlert = false
+        let holidayAlert = false;
         if (holiday?.date === new Date().toISOString().slice(0, 10)) {
-          console.log("holiday is today, increase change of using holidays template");
-          holidayAlert = true
+          console.log(
+            "holiday is today, increase change of using holidays template"
+          );
+          holidayAlert = true;
         }
 
         const holidaysTemplates = [
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
-          `<Message related to time between(either its coming up soon or just passed or currently is) ${holiday?.name} ${holiday?.date} relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${holiday?.name} depending on if its in the past, future, or present>`,
-        ]
-
+          `<Message related to time between(either its coming up soon or just passed or currently is) ${
+            holiday?.name
+          } ${
+            holiday?.date
+          } relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${
+            holiday?.name
+          } depending on if its in the past, future, or present>`,
+        ];
 
         const tweetTemplateStrings = [
           `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
@@ -1035,7 +1061,13 @@ export const botsRouter = createTRPCRouter({
           `I'm feeling grateful for < something related to ${likes} or ${dreams} > today!  What are you grateful for? `,
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
-          `<Message related to time between(either its coming up soon or just passed or currently is) ${holiday?.name} ${holiday?.date} relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${holiday?.name} depending on if its in the past, future, or present>`,
+          `<Message related to time between(either its coming up soon or just passed or currently is) ${
+            holiday?.name
+          } ${
+            holiday?.date
+          } relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${
+            holiday?.name
+          } depending on if its in the past, future, or present>`,
           `Share a funny or inspiring quote you would find interesting related to your < ${likes}, ${hobbies} or ${dreams} > and add some commentary or a question.`,
           `Write a short story about one of your goals based on your ${likes}, ${dreams} and ${job}`,
           `List three things you like (you like ${likes}) and three things you dislike (you dislike ${dislikes}) and challenge your followers to do the same.`,
@@ -1236,8 +1268,8 @@ export const botsRouter = createTRPCRouter({
           ...tweetTemplateStrings,
         ];
 
-        if(holidayAlert) {
-          console.log('holiday alert is true')
+        if (holidayAlert) {
+          console.log("holiday alert is true");
 
           tweetTemplates = [
             ...Array(20).fill(basicTemplate),
@@ -1245,8 +1277,7 @@ export const botsRouter = createTRPCRouter({
             ...tweetTemplateStrings,
           ];
 
-          console.log(tweetTemplates)
-
+          console.log(tweetTemplates);
         }
 
         const randomNumber = Math.floor(Math.random() * 6) + 1;
@@ -1866,13 +1897,12 @@ export const botsRouter = createTRPCRouter({
       return posts;
     }),
 
-  getHotHashTags: publicProcedure
-  .query(async ({ ctx }) => {
+  getHotHashTags: publicProcedure.query(async ({ ctx }) => {
     const botPosts = await ctx.prisma.botPost.findMany({
       orderBy: {
-        createdAt: 'desc' // Assuming createdAt field indicates the post's date
+        createdAt: "desc", // Assuming createdAt field indicates the post's date
       },
-      take: 2500
+      take: 2500,
     });
 
     const hashtagCount: { [key: string]: number } = {}; // Explicitly define the type
@@ -1892,7 +1922,9 @@ export const botsRouter = createTRPCRouter({
       });
     });
 
-    const sortedHashtags = Object.entries(hashtagCount).sort((a, b) => b[1] - a[1]);
+    const sortedHashtags = Object.entries(hashtagCount).sort(
+      (a, b) => b[1] - a[1]
+    );
 
     const top10Hashtags = sortedHashtags.slice(0, 10).map(([tag]) => tag);
 
