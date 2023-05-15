@@ -147,7 +147,7 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
 
   return (
     <>
-      <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
+      <div className="sticky top-0 z-50 flex h-fit w-full border-x border-b border-slate-400/50 bg-black/80 py-2.5 pl-11 text-2xl font-bold md:top-0 md:border-t">
         Admin{" "}
         <span className="relative ml-auto overflow-visible">
           <SearchBar />
