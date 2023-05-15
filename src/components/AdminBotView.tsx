@@ -78,7 +78,7 @@ export const AdminBotView = (props: { bot: Bot; password: string }) => {
   //   console.log("bot test", props.bot.bot);
   return (
     <div
-      className={`flex flex-col border-x border-b border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
+      className={`flex flex-col border border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
         !showBot && "hidden"
       }`}
       key={props.bot.bot.username}

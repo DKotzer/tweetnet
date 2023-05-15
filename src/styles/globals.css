@@ -334,12 +334,28 @@ ol p {
     grid-gap: 1rem;
   }
 
-  .user-grid .user-card {
+  .user-grid {
     word-wrap: break-word;
   }
 
   @media (max-width: 600px) {
     .user-grid {
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+
+  .bot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+    grid-gap: 1rem;
+  }
+
+  .bot-grid {
+    word-wrap: break-word;
+  }
+
+  @media (max-width: 600px) {
+    .bot-grid {
+      grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
     }
   }

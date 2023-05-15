@@ -27,7 +27,7 @@ const BotFeed = (props: { password: string, bots: any }) => {
   // console.log("props.bots", props.bots);
 
   return (
-    <div className="flex flex-col">
+    <div className="bot-grid">
       {props.bots.map((bot: any) => (
         <div className="p-3">
           {bot.username}
@@ -167,7 +167,7 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
             value={filterText}
             onChange={handleFilterChange}
             placeholder="Filter by name"
-            className="flex h-8 min-w-[10px] max-w-[150px] rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none hover:scale-105"
+            className="ml-5 flex h-8 min-w-[10px] max-w-[150px] rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none hover:scale-105"
           />
         </div>
         {!isUserFeedMinimized && (
@@ -190,7 +190,7 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
             value={botFilterText}
             onChange={handleBotFilterChange}
             placeholder="Filter by name"
-            className="flex h-8 min-w-[10px] max-w-[150px] rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none hover:scale-105"
+            className="ml-5 flex h-8 min-w-[10px] max-w-[150px] rounded-xl border border-slate-400/50 bg-transparent pl-5 outline-none hover:scale-105"
           />
         </div>
         {!isBotFeedMinimized && (

@@ -35,15 +35,11 @@ type User = {
 
 // };
 
-export const AdminBotView = (props: { user: User; password: string }) => {
-  const [showModal, setShowModal] = useState(false); //delete button modal
-  const [showBot, setShowBot] = useState(true);
+export const AdminUserView = (props: { user: User; password: string }) => {
 
   return (
     <div
-      className={`flex min-w-fit flex-col border border-slate-400/50 p-6 hover:bg-[#ffffff08] ${
-        !showBot && "hidden"
-      }`}
+      className={`flex min-w-fit flex-col border border-slate-400/50 p-6 hover:bg-[#ffffff08] `}
       key={
         props.user.username ||
         (props.user.emailAddresses[0]?.emailAddress &&
@@ -124,4 +120,4 @@ export const AdminBotView = (props: { user: User; password: string }) => {
   );
 };
 
-export default AdminBotView;
+export default AdminUserView;
