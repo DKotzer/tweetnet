@@ -83,13 +83,12 @@ const [filterText, setFilterText] = useState("");
 const { data: users, isLoading } = api.profile.getUsersList.useQuery({
   password: password,
 });
-
-  const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
-    password: password,
-  });
+const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
+  password: password,
+});
 
   
-  if (isLoading) {
+  if (isLoading || botsLoading) {
     // Handle loading state
     return <LoadingPage />;
   }
