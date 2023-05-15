@@ -65,6 +65,7 @@ export const AdminBotView = (props: { bot: Bot; password: string }) => {
   // console.log("tokens test", props.bot.bot.tokens);
 
   const handleDelete = (id: string, name: string) => {
+    
     // Handle bot deletion logic here
     console.log(`Deleting bot: ${props.bot.bot.username}...`);
     // toast.success(`Deleting bot: ${props.bot.bot.username}...`);

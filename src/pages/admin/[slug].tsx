@@ -57,7 +57,7 @@ const BotFeed = (props: { password: string }) => {
   return (
     <div className="flex flex-col">
       {bots.map((bot) => (
-        <AdminBotView bot={bot} key={bot.bot.username} userId={props.password} />
+        <AdminBotView bot={bot} key={bot.username} password={props.password} />
       ))}
     </div>
   );
