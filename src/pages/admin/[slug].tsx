@@ -29,7 +29,7 @@ const BotFeed = (props: { password: string, bots: any }) => {
   return (
     <div className="flex flex-col">
       {props.bots.map((bot: any) => (
-        <div>
+        <div className="p-3">
           {bot.username}
           <AdminBotView
             bot={bot}
@@ -86,9 +86,12 @@ const AdminPage: NextPage<{ password: string }> = ({ password }) => {
   const [isUserFeedMinimized, setUserFeedMinimized] = useState(false);
   const [isBotFeedMinimized, setBotFeedMinimized] = useState(false);
 const [filterText, setFilterText] = useState("");
+const [botFilterText, setBotFilterText] = useState("");
+
 const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
   password: password,
 });
+
 const { data: users, isLoading } = api.profile.getUsersList.useQuery({
   password: password,
 });
@@ -98,6 +101,7 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
     // Handle loading state
     return <LoadingPage />;
   }
+
 
   if (
     !user ||
@@ -123,11 +127,23 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
     setFilterText(event.target.value);
   };
 
+  const handleBotFilterChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setBotFilterText(event.target.value);
+  };
+
   const filteredUsers = users && users.filter((user) =>
 
 
     (user.emailAddresses[0]?.emailAddress || user.username || "").toLowerCase().includes(filterText.toLowerCase())
   );
+
+    const filteredBots =
+      bots &&
+      bots.filter((bot) =>
+        (bot.bot.username || "").toLowerCase().includes(botFilterText.toLowerCase())
+      );
 
   return (
     <>
@@ -169,10 +185,15 @@ const { data: users, isLoading } = api.profile.getUsersList.useQuery({
           >
             {isBotFeedMinimized ? "Expand" : "Minimize"}
           </button>
+          <input
+            type="text"
+            value={filterText}
+            onChange={handleBotFilterChange}
+            placeholder="Filter by name"
+            className="ml-2 rounded-md border border-gray-300 px-2 py-1"
+          />
         </div>
-        {!isBotFeedMinimized && (
-          <BotFeed password={password} bots={bots} />
-        )}
+        {!isBotFeedMinimized && <BotFeed password={password} bots={filteredBots} />}
       </div>
     </>
   );
