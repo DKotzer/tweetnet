@@ -3,8 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { users } from "@clerk/clerk-sdk-node";
 
-
-import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 export const profileRouter = createTRPCRouter({
@@ -38,6 +41,33 @@ export const profileRouter = createTRPCRouter({
       return filterUserForClient(user);
     }),
 
+  getUsersList: publicProcedure
+    .input(z.object({ password: z.string() }))
+    .query(async ({ input }) => {
+      if (input.password !== process.env.ADMIN_PASSWORD) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Incorrect Admin Password",
+        });
+      }
+      const users = await clerkClient.users.getUserList();
+
+      if (users && users.length === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Users not found",
+        });
+      }
+      return users;
+    }),
+
+  getUserCount: publicProcedure.query(async () => {
+    
+    const count= await clerkClient.users.getCount();
+
+    return count;
+  }),
+
   getPaymentById: publicProcedure
     .input(z.object({ paymentIntentId: z.string() }))
     .query(async ({ input }) => {
@@ -54,22 +84,18 @@ export const profileRouter = createTRPCRouter({
   getPaymentsByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-
       const paymentsList = ctx.prisma.payment.findMany({
         where: {
           authorId: input.userId as string,
         },
       });
 
-      console.log('paymentsList test',paymentsList)
+      console.log("paymentsList test", paymentsList);
 
-
-      
-      
       // console.log(input);
       // console.log("intents:", intents);
 
-      return paymentsList || []
+      return paymentsList || [];
     }),
 
   savePayment: privateProcedure
