@@ -29,8 +29,14 @@ const BotFeed = (props: { password: string, bots: any }) => {
   return (
     <div className="flex flex-col">
       {props.bots.map((bot: any) => (
-        <div>{bot.username}</div>
-        // <AdminBotView bot={bot} key={bot.username} password={props.password} />
+        <div>
+          {bot.username}
+          <AdminBotView
+            bot={bot}
+            key={bot.username}
+            password={props.password}
+          />
+        </div>
       ))}
     </div>
   );
@@ -80,10 +86,10 @@ const AdminPage: NextPage<{ password: string }> = ({ password }) => {
   const [isUserFeedMinimized, setUserFeedMinimized] = useState(false);
   const [isBotFeedMinimized, setBotFeedMinimized] = useState(false);
 const [filterText, setFilterText] = useState("");
-const { data: users, isLoading } = api.profile.getUsersList.useQuery({
+const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
   password: password,
 });
-const { data: bots, isLoading: botsLoading } = api.bots.getAllBotsAdmin.useQuery({
+const { data: users, isLoading } = api.profile.getUsersList.useQuery({
   password: password,
 });
 
