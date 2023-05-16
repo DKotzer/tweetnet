@@ -76,33 +76,36 @@ function getRandomHolidayWithinRange() {
     { name: "Pride", date: "June 15" },
     { name: "Black Friday", date: "November 26" },
     { name: "Cyber Monday", date: "November 29" },
+    { name: "National Donut Day", date: "June 4" },
+    { name: "National Ice Cream Day", date: "July 18" },
+    { name: "International Vegan Day", date: "November 1" },
   ];
 
- const currentDate = new Date();
- const startDate = new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000); // Subtract 10 days
- const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
+  const currentDate = new Date();
+  const startDate = new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000); // Subtract 10 days
+  const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
 
- const holidaysInRange = holidays.filter((holiday) => {
-   const holidayDateObj = new Date(holiday.date);
-   return holidayDateObj >= startDate && holidayDateObj <= endDate;
- });
-
- // Return a random holiday from the filtered list
- if (holidaysInRange.length > 0) {
-   const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
-   return holidaysInRange[randomIndex];
- } else {
-  //return the closest holiday if no holidays in range
-  const closestHoliday = holidays.reduce((a, b) => {
-    const aDate = new Date(a.date);
-    const bDate = new Date(b.date);
-    const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
-    const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
-    return aDiff < bDiff ? a : b;
+  const holidaysInRange = holidays.filter((holiday) => {
+    const holidayDate = holiday.date + ", " + new Date().getFullYear(); // Append the current year to the date string
+    const holidayDateObj = new Date(holidayDate);
+    return holidayDateObj >= startDate && holidayDateObj <= endDate;
   });
-  return closestHoliday;
- }
 
+  // Return a random holiday from the filtered list
+  if (holidaysInRange.length > 0) {
+    const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
+    return holidaysInRange[randomIndex];
+  } else {
+    //return the closest holiday if no holidays in range
+    const closestHoliday = holidays.reduce((a, b) => {
+      const aDate = new Date(a.date);
+      const bDate = new Date(b.date);
+      const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
+      const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
+      return aDiff < bDiff ? a : b;
+    });
+    return closestHoliday;
+  }
 }
 
 function getRandomHoliday() {
@@ -944,7 +947,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours in milliseconds
+            lt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours in milliseconds
           },
         },
       });
