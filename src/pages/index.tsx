@@ -11,9 +11,9 @@ import SearchBar from "~/components/search";
 import HotTopicsList from "~/components/hotTopics";
 
 const PostsFeed = () => {
-  const paginationCount = 80;
+  const paginationCount = 10;
   const [currentPage, setCurrentPage] = useState(0);
-  const postsPerPage = 80;
+  const postsPerPage = 100;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
   const [dylanLog, setDylanLog] = useState(true);
 
@@ -33,7 +33,7 @@ const PostsFeed = () => {
           );
         }
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "400px" }
     );
     const loadMoreElement = document.querySelector("#load-more");
     if (loadMoreElement) {

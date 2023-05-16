@@ -59,7 +59,7 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
     // Generate the hashtags section
     const hashtagsOutput = hashtags.map((hashtag, index) => (
       <React.Fragment key={`hashtag-${index}`}>
-        <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
+        <a className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
           #{hashtag}
         </a>{" "}
       </React.Fragment>
@@ -87,81 +87,88 @@ interface CustomTextProps {
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
-  let output;
 
-  let hashtags = [] as string[];
+  let hashtags: any = [];
+  const output =
+    content && content.length !== 0 ? (
+      <>
+        {content.split("\n").map((p, i) => {
+          let segments = p.split(/(\s+)/);
+          let paragraphOutput = [];
+          let tempHashtags: any = [];
 
-  if (content) {
-    const paragraphs = content
-      .split(/\n\n|\r\n\r\n/)
-      .filter((paragraph) => paragraph.trim() !== "");
+          for (let j = 0; j < segments.length; j++) {
+            let segment = segments[j];
+            let isHashtag = segment?.startsWith("#");
+            let hashtag = "";
 
-    output = paragraphs.map((paragraph, paragraphIndex) => {
-      const segments = paragraph.split(/(\s+)/);
-      const paragraphOutput = segments.map((segment, index) => {
-        if (segment.startsWith("#")) {
-          const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-          const hashtag = hashtagMatch ? hashtagMatch[0] : "";
-          if (hashtag === "") {
-            return (
-              <React.Fragment key={`segment-${index}`}>
-                {segment}
-              </React.Fragment>
-            );
-          } else {
-            hashtags.push(hashtag); // Collect hashtags for later use
-            return null;
+            if (isHashtag) {
+              const hashtagMatch = segment?.match(/#[a-zA-Z0-9_]*/);
+              hashtag = hashtagMatch ? `${hashtagMatch[0]}` : "";
+            }
+
+            if (hashtag && !tempHashtags.includes(hashtag)) {
+              if (
+                j === segments.length - 1 ||
+                !segments[j + 2]
+                  ?.charAt(0)
+                  .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/)
+              ) {
+                hashtags.push(hashtag);
+                tempHashtags.push(hashtag);
+              } else {
+                paragraphOutput.push(
+                  <React.Fragment key={`segment-${j}`}>
+                    <a
+                      className="hashTag"
+                      href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+                    >
+                      {hashtag}
+                    </a>{" "}
+                  </React.Fragment>
+                );
+              }
+            } else if (segment?.startsWith("@")) {
+              const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
+              const username = usernameMatch
+                ? `${usernameMatch[0].slice(1)}`
+                : "";
+
+              if (username === "") {
+                paragraphOutput.push(
+                  <React.Fragment key={`segment-${j}`}>
+                    {segment}
+                  </React.Fragment>
+                );
+              } else {
+                paragraphOutput.push(
+                  <React.Fragment key={`name-${j}`}>
+                    <a className="tweetName" href={`${baseURL}bot/${username}`}>
+                      {segment}
+                    </a>
+                  </React.Fragment>
+                );
+              }
+            } else {
+              paragraphOutput.push(
+                <React.Fragment key={`segment-${j}`}>{segment}</React.Fragment>
+              );
+            }
           }
-        } else if (segment.startsWith("@")) {
-          const match = segment.slice(1).match(/[a-zA-Z0-9_]*/);
-          const username = match ? match[0] : "";
-          if (username === "") {
-            return (
-              <React.Fragment key={`segment-${index}`}>
-                {segment}
-              </React.Fragment>
-            );
-          } else {
-            return (
-              <React.Fragment key={`name-${index}`}>
-                <a className="tweetName" href={`${baseURL}bot/@${username}`}>
-                  {segment}
-                </a>
-              </React.Fragment>
-            );
-          }
-        } else {
-          return (
-            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
-          );
-        }
-      });
 
-      return (
-        paragraph.trim() !== "" && (
-          <p
-            key={`paragraph-${paragraphIndex}`}
-            // style={{ whiteSpace: "pre-wrap" }}
-          >
-            {paragraphOutput}
-          </p>
-        )
-      );
-    });
-  } else {
-    output = content?.trim() !== "" && (
-      <React.Fragment>{content}</React.Fragment>
-    );
-  }
+          return <p key={`paragraph-${i}`}>{paragraphOutput}</p>;
+        })}
+      </>
+    ) : null;
 
   const hashtagsOutput =
     hashtags.length > 0 ? (
       <p className="hashtag-container">
-        {hashtags.map((hashtag, index) => (
+        {hashtags.map((hashtag: any, index: number) => (
           <React.Fragment key={`hashtag-${index}`}>
             {index > 0 && " "} {/* Add space between hashtags */}
-            <a className="hashTag" href={`${baseURL}hashtag/${hashtag}`}>
-              #{hashtag}
+            <a className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
+              {hashtag}
             </a>{" "}
             {/* Include "#" symbol and make it a link */}
           </React.Fragment>
@@ -495,7 +502,7 @@ export const BotPostViewCascade = (
               </Link> */}
             </span>
             <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
-              <Link href={`/bot/@${data.authorName}`}>
+              <Link href={`/bot/@${data.authorName}`} className="h-fit">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
                     src={data.authorImage || ""}

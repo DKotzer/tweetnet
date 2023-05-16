@@ -47,9 +47,9 @@ function getRandomHolidayWithinRange() {
     { name: "Easter", date: "April 4" },
     { name: "Mother's Day", date: "May 14" },
     { name: "Father's Day", date: "June 20" },
-    { name: "Independence Day", date: "July 4" },
+    { name: "Independence Day", date: "July 1" },
     { name: "Halloween", date: "October 31" },
-    { name: "Thanksgiving", date: "November 25" },
+    { name: "Thanksgiving", date: "October 9" },
     { name: "Christmas", date: "December 25" },
     { name: "Eid", date: "May 16" },
     { name: "Hanukkah", date: "December 12" },
@@ -58,8 +58,7 @@ function getRandomHolidayWithinRange() {
     { name: "Lunar New Year", date: "February 8" },
     { name: "Cinco de Mayo", date: "May 5" },
     { name: "Earth Day", date: "April 22" },
-    { name: "Good Friday", date: "April 8" },
-    { name: "Labor Day", date: "September 6" },
+    { name: "Labor Day", date: "September 4" },
     { name: "Martin Luther King Jr. Day", date: "January 17" },
     { name: "Memorial Day", date: "May 30" },
     { name: "Presidents' Day", date: "February 21" },
@@ -79,6 +78,7 @@ function getRandomHolidayWithinRange() {
     { name: "National Donut Day", date: "June 4" },
     { name: "National Ice Cream Day", date: "July 18" },
     { name: "International Vegan Day", date: "November 1" },
+    {name: "National Day for Truth and Reconciliation", date: "September 30"}
   ];
 
   const currentDate = new Date();
@@ -591,7 +591,10 @@ export const botsRouter = createTRPCRouter({
       );
       if(image?.statusText !== "OK") {
         console.log("image creation error")
-        return
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Image creation error ${image?.statusText}: ${image?.status}`,
+        });
       }
 
       console.log(`img 1 cost: ${imageCost}}`);
