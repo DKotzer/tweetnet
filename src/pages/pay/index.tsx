@@ -1,23 +1,17 @@
 import React from "react";
-import { loadStripe } from "@stripe/stripe-js";
+import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import { Elements, ElementProps } from "@stripe/react-stripe-js";
 import Image from "next/image";
-import type { Layout } from "@stripe/stripe-js";
 import { PageLayout } from "~/components/layout";
 
 import CheckoutForm from "../../components/CheckoutForm";
+import { TbRobot } from "react-icons/tb";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-// interface CustomPaymentElementOptions {
-//   layout?: {
-//     type: Layout;
-//     defaultCollapsed?: boolean;
-//   };
-//   // other properties of the options object
-// }
+
 
 export default function PaymentPage() {
   const [clientSecret, setClientSecret] = React.useState<string | undefined>(
@@ -41,7 +35,7 @@ export default function PaymentPage() {
   }, []);
 
   type Appearance = {
-    theme: "light" | "dark" | "night";
+    theme: "night" | "stripe" 
     [key: string]: any;
   };
 
@@ -54,12 +48,13 @@ export default function PaymentPage() {
   const appearance: Appearance = {
     theme: "night",
   };
-  const options: PaymentOptions | undefined = clientSecret
+
+  const options : StripeElementsOptions = clientSecret
     ? {
         clientSecret,
         appearance,
       }
-    : undefined;
+    : {};
 
   return (
     <PageLayout>
@@ -77,35 +72,32 @@ export default function PaymentPage() {
               blurDataURL={"/tweetnet.svg"}
             />
             <div className="mx-auto">
-              <a href="#">
-                <h5 className="justify-center text-xl font-semibold tracking-tight text-slate-100">
-                  <span className=" text-lg">
-                    {" "}
-                    {(
-                      <Image
-                        src="/token.ico"
-                        width={35}
-                        height={35}
-                        alt={"tokens"}
-                        className="mr-1 inline hover:scale-110"
-                      />
-                    ) || "🪙"}{" "}
-                    1,000,000
-                  </span>{" "}
-                  TweetNet Tokens
-                </h5>
-              </a>
+              <h5 className="justify-center text-xl font-semibold tracking-tight text-slate-100">
+                <span className=" text-lg">
+                  {" "}
+                  {(
+                    <Image
+                      src="/token.ico"
+                      width={35}
+                      height={35}
+                      alt={"tokens"}
+                      className="mr-1 inline hover:scale-110"
+                    />
+                  ) || "🪙"}{" "}
+                  1,000,000
+                </span>{" "}
+                TweetNet Tokens
+              </h5>
+              <h5 className="text-xl font-semibold tracking-tight text-slate-100 flex flex-row">
+                <TbRobot className="my-auto ml-1 mr-3" size={30} />
+                <span className=" text-lg">10 Bot Limit</span>{" "}
+              </h5>
 
               <div className="flex items-center justify-between">
-                <span className="text-3xl font-bold text-slate-100">
+                <span className="text-3xl mx-auto font-bold text-slate-100">
                   $5.00 (CAD) ✅
                 </span>
-                {/* <a
-              href="#"
-              className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Add to cart
-            </a> */}
+  
               </div>
             </div>
           </div>
@@ -121,60 +113,3 @@ export default function PaymentPage() {
 }
 
 
-     {
-       /* <div className="mt-2.5 mb-5 flex items-center">
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>First star</title>
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-              </svg>
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Second star</title>
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-              </svg>
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Third star</title>
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-              </svg>
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Fourth star</title>
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-              </svg>
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 text-yellow-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Fifth star</title>
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-              </svg>
-              <span className="mr-2 ml-3 rounded bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-800 dark:bg-blue-200 dark:text-blue-800">
-                5.0
-              </span>
-            </div> */
-     }

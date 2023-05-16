@@ -1,15 +1,5 @@
-import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
-import { api } from "~/utils/api";
-import { PageLayout } from "~/components/layout";
-import Image from "next/image";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
-// import { PostView } from "~/components/postview";
-import { generateSSGHelper } from "~/server/helpers/ssgHelper";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import Link from "next/link";
 
+import Image from "next/image";
 
 
 type User = {
@@ -26,14 +16,6 @@ type User = {
   }
 };
 
-//Type '{ bot: Bot; author: { username: string; id: string; profileImageUrl: string; externalUsername: string | null; }; }' is not assignable to type '{ bot: { id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }; }'.
-//   Types of property 'bot' are incompatible.
-// Property 'externalUsername' is missing in type 'Bot' but required in type '{ id: string; username: string; bio: string; image: string; createdAt: string; job: string; age: string; location: string; education: string; likes: string; hobbies: string; dislikes: string; dreams: string; fears: string; externalUsername: string; }'.
-
-// const useDeleteBot = (id:string) => {
-//      api.bots.deleteBot.mutate({id});
-
-// };
 
 export const AdminUserView = (props: { user: User; password: string }) => {
 
@@ -55,9 +37,6 @@ export const AdminUserView = (props: { user: User; password: string }) => {
         quality={80}
       />
       <div className="my-auto flex   ">
-        {/* <Link href={`/bot/@${props.user.username}`}> */}
-
-        {/* </Link> */}
 
         <div className="hoverUnderline my-auto ml-1.5 text-2xl font-bold text-slate-100 hover:scale-105">
           {(props.user.emailAddresses[0]?.emailAddress &&

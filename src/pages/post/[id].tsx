@@ -13,7 +13,7 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
   if (!data) return <div>404</div>;
   // console.log("data test", data);
 
-  //move replies data in to botpostview cascade and map the data as botpostviewcascades
+  //move replies data in to botpostview cascade and map the data as botpostviewcascade
 
   return (
     <>

@@ -1,10 +1,8 @@
-import { RouterOutputs, api } from "~/utils/api";
-
+import { api } from "~/utils/api";
 import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
-import ReactMarkdown, { Components } from "react-markdown";
-import { visit } from "unist-util-visit";
+import ReactMarkdown from "react-markdown";
 import React, { Fragment } from "react";
 
 
@@ -14,38 +12,6 @@ dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
-
-const transformSpanToP = () => {
-  return (tree: any) => {
-    visit(tree, "element", (node, index, parent) => {
-      if (node.tagName === "span") {
-        node.tagName = "p";
-      }
-    });
-  };
-};
-
-// const options = {
-//   formatHref: {
-//     hashtag: (href) => "https://twitter.com/hashtag/" + href.substr(1),
-//   },
-// };
-
-// const renderLink = ({ attributes, content }) => {
-//   const { href, ...props } = attributes;
-//   return (
-//     <Link to={href} {...props}>
-//       {content}
-//     </Link>
-//   );
-// };
-
-// const options = {
-//   formatHref: {
-//     hashtag: (href:any) => `https://${baseURL}hashtag/` + href.substr(1),
-//   },
-//    render: {hashtag: renderLink}, 
-// };
 
 interface CustomLiProps {
   children: React.ReactNode;
@@ -69,9 +35,9 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
           const hashtag = hashtagMatch ? hashtagMatch[0] : "";
           if (hashtag === "") {
             return (
-              <React.Fragment key={`segment-${index}`}>
+              <Fragment key={`segment-${index}`}>
                 {segment}
-              </React.Fragment>
+              </Fragment>
             );
           } else {
             hashtags.push(hashtag); // Collect hashtags for later use
@@ -79,7 +45,7 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
           }
         } else {
           return (
-            <React.Fragment key={`segment-${index}`}>{segment}</React.Fragment>
+            <Fragment key={`segment-${index}`}>{segment}</Fragment>
           );
         }
       });
@@ -91,9 +57,14 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
 
     // Generate the hashtags section
     const hashtagsOutput = hashtags.map((hashtag, index) => (
-      <React.Fragment key={`hashtag-${index}`}><a className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
-              #{hashtag}
-            </a> </React.Fragment>
+      <Fragment key={`hashtag-${index}`}>
+        <Link
+          className="hashTag"
+          href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+        >
+          #{hashtag}
+        </Link>{" "}
+      </Fragment>
     ));
 
     if (hashtags.length > 0) {
@@ -156,11 +127,11 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                tempHashtags.push(hashtag);
              } else {
                paragraphOutput.push(
-                 <React.Fragment key={`segment-${j}`}>
-                   <a className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
+                 <Fragment key={`segment-${j}`}>
+                   <Link className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
                      {hashtag}
-                   </a>{" "}
-                 </React.Fragment>
+                   </Link>{" "}
+                 </Fragment>
                );
              }
            }else if (segment?.startsWith("@")) {
@@ -171,20 +142,20 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
 
             if (username === "") {
               paragraphOutput.push(
-                <React.Fragment key={`segment-${j}`}>{segment}</React.Fragment>
+                <Fragment key={`segment-${j}`}>{segment}</Fragment>
               );
             } else {
               paragraphOutput.push(
-                <React.Fragment key={`name-${j}`}>
-                  <a className="tweetName" href={`${baseURL}bot/${username}`}>
+                <Fragment key={`name-${j}`}>
+                  <Link className="tweetName" href={`${baseURL}bot/${username}`}>
                     {segment}
-                  </a>
-                </React.Fragment>
+                  </Link>
+                </Fragment>
               );
             }
           }  else {
              paragraphOutput.push(
-               <React.Fragment key={`segment-${j}`}>{segment}</React.Fragment>
+               <Fragment key={`segment-${j}`}>{segment}</Fragment>
              );
            }
          }
@@ -197,14 +168,17 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const hashtagsOutput =
     hashtags.length > 0 ? (
       <p className="hashtag-container">
-        {hashtags.map((hashtag: any, index : number) => (
-          <React.Fragment key={`hashtag-${index}`}>
+        {hashtags.map((hashtag: any, index: number) => (
+          <Fragment key={`hashtag-${index}`}>
             {index > 0 && " "} {/* Add space between hashtags */}
-            <a className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
+            <Link
+              className="hashTag"
+              href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+            >
               {hashtag}
-            </a>{" "}
+            </Link>{" "}
             {/* Include "#" symbol and make it a link */}
-          </React.Fragment>
+          </Fragment>
         ))}
       </p>
     ) : null;
@@ -216,7 +190,6 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
     </div>
   );
 };
-
 
 
 interface CustomListProps {
@@ -288,8 +261,6 @@ type CustomComponents = {
   ul: React.FC<CustomListProps>;
   li: React.FC<CustomTextProps>;
 };
-
-
 
 
 
@@ -669,9 +640,7 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          {/* <Linkify as="div" options={options}>
-            {props.content} dylan@gmail.com @bob #test
-          </Linkify> */}
+  
 
           <ReactMarkdown
             // @ts-ignore

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LoadingPage, LoadingSpinner } from "./loading";
+import {  LoadingSpinner } from "./loading";
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { dark } from "@clerk/themes";
 import Image from "next/image";
 import {BiHomeCircle} from "react-icons/bi"
-// import {BsRobot} from "react-icons/bs"
 import {TbRobot} from "react-icons/tb"
 import {HiOutlineArrowLeftOnRectangle} from "react-icons/hi2"
 import HotTopicsList from "./hotTopics";

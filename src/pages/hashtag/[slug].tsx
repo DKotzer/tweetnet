@@ -2,20 +2,15 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
-import Image from "next/image";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
-// import { PostView } from "~/components/postview";
+import { LoadingSpinner } from "~/components/loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import Link from "next/link";
-import { BotView } from "~/components/botview";
 import ReactPaginate from "react-paginate";
 import { BotPostView } from "~/components/botpostview";
 import SearchBar from "~/components/search";
 
 const PostsFeed = (props: {hashtag: string}) => {
-  const paginationCount = 75;
+  const paginationCount = 10;
   const [currentPage, setCurrentPage] = useState(0);
   const postsPerPage = 150;
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
@@ -42,7 +37,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           );
         }
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "400px"  }
     );
     const loadMoreElement = document.querySelector("#load-more");
     if (loadMoreElement) {

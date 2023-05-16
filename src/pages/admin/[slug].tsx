@@ -1,21 +1,15 @@
 import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
-import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import Link from "next/link";
+import {  useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import SearchBar from "~/components/search";
 import AdminBotView from "~/components/AdminBotView";
-import { InfoBox } from "~/components/info";
 import AdminUserView from "~/components/AdminUserView";
 
 const BotFeed = (props: { password: string, bots: any }) => {
-
 
   if (!props.bots || props.bots.length === 0)
     return (
@@ -44,7 +38,6 @@ const BotFeed = (props: { password: string, bots: any }) => {
 
 
 const UserFeed = (props: { password: string, users:any}) => {
-
 
 
   if(!props.users)
@@ -77,8 +70,6 @@ const UserFeed = (props: { password: string, users:any}) => {
     </div>
   );
 };
-
-
 
 
 const AdminPage: NextPage<{ password: string }> = ({ password }) => {
@@ -204,9 +195,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper();
 
   const password = context.params?.slug;
-
-
-
 
   return {
     props: {
