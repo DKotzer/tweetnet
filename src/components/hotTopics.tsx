@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LoadingPage, LoadingSpinner } from "./loading";
 import { api } from "~/utils/api";
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;

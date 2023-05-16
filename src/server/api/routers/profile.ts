@@ -41,6 +41,18 @@ export const profileRouter = createTRPCRouter({
       return filterUserForClient(user);
     }),
 
+  getUserById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const [user] = await clerkClient.users.getUserList({
+        userId: [input.id],
+      });
+
+      if(!user ) { return}
+
+      return filterUserForClient(user);
+    }),
+
   getUsersList: publicProcedure
     .input(z.object({ password: z.string() }))
     .query(async ({ input }) => {
@@ -62,8 +74,7 @@ export const profileRouter = createTRPCRouter({
     }),
 
   getUserCount: publicProcedure.query(async () => {
-    
-    const count= await clerkClient.users.getCount();
+    const count = await clerkClient.users.getCount();
 
     return count;
   }),

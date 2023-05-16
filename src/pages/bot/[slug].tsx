@@ -4,10 +4,8 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
-import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { BotPostView } from "~/components/botpostview";
-import Link from "next/link";
 import BotView from "~/components/botview";
 import { useState } from "react";
 
@@ -97,10 +95,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="flex w-full border border-slate-400/50 ">
           {/* <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b md:border-t border-slate-400/50 bg-black/80 py-1 pl-11 text-2xl font-bold md:top-0"> */}
 
-          {/* <a
-            target="_blank"
-            href={`https://tweetbots.s3.amazonaws.com/${data[0]?.bot.username}`}
-          > */}
+   
           <div onClick={handleImageClick}>
             <Image
               src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}

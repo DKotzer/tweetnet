@@ -3,12 +3,8 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import {
   Elements,
-  PaymentElement,
-  LinkAuthenticationElement,
-  useStripe,
-  useElements,
 } from "@stripe/react-stripe-js";
-import type { GetStaticProps, NextPage } from "next";
+import type {  NextPage } from "next";
 import { loadStripe } from "@stripe/stripe-js";
 import { PageLayout } from "~/components/layout";
 import { useUser } from "@clerk/nextjs";
@@ -87,8 +83,8 @@ const PaymentForm = (props: {
          stripeId: paymentObj.data?.id || "",
          amount: paymentObj.data?.amount_received || 500,
          status: paymentObj.status || "failed",
-         secret: paymentObj.data?.client_secret || "nosecretfound",
-         receiptEmail: paymentObj.data?.receipt_email || "noemailfound",
+         secret: paymentObj.data?.client_secret || "no secret found",
+         receiptEmail: paymentObj.data?.receipt_email || "no email found",
          authorId: user?.id || "noUserFound" ,
          tokensBought: 1000000,
          currency: "cad",

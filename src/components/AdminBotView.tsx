@@ -1,11 +1,5 @@
-import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
 import { api } from "~/utils/api";
-import { PageLayout } from "~/components/layout";
 import Image from "next/image";
-import { LoadingPage, LoadingSpinner } from "~/components/loading";
-// import { PostView } from "~/components/postview";
-import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";

@@ -46,7 +46,7 @@ export default async function handler(
     console.log('bot api test', bot)
     const updatedUser = await users.getUser(authorId);
 
-    //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isnt
+    //not working for some reason, just ended up adding totalCost to the update lower down. - not catching the case where user is created but first post isn't
     await users.updateUser(authorId, {
       publicMetadata: {
         ...updatedUser.publicMetadata,
@@ -106,21 +106,6 @@ export default async function handler(
       newPost?.data?.choices[0]?.message?.content ||
       "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
-    // console.log("checkpoint");
-
-    // const firstPostImage: any = await replicate.run(
-    //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-    //   {
-    //     input: {
-    //       prompt: `An photograph representation of: ${formattedRes.slice(
-    //         0,
-    //         500
-    //       )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-    //       image_dimensions: "512x512",
-    //       negative_prompt: "No unentered portraits. No cut off foreheads.",
-    //     },
-    //   }
-    // );
 
     const firstPostImage = await openai.createImage({
       prompt: `An photograph representation of a social media post from a user that looks like ${description} with post content: ${formattedRes.slice(
@@ -134,7 +119,6 @@ export default async function handler(
     console.log(`img 2 cost: ${imageCost}`);
 
 
-    // console.log('test 66',botname, age, job,likes, hobbies, dislikes, dreams, fears, education, location)
     if (
       botname === undefined ||
       age === undefined ||
@@ -163,13 +147,7 @@ export default async function handler(
     console.log("education:", education);
     console.log("location:", location);
     console.log("bot image:", botImage);
-    // console.log(image?.data?.data[0]?.url);
 
-    // const authorId = ctx.userId;
-
-
-    // console.log("checkpoint 2");
-    //generate random uid key
     let randomKey = Math.random().toString(36).substring(2, 15);
 
     const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
@@ -209,18 +187,7 @@ export default async function handler(
         });
     }
 
-    // Download the image from the url
 
-    // const dataTest =  {
-    //     content: formattedRes,
-    //     botId: id,
-    //     authorImage: botImage,
-    //     authorName: botname,
-    //     postImage: postImage,
-    //     // bot: { connect: { id: id } },
-    // }
-
-    // console.log("first post data test:", dataTest);
 
     const regex = /#[\w]+/g;
     const hashtags = formattedRes.match(regex) || [];

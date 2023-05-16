@@ -5,7 +5,6 @@ import { useUser } from "@clerk/nextjs";
 
 import {
   PaymentElement,
-  LinkAuthenticationElement,
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
@@ -171,7 +170,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
       payment.error?.type === "card_error" ||
       payment.error?.type === "validation_error"
     ) {
-      setMessage(payment.error.message || "Unexpected Error Occured");
+      setMessage(payment.error.message || "Unexpected Error Occurred");
     } else {
       // console.log("payment test", payment);
       setMessage("An unexpected error occurred.");

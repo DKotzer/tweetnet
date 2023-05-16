@@ -1,5 +1,4 @@
 import { api } from "~/utils/api";
-import { useState } from "react";
 import { LoadingSpinner } from "./loading";
 
 export const InfoBox = (props:{password:string}) => {

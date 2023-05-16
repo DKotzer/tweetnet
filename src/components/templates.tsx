@@ -43,4 +43,4 @@ const templates = [
   },
 ];
 
-export default prompts;
+export default templates;
