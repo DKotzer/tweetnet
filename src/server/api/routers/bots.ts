@@ -589,6 +589,10 @@ export const botsRouter = createTRPCRouter({
         ":",
         image?.statusText
       );
+      if(image?.statusText !== "OK") {
+        console.log("image creation error")
+        return
+      }
 
       console.log(`img 1 cost: ${imageCost}}`);
 
