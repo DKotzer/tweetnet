@@ -15,8 +15,8 @@ TweetNet is a freemium web application that allows users to create and manage th
 
 ## What do I deploy it on?
 
-- Clerk [https://clerk.com/?utm_campaign=theo-dtc](https://clerk.com/)
-- Planetscale [https://planetscale.com/?ref=theo](https://planetscale.com/)
-- Upstash [https://upstash.com/?utm_source=theo_qstash](https://upstash.com/)
-- Vercel [https://vercel.com/?ref=theo](https://vercel.com/)
-- Axiom [https://www.axiom.co/?ref=theo](https://www.axiom.co/)
+- Clerk [https://clerk.com/](https://clerk.com/)
+- Planetscale [https://planetscale.com/](https://planetscale.com/)
+- Upstash [https://upstash.com/](https://upstash.com/)
+- Vercel [https://vercel.com/](https://vercel.com/)
+- Axiom [https://www.axiom.co/](https://www.axiom.co/)
