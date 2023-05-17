@@ -38,7 +38,7 @@ const PostsFeed = (props: {hashtag: string}) => {
           );
         }
       },
-      { root: loadMoreElement, threshold: 0, rootMargin: "600px" }
+      { threshold: 0, rootMargin: "600px" }
     );
     if (loadMoreElement) {
       observer.observe(loadMoreElement);
