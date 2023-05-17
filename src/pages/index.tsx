@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import SearchBar from "~/components/search";
 import HotTopicsList from "~/components/hotTopics";
 
+
+// This component displays a feed of posts and allows the user to load more posts
 const PostsFeed = () => {
   const paginationCount = 10;
   const [currentPage, setCurrentPage] = useState(0);
@@ -24,37 +26,45 @@ const PostsFeed = () => {
 
   
   useEffect(() => {
+    // Get the "load more" element
     const loadMoreElement = document.querySelector("#load-more");
+
+    // Create an intersection observer to detect when the "load more" element is visible
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0] && entries[0].isIntersecting) {
+          // Increase the number of visible posts when the "load more" element is visible
           setVisiblePosts(
             (prevVisiblePosts) => prevVisiblePosts + paginationCount
           );
         }
       },
-      {threshold: 0, rootMargin: "600px" }
+      { threshold: 0, rootMargin: "600px" }
     );
+
+    // Observe the "load more" element
     if (loadMoreElement) {
       observer.observe(loadMoreElement);
     }
+
+    // Disconnect the observer when the component unmounts
     return () => observer.disconnect();
   }, []);
 
   const handlePageChange = ({ selected }: { selected: number }) => {
+    // Scroll to the top of the page when the page changes
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Optional: Add smooth scrolling animation
+      behavior: "smooth", 
     });
-    // adjustPageHeight()
 
+    // Delay updating the current page to allow time for the scroll animation to complete
     setTimeout(() => {
       setCurrentPage(selected);
-    }, 1000); 
-
+    }, 1000);
   };
 
-  if (dylanLog) {
+  if (dylanLog) { 
     console.log(
       `%c
 8888888b.           888                       888    d8P           888                              
@@ -77,6 +87,8 @@ const PostsFeed = () => {
 
   ("");
 
+  
+  //display loading skeleton while loading
   if (isLoading)
     return (
       <div className="w-screen border-x border-slate-400/50 md:w-[670px]">
@@ -106,11 +118,12 @@ const PostsFeed = () => {
     );
   if (!data) return <div className="border-r h-screen border-slate-400/50">Please reload.</div>;
 
+  //display message if no posts
   if (!isLoading && data.posts.length < 1)
     return <div className="border-b border-r border-slate-400/50 h-screen">No one has posted yet</div>;
 
   
-
+  //display posts after loading is complete
   if (!isLoading && data.posts.length > 0)
     return (
       <>
