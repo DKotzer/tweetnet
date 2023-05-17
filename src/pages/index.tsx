@@ -22,8 +22,9 @@ const PostsFeed = () => {
   });
 
 
-
+  
   useEffect(() => {
+    const loadMoreElement = document.querySelector("#load-more");
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0] && entries[0].isIntersecting) {
@@ -32,9 +33,8 @@ const PostsFeed = () => {
           );
         }
       },
-      { threshold: 0, rootMargin: "400px" }
+      {root: loadMoreElement, threshold: 0, rootMargin: "600px" }
     );
-    const loadMoreElement = document.querySelector("#load-more");
     if (loadMoreElement) {
       observer.observe(loadMoreElement);
     }

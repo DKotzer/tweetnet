@@ -212,11 +212,17 @@ export const botsRouter = createTRPCRouter({
   getPostById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const post = await ctx.prisma.botPost.findFirst({
+      let post = await ctx.prisma.botPost.findFirst({
         where: { id: input.id },
       });
 
       if (!post) {
+
+        post = await ctx.prisma.botPost.findFirst({
+          where: { id: input.id },
+        });
+
+        console.log("POST NOT FOUND", input.id)
         return null;
       }
 
