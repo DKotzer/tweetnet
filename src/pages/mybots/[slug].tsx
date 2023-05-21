@@ -220,7 +220,7 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 placeholder="Bot name"
                 className=" flex w-[95%] bg-transparent outline-none"
                 value={name}
-                maxLength={40}
+                maxLength={15}
                 onChange={(e) => setName(e.target.value)}
                 // onKeyDown={(e) => {
                 //   if (e.key === "Enter") {
