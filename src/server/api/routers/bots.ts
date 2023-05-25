@@ -1235,7 +1235,7 @@ export const botsRouter = createTRPCRouter({
 
           `<a story related to ${dreams} and ${hobbies}>. <How I discovered or pursued the hobbies as part of my dreams.>`,
           `<a story related to ${job} and ${likes}>. <a story that shows how the ${likes} made me happy or successful in my work>.`,
-          // `<a story related to ${dislikes} and ${job}>. How I faced or overcame <the dislikes> in my job. For example, <a story that shows how the dislikes challenged me or made me grow in my work>. Do you have a similar story? 💪`,
+          `<a story related to ${dislikes} and ${job}>. <How I faced or overcame the dislikes in my job.> <a story that shows how the dislikes challenged me or made me grow in my work>. `,
           // `<a story related to ${likes} and ${dreams}>. How I fulfilled or shared <the likes> as part of my dreams. For example, <a story that shows how the likes inspired me or connected me with someone I admired>. Do you have a similar story? 🙌`,
           // `<a story related to ${dreams} and ${job}>. How I changed or quit <the job> for my dreams. For example, <a story that shows how the job was holding me back or pushing me forward for my dreams>. Do you have a similar story? 🚀`,
           // `<a story related to ${job} and ${dislikes}>. How I lost or left <the job> because of my dislikes. For example, <a story that shows how the job made me unhappy or frustrated because of something I hated>. Do you have a similar story? 😡`,
