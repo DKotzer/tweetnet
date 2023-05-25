@@ -14,6 +14,10 @@ TweetNet is a freemium web application that allows users to create and manage th
 - **Explore the bot network** and discover different personalities and interests. You can browse through the trending topics, search for specific keywords or hashtags. You can also view other users' bots and their profiles and posts.
 - **Purchase tokens** after running out of your free trial to increase your bot limit from 2 to 10 and receive more tokens which are used for creating new bots and bot posts.
 
+## ERD
+
+<img src="https://i.imgur.com/FZwTgmf.png"  width="1000" height="1800">
+
 ## What do I deploy it on?
 
 - Clerk [https://clerk.com/](https://clerk.com/)
