@@ -78,7 +78,7 @@ function getRandomHolidayWithinRange() {
     { name: "National Donut Day", date: "June 4" },
     { name: "National Ice Cream Day", date: "July 18" },
     { name: "International Vegan Day", date: "November 1" },
-    {name: "National Day for Truth and Reconciliation", date: "September 30"}
+    { name: "National Day for Truth and Reconciliation", date: "September 30" },
   ];
 
   const currentDate = new Date();
@@ -217,12 +217,11 @@ export const botsRouter = createTRPCRouter({
       });
 
       if (!post) {
-
         post = await ctx.prisma.botPost.findFirst({
           where: { id: input.id },
         });
 
-        console.log("POST NOT FOUND", input.id)
+        console.log("POST NOT FOUND", input.id);
         return null;
       }
 
@@ -238,24 +237,25 @@ export const botsRouter = createTRPCRouter({
     return addUserDataToPosts(bots);
   }),
 
-  getAllBotsAdmin: publicProcedure.input(
+  getAllBotsAdmin: publicProcedure
+    .input(
       z.object({
         password: z.string(),
       })
-    ).query(async ({ ctx, input }) => {
-      
-      if(input.password !== process.env.ADMIN_PASSWORD) {
+    )
+    .query(async ({ ctx, input }) => {
+      if (input.password !== process.env.ADMIN_PASSWORD) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Incorrect Admin Password",
-        })
-    }
-    const bots = await ctx.prisma.bot.findMany({
-      orderBy: [{ createdAt: "desc" }],
-    });
+        });
+      }
+      const bots = await ctx.prisma.bot.findMany({
+        orderBy: [{ createdAt: "desc" }],
+      });
 
-    return addUserDataToPosts(bots);
-  }),
+      return addUserDataToPosts(bots);
+    }),
 
   getAllPosts: publicProcedure
     .input(
@@ -595,8 +595,8 @@ export const botsRouter = createTRPCRouter({
         ":",
         image?.statusText
       );
-      if(image?.statusText !== "OK") {
-        console.log("image creation error")
+      if (image?.statusText !== "OK") {
+        console.log("image creation error");
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Image creation error ${image?.statusText}: ${image?.status}`,
@@ -1061,22 +1061,71 @@ export const botsRouter = createTRPCRouter({
         const holidaysTemplates = [
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
-          `<Message related to time between(either its coming up soon or just passed or currently is) ${
-            holiday?.name
-          } ${
-            holiday?.date
-          } relative to the current date ${Date.now().toLocaleString()}><Things I need to do or did do related to ${
-            holiday?.name
-          } depending on if its in the past, future, or present>`,
+          `<Greetings related to ${holiday?.name}>! <Shared memory related to the holiday>. <Question about followers' own holiday memories>`,
+          `<Reflection on the significance of ${holiday?.name}>. <Question about what this holiday means to followers>`,
+          `<Excitement for ${holiday?.name}>! <Personal anecdote about holiday traditions>. <Question about followers' favorite holiday tradition>`,
+          `<Well-wishes for ${holiday?.name}>! <Story about past holiday experiences>. <Prompt for followers' own unforgettable holiday stories>`,
+          `<Expression of holiday sentiments for ${holiday?.name}>. <Question about followers' plans to spread holiday cheer>`,
+          `<Warm greetings for ${holiday?.name}>! <Anecdote about holiday preparations>. <Inquiry about followers' preparations for the holiday>`,
+          `<Celebratory toast to ${holiday?.name}>! <Reflection on the holiday's meaning>. <Question about followers' interpretations of the holiday>`,
+          `<Joyous celebration of ${holiday?.name}>! <Discussion of holiday customs>. <Question about how followers keep the holiday traditions alive>`,
         ];
 
         const tweetTemplateStrings = [
+          `<Express a novel idea or observation in your unique style, derived from your personal experiences>`,
+
+          `<Share a thought-provoking quote or mantra that resonates with your life journey, without mentioning the journey itself>`,
+
+          `<Present an engaging question or discussion topic that aligns with your personal interests(${hobbies}) and beliefs, subtly reflecting your background>`,
+
+          `<Craft a humorous or witty comment that reveals your character's personality and worldview>`,
+
+          `<Convey a cryptic or metaphorical message that implies your life experiences, but leaves it open to interpretation>`,
+
+          `<Showcase an inspirational or motivational message in your own style, shaped by your life's trials and tribulations without directly stating them>`,
+
+          `<Narrate a day in your life using an interesting metaphor or simile, indirectly hinting at your personal background>`,
+
+          `<Create an intriguing riddle or puzzle that subtly represents your experiences or interests>`,
+
+          `<Express your opinion on a trending topic in a way that subtly shows your personal beliefs and values>`,
+
+          `<Describe an imaginary scenario or dream that aligns with your character's aspirations(${dreams}) or fears(${fears})>`,
+
+          `<Share a piece of advice or life lesson, subtly linked to your personal journey>`,
+
+          `<Pen a brief, enigmatic statement that encapsulates your character's philosophy without giving explicit details>`,
+
+          `<Craft a tongue-in-cheek observation about everyday life, colored by your unique perspective>`,
+
+          `<Spin a mini fictional tale that, while not directly about you, resonates with your life experiences>`,
+
+          `<Offer a fresh perspective on a common saying or idiom, revealing your unique interpretation>`,
+
+          `<Write a rhyming couplet or short poem that embodies the essence of your character without revealing specifics>`,
+
+          `<Imagine a scenario or event in the future that aligns with your personal aspirations or fears>`,
+
+          `<Comment on a universally shared human experience in a way that subtly reflects your personal journey>`,
+
+          `<Describe a significant moment of personal change or growth without going into specifics>`,
+
+          `<Craft a bold statement or declaration that indirectly speaks to your core values or beliefs>`,
+
+          `<Offer a unique take or commentary on a current event, subtly shaped by your background and perspectives>`,
+
+          `<Imagine a conversation with a famous figure, indirectly revealing your interests and philosophies>`,
+
+          `<Pose a thought-provoking hypothetical question that is inspired by your personal experiences or beliefs>`,
+
+          `<Make a subtle, indirect reference to a favorite book, movie, or song that has influenced your character>`,
+
+          `<Write a statement or phrase that could be a tagline for your character's life, without directly referencing your background>`,
+
           `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
           ` <Positive statement about TweetNet>. <Reason why TweetNet is better than twitter>. What do you like about TweetNet? `,
           `Greetings from ${location}! <Story that takes place in ${location} related to one of my ${hobbies}>. <Sentence or two about going to an event related to that hobby at/in ${location} <today/tomorrow/next week> >. `,
           `I'm feeling grateful for < something related to ${likes} or ${dreams} > today!  What are you grateful for? `,
-          `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
-          `Happy ${holiday?.name}! <Personal story about the holiday>. <Commentary on the holiday >. `,
           `<Message related to time between(either its coming up soon or just passed or currently is) ${
             holiday?.name
           } ${
@@ -1212,6 +1261,28 @@ export const botsRouter = createTRPCRouter({
           // `<a top 5 ordered list related to ${job} and ${likes}>. <What you should avoid about the likes> for your job. For example, <a list of top 5 errors or drawbacks of using or enjoying the likes in your job>. `,
           // `<a top 5 ordered list related to ${dislikes} and ${hobbies}>. <What you should avoid about the hobbies> for your dislikes. For example, <a list of top 5 complaints or problems of doing or not doing the hobbies for your dislikes>.`,
 
+          `<Joke relating to ${hobbies}>`,
+
+          `<Joke or humorous comment about ${job}>`,
+
+          `<Funny statement involving ${likes}>`,
+
+          `<Humorous commentary regarding ${dislikes}>`,
+
+          `<Joke around the theme of ${goals}>`,
+
+          `<Joke or fun anecdote related to being ${age} years old>`,
+          `<Setup of a long-form joke about ${hobbies}> <Punchline of the joke related to ${hobbies}>`,
+
+          `<Beginning of a humorous anecdote about working in ${job}> <Funny conclusion or punchline related to ${job}>`,
+
+          `<Introduction to a story showcasing your love for ${likes}> <Humorous twist related to ${likes}>`,
+
+          `<Start of a funny tale involving your ${dislikes}> <Comical ending or punchline related to ${dislikes}>`,
+
+          `<Beginning of a humorous narrative about pursuing ${goals}> <Funny outcome or punchline related to ${goals}>`,
+
+          `<Opening of a long-form joke about being ${age} years old> <Punchline of the joke about being ${age} years old>`,
           // `<a joke related to ${age} and ${hobbies}>. How I make fun of <the hobbies> for my age. For example, <a joke that shows how the hobbies are funny or ironic for my age>. `,
           // `<a joke related to ${dreams} and ${likes}>. How I make fun of <the likes> for my dreams. For example, <a joke that shows how the likes are funny or unrealistic for my dreams>. `,
           // `<a joke related to ${job} and ${dislikes}>. How I make fun of <the dislikes> for my job. For example, <a joke that shows how the dislikes are funny or annoying for my job>. `,
@@ -1288,9 +1359,8 @@ export const botsRouter = createTRPCRouter({
           console.log("holiday alert is true");
 
           tweetTemplates = [
-            ...Array(20).fill(basicTemplate),
-            ...Array(20).flatMap(() => holidaysTemplates),
-            ...tweetTemplateStrings,
+            ...tweetTemplates,
+            ...Array(10).flatMap(() => holidaysTemplates),
           ];
 
           console.log(tweetTemplates);
