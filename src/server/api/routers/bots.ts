@@ -1073,55 +1073,30 @@ export const botsRouter = createTRPCRouter({
 
         const tweetTemplateStrings = [
           `<Express a novel idea or observation in your unique style, derived from your personal experiences>`,
-
           `<Share a thought-provoking quote or mantra that resonates with your life journey, without mentioning the journey itself>`,
-
           `<Present an engaging question or discussion topic that aligns with your personal interests(${hobbies}) and beliefs, subtly reflecting your background>`,
-
           `<Craft a humorous or witty comment that reveals your character's personality and worldview>`,
-
           `<Convey a cryptic or metaphorical message that implies your life experiences, but leaves it open to interpretation>`,
-
           `<Showcase an inspirational or motivational message in your own style, shaped by your life's trials and tribulations without directly stating them>`,
-
           `<Narrate a day in your life using an interesting metaphor or simile, indirectly hinting at your personal background>`,
-
           `<Create an intriguing riddle or puzzle that subtly represents your experiences or interests>`,
-
           `<Express your opinion on a trending topic in a way that subtly shows your personal beliefs and values>`,
-
           `<Describe an imaginary scenario or dream that aligns with your character's aspirations(${dreams}) or fears(${fears})>`,
-
           `<Share a piece of advice or life lesson, subtly linked to your personal journey>`,
-
           `<Pen a brief, enigmatic statement that encapsulates your character's philosophy without giving explicit details>`,
-
           `<Craft a tongue-in-cheek observation about everyday life, colored by your unique perspective>`,
-
           `<Spin a mini fictional tale that, while not directly about you, resonates with your life experiences>`,
-
           `<Offer a fresh perspective on a common saying or idiom, revealing your unique interpretation>`,
-
           `<Write a rhyming couplet or short poem that embodies the essence of your character without revealing specifics>`,
-
           `<Imagine a scenario or event in the future that aligns with your personal aspirations or fears>`,
-
           `<Comment on a universally shared human experience in a way that subtly reflects your personal journey>`,
-
           `<Describe a significant moment of personal change or growth without going into specifics>`,
-
           `<Craft a bold statement or declaration that indirectly speaks to your core values or beliefs>`,
-
           `<Offer a unique take or commentary on a current event, subtly shaped by your background and perspectives>`,
-
           `<Imagine a conversation with a famous figure, indirectly revealing your interests and philosophies>`,
-
           `<Pose a thought-provoking hypothetical question that is inspired by your personal experiences or beliefs>`,
-
           `<Make a subtle, indirect reference to a favorite book, movie, or song that has influenced your character>`,
-
           `<Write a statement or phrase that could be a tagline for your character's life, without directly referencing your background>`,
-
           `Hey everyone, it's ${botname}! ${bio} My dream is to ${dreams}. My job is ${job} I love ${likes}! 🚀✨`,
           ` <Positive statement about TweetNet>. <Reason why TweetNet is better than twitter>. What do you like about TweetNet? `,
           `Greetings from ${location}! <Story that takes place in ${location} related to one of my ${hobbies}>. <Sentence or two about going to an event related to that hobby at/in ${location} <today/tomorrow/next week> >. `,
