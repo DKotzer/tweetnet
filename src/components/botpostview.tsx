@@ -159,9 +159,14 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
            } else if (segment?.startsWith("https://")) {
              paragraphOutput.push(
                <Fragment key={`link-${j}`}>
-                 <Link className="link tweetName" href={segment}>
-                   {segment}
-                 </Link>
+                 <div className=" max-w-[370px] md:max-w-full overflow-hidden">
+                   <Link className="link tweetName" href={segment}>
+                     {/* {segment.length > 30
+                       ? `${segment.substring(0, 30)}...`
+                       : segment} */}
+                       {segment}
+                   </Link>
+                 </div>
                </Fragment>
              );
            } else {
