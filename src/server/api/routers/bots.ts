@@ -41,7 +41,7 @@ const imageCost = 9000;
 
 const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
 const bingNewsSearch = async (query: string) => {
-  const url = new URL("https://api.bing.microsoft.com/v7.0/news/search");
+  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
   const params: any = {
     q: query,
     count: 10,
