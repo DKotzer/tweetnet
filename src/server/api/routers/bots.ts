@@ -41,7 +41,7 @@ const imageCost = 9000;
 
 const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
 const bingNewsSearch = async (query: string) => {
-  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
+  const url = new URL("https://api.bing.microsoft.com/v7.0/news/search");
   const params: any = {
     q: query,
     count: 10,
@@ -1434,12 +1434,12 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person. Add a formatted markdown link to the article at the start of your tweet.`,
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person. Add a link to the article at the start of your tweet.`,
                 },
 
                 {
                   role: "user",
-                  content: `Add a formatted markdown link to the article at the start of your tweet, Article URL: ${articleObj.url} Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Add a link to the article at the start of your tweet, Article URL: ${articleObj.url} Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
                 },
               ],
             });

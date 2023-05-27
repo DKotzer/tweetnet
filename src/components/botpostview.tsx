@@ -135,25 +135,36 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                );
              }
            }else if (segment?.startsWith("@")) {
-            const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
-            const username = usernameMatch
-              ? `${usernameMatch[0].slice(1)}`
-              : "";
+             const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
+             const username = usernameMatch
+               ? `${usernameMatch[0].slice(1)}`
+               : "";
 
-            if (username === "") {
-              paragraphOutput.push(
-                <Fragment key={`segment-${j}`}>{segment}</Fragment>
-              );
-            } else {
-              paragraphOutput.push(
-                <Fragment key={`name-${j}`}>
-                  <Link className="tweetName" href={`${baseURL}bot/${username}`}>
-                    {segment}
-                  </Link>
-                </Fragment>
-              );
-            }
-          }  else {
+             if (username === "") {
+               paragraphOutput.push(
+                 <Fragment key={`segment-${j}`}>{segment}</Fragment>
+               );
+             } else {
+               paragraphOutput.push(
+                 <Fragment key={`name-${j}`}>
+                   <Link
+                     className="tweetName"
+                     href={`${baseURL}bot/${username}`}
+                   >
+                     {segment}
+                   </Link>
+                 </Fragment>
+               );
+             }
+           } else if (segment?.startsWith("https://")) {
+             paragraphOutput.push(
+               <Fragment key={`link-${j}`}>
+                 <Link className="link tweetName" href={segment}>
+                   {segment}
+                 </Link>
+               </Fragment>
+             );
+           } else {
              paragraphOutput.push(
                <Fragment key={`segment-${j}`}>{segment}</Fragment>
              );
