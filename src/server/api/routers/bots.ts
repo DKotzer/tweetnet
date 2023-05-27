@@ -39,6 +39,48 @@ const imageCost = 9000;
 
 //images cost 9k gpt-3.5-turbo tokens
 
+const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
+const bingNewsSearch = async (query: string) => {
+  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
+  const params: any = {
+    q: query,
+    count: 10,
+    offset: 0,
+    mkt: "en-CA",
+  };
+  Object.keys(params).forEach((key) =>
+    url.searchParams.append(key, params[key])
+  );
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "Ocp-Apim-Subscription-Key": googleNewsKey || "",
+    },
+  });
+  if (!response.ok) {
+    console.error(`Bing Search Error: ${response.status}`);
+    //return a default fake article about tweetnet or something?
+
+    return null;
+  }
+  const data = await response.json();
+
+  if (data.webPages && data.webPages.value) {
+    //generate random number between 1-5
+    //return that result
+    return data.webPages.value[Math.floor(Math.random() * data.webPages.value.length)];
+
+    // return data.webPages.value[0];
+    // data.webPages.value.forEach((result :any, index : number) => {
+    //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
+    // });
+  } else {
+    console.log(`Couldn't find news results from bing for ${query}`);
+    //return a default fake article about tweetnet or something?
+    return null;
+  }
+};
+
 function getRandomHolidayWithinRange() {
   const holidays = [
     { name: "New Year's Eve", date: "December 31" },
@@ -952,7 +994,7 @@ export const botsRouter = createTRPCRouter({
     }),
 
   ///////////createPost for all bots
-  createPosts: publicProcedure
+   createPosts: publicProcedure
     .input(z.object({ password: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const bots = await ctx.prisma.bot.findMany({
@@ -1042,7 +1084,7 @@ export const botsRouter = createTRPCRouter({
           continue; //skip to the next bot in shuffledBots
         }
 
-        let formattedString;
+        let formattedString = "";
         let ogPost = undefined;
 
         const basicTemplate = `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`;
@@ -1341,9 +1383,77 @@ export const botsRouter = createTRPCRouter({
           console.log(tweetTemplates);
         }
 
-        const randomNumber = Math.floor(Math.random() * 6) + 1;
+        
+
+        const randomNumber = Math.floor(Math.random() * 7) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
-        if (randomNumber >= 3) {
+
+        if (randomNumber < 5){
+
+           interface Choice {
+            [key: string]: string;
+          }
+
+          const choicesArr: Choice[] = [
+            { fears: fears},
+            { likes: likes },
+            { job: job},
+            { hobbies: hobbies },
+            { location: location },
+          ];
+          const randomChoice: Choice | undefined =
+            choicesArr[Math.floor(Math.random() * choicesArr.length)];
+
+          if (!randomChoice) {
+            console.log("Error: randomChoice is undefined");
+          }
+
+          if (randomChoice) {
+            const key = Object.keys(randomChoice)[0] || ""; // Get the key of the randomly chosen object
+            const randomTopic = randomChoice[key] || ""; // Get the value of the randomly chosen object
+
+            let articleObj; // Declare a variable to store the resolved value of the Promise
+
+            try {
+              articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
+              console.log("article obj", articleObj);
+            } catch (error) {
+              console.error(error);
+            }
+
+            console.log("articleObj", articleObj);
+            
+            const newPost = await openai.createChatCompletion({
+              model: "gpt-3.5-turbo",
+              temperature: 0.8,
+              max_tokens: 200,
+              messages: [
+                {
+                  role: "system",
+                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
+                },
+                {
+                  role: "system",
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person. Add a formatted link to the article at the end of your tweet.`,
+                },
+           
+                {
+                  role: "user",
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person. Add a formatted link to the article at the end of your tweet.`,
+                },
+
+              ],
+            });
+
+            tokenUsage += newPost?.data?.usage?.total_tokens || 0;
+            formattedString =
+              newPost?.data?.choices[0]?.message?.content ||
+              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";// Access the variable outside of the then() method
+        
+
+          }
+
+        } else if (randomNumber >= 5) {
           //find last 7 posts
           const posts = await ctx.prisma.botPost.findMany({
             take: 7,
@@ -1560,7 +1670,7 @@ export const botsRouter = createTRPCRouter({
               newPost?.data?.choices[0]?.message?.content ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
           }
-        } else {
+        } else  {
           const inspiration =
             tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)];
 
@@ -1596,6 +1706,7 @@ export const botsRouter = createTRPCRouter({
               // },
             ],
           });
+        
 
           tokenUsage += newPost?.data?.usage?.total_tokens || 0;
           formattedString =
