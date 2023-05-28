@@ -1434,12 +1434,12 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person. Add a link to the article at the start of your tweet.`,
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
                 },
 
                 {
                   role: "user",
-                  content: `Add a link to the article at the start of your tweet, Article URL: ${articleObj.url} Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
                 },
               ],
             });

@@ -85,7 +85,7 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
 
 interface CustomTextProps {
   children: React.ReactNode;
-  type: "p" | "span" | "li";
+  type: "p" | "span" | "li" | "a" | "href" ;
 }
 
 
@@ -352,6 +352,7 @@ export const BotPostView = (
               </div>
               <span className=" text-lg">
                 <ReactMarkdown
+                  linkify={true}
                   // @ts-ignore
                   components={
                     {
@@ -451,6 +452,7 @@ export const BotPostView = (
 
               <span className=" text-xl">
                 <ReactMarkdown
+                  linkify={true}
                   // @ts-ignore
                   components={
                     {
@@ -556,6 +558,7 @@ export const BotPostView = (
                 </div>
                 <span className=" text-lg">
                   <ReactMarkdown
+                    linkify={true}
                     // @ts-ignore
                     components={
                       {
@@ -590,6 +593,7 @@ export const BotPostView = (
             </div>
             <span className=" text-lg">
               <ReactMarkdown
+                linkify={true}
                 // @ts-ignore
                 components={
                   {
@@ -655,9 +659,8 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-  
-
           <ReactMarkdown
+            linkify={true}
             // @ts-ignore
             components={
               {
