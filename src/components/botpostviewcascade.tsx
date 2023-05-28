@@ -163,7 +163,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                 <Fragment key={`link-${j}`}>
                   <div className=" max-w-[260px] overflow-hidden md:max-w-full">
                     <Link className="link tweetName" href={segment}>
-                      {segment.length > 30
+                      {segment.length > 150
                         ? `${segment.substring(0, 150)}...`
                         : segment}
                     </Link>
