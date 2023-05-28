@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import React, { Fragment } from "react";
+	
 
 
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -13,6 +14,25 @@ dayjs.extend(relativeTime);
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
 
+const transformLinkUri = (uri: string) => {
+  // Transform the link URI here
+  return uri;
+};
+
+
+// interface CustomLinkProps {
+//   href: string;
+//   title?: string;
+// }
+
+// const CustomLink: React.FC<CustomLinkProps> = ({ href, title }) => {
+//   return (
+//     <Link href={href}>
+//       <a>{title}</a>
+//     </Link>
+//   );
+// };
+
 interface CustomLiProps {
   children: React.ReactNode;
   type: "li";
@@ -21,6 +41,7 @@ interface CustomLiProps {
 const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output = [];
+
 
   let hashtags = [] as string[];
 
@@ -85,13 +106,13 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
 
 interface CustomTextProps {
   children: React.ReactNode;
-  type: "p" | "span" | "li" | "a" | "href" ;
+  type: "p" | "span" | "li" | "a" | "href" | "link" | "text";
 }
 
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
-
+console.log('content', content)
  let hashtags : any = [];
  const output =
    content && content.length !== 0 ? (
@@ -134,7 +155,8 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                  </Fragment>
                );
              }
-           }else if (segment?.startsWith("@")) {
+
+            } else if (segment?.startsWith("@")) {
              const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
              const username = usernameMatch
                ? `${usernameMatch[0].slice(1)}`
@@ -277,6 +299,18 @@ type CustomComponents = {
   li: React.FC<CustomTextProps>;
 };
 
+const renderers = {
+  text: CustomText,
+  paragraph: CustomText,
+  link: CustomText,
+  linkReference: CustomText,
+  image: CustomText,
+  imageReference: CustomText,
+  list: CustomList,
+  listItem: CustomLi,
+};
+
+
 
 
 type Post = {
@@ -351,14 +385,14 @@ export const BotPostView = (
                 </div>
               </div>
               <span className=" text-lg">
-                <ReactMarkdown
-                  linkify={true}
+                <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
                   // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomLi,
+                      a: CustomText,
                     } as CustomComponents
                   }
                 >
@@ -451,14 +485,14 @@ export const BotPostView = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown
-                  linkify={true}
+                <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
                   // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomLi,
+                      a: CustomText,
                     } as CustomComponents
                   }
                 >
@@ -488,6 +522,8 @@ export const BotPostView = (
         </div>
       );
     }
+
+
 
     return (
       <div className="botPostView hover:bg-[#ffffff08]">
@@ -557,14 +593,14 @@ export const BotPostView = (
                   </span>
                 </div>
                 <span className=" text-lg">
-                  <ReactMarkdown
-                    linkify={true}
+                  <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
                     // @ts-ignore
                     components={
                       {
                         p: CustomText,
                         ul: CustomList,
                         li: CustomLi,
+                        a: CustomText,
                       } as CustomComponents
                     }
                   >
@@ -592,14 +628,14 @@ export const BotPostView = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown
-                linkify={true}
+              <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
                 // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
                     li: CustomLi,
+                    a: CustomText,
                   } as CustomComponents
                 }
               >
@@ -627,6 +663,7 @@ export const BotPostView = (
       </div>
     );
   }
+      console.log("data test", props.content);
   return (
     <div
       key={props.id}
@@ -659,14 +696,14 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          <ReactMarkdown
-            linkify={true}
+          <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
             // @ts-ignore
             components={
               {
                 p: CustomText,
                 ul: CustomList,
                 li: CustomLi,
+                href: CustomText,
               } as CustomComponents
             }
           >
