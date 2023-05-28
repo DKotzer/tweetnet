@@ -81,14 +81,14 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
   return <span>{output}</span>;
 };
 
+
 interface CustomTextProps {
   children: React.ReactNode;
-  type: "p" | "span" | "li";
+  type: "p" | "span" | "li" | "a" | "href" ;
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
-
   let hashtags: any = [];
   const output =
     content && content.length !== 0 ? (
@@ -113,19 +113,23 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                 j === segments.length - 1 ||
                 !segments[j + 2]
                   ?.charAt(0)
-                  .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/)
+                  .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/) ||
+                !segments[j + 2] ||
+                segments[j + 2]?.startsWith("https://") ||
+                segments[j + 2]?.toLowerCase().startsWith("article") ||
+                segments[j + 2]?.toLowerCase().startsWith("url")
               ) {
                 hashtags.push(hashtag);
                 tempHashtags.push(hashtag);
               } else {
                 paragraphOutput.push(
                   <Fragment key={`segment-${j}`}>
-                    <Link 
+                    <Link
                       className="hashTag"
                       href={`${baseURL}hashtag/${hashtag.substring(1)}`}
                     >
                       {hashtag}
-                    </Link >{" "}
+                    </Link>{" "}
                   </Fragment>
                 );
               }
@@ -137,9 +141,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
 
               if (username === "") {
                 paragraphOutput.push(
-                  <Fragment key={`segment-${j}`}>
-                    {segment}
-                  </Fragment>
+                  <Fragment key={`segment-${j}`}>{segment}</Fragment>
                 );
               } else {
                 paragraphOutput.push(
@@ -153,6 +155,21 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                   </Fragment>
                 );
               }
+            } else if (segment?.startsWith("https://")) {
+              if (segment?.endsWith("'") || segment?.endsWith('"')) {
+                segment = segment.slice(0, -1);
+              }
+              paragraphOutput.push(
+                <Fragment key={`link-${j}`}>
+                  <div className=" max-w-[260px] overflow-hidden md:max-w-full">
+                    <Link className="link tweetName" href={segment}>
+                      {segment.length > 30
+                        ? `${segment.substring(0, 150)}...`
+                        : segment}
+                    </Link>
+                  </div>
+                </Fragment>
+              );
             } else {
               paragraphOutput.push(
                 <Fragment key={`segment-${j}`}>{segment}</Fragment>
@@ -162,33 +179,27 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
 
           return <p key={`paragraph-${i}`}>{paragraphOutput}</p>;
         })}
+
+        {hashtags.length > 0 && (
+          <p className="hashtag-container">
+            {hashtags.map((hashtag: any, index: number) => (
+              <Fragment key={`hashtag-${index}`}>
+                {index > 0 && " "} {/* Add space between hashtags */}
+                <Link
+                  className="hashTag"
+                  href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+                >
+                  {hashtag}
+                </Link>{" "}
+                {/* Include "#" symbol and make it a link */}
+              </Fragment>
+            ))}
+          </p>
+        )}
       </>
     ) : null;
 
-  const hashtagsOutput =
-    hashtags.length > 0 ? (
-      <p className="hashtag-container">
-        {hashtags.map((hashtag: any, index: number) => (
-          <Fragment key={`hashtag-${index}`}>
-            {index > 0 && " "} {/* Add space between hashtags */}
-            <Link
-              className="hashTag"
-              href={`${baseURL}hashtag/${hashtag.substring(1)}`}
-            >
-              {hashtag}
-            </Link>{" "}
-            {/* Include "#" symbol and make it a link */}
-          </Fragment>
-        ))}
-      </p>
-    ) : null;
-
-  return (
-    <div className="markdown text-lg">
-      {output}
-      {hashtagsOutput}
-    </div>
-  );
+  return <div className="markdown text-lg">{output}</div>;
 };
 
 interface CustomListProps {

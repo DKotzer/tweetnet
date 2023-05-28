@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown";
 import React, { Fragment } from "react";
 	
 
-
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
 dayjs.extend(relativeTime);
@@ -109,123 +108,127 @@ interface CustomTextProps {
   type: "p" | "span" | "li" | "a" | "href" | "link" | "text";
 }
 
-
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
   const content = (children as string[])[0];
-console.log('content', content)
- let hashtags : any = [];
- const output =
-   content && content.length !== 0 ? (
-     <>
-       {content.split("\n").map((p, i) => {
-         let segments = p.split(/(\s+)/);
-         let paragraphOutput = [];
-         let tempHashtags : any = [];
+  let hashtags: any = [];
+  const output =
+    content && content.length !== 0 ? (
+      <>
+        {content.split("\n").map((p, i) => {
+          let segments = p.split(/(\s+)/);
+          let paragraphOutput = [];
+          let tempHashtags: any = [];
 
-         for (let j = 0; j < segments.length; j++) {
-           let segment = segments[j];
-           let isHashtag = segment?.startsWith("#");
-           let hashtag = "";
+          for (let j = 0; j < segments.length; j++) {
+            let segment = segments[j];
+            let isHashtag = segment?.startsWith("#");
+            let hashtag = "";
 
-           if (isHashtag) {
-               const hashtagMatch = segment?.match(/#[a-zA-Z0-9_]*/);
-               hashtag = hashtagMatch ? `${hashtagMatch[0]}` : "";
-           }
+            if (isHashtag) {
+              const hashtagMatch = segment?.match(/#[a-zA-Z0-9_]*/);
+              hashtag = hashtagMatch ? `${hashtagMatch[0]}` : "";
+            }
 
-           
+            if (
+              hashtag &&
+              !tempHashtags.includes(hashtag)
+              
+            ) {
 
-           if (
-             hashtag &&
-             !tempHashtags.includes(hashtag) 
-           ) {
              if (
                j === segments.length - 1 ||
                !segments[j + 2]
                  ?.charAt(0)
-                 .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/)
+                 .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/) ||
+               !segments[j + 2] ||
+               segments[j + 2]?.startsWith("https://") ||
+               segments[j + 2]?.toLowerCase().startsWith("article") ||
+               segments[j + 2]?.toLowerCase().startsWith("url")
              ) {
                hashtags.push(hashtag);
                tempHashtags.push(hashtag);
              } else {
                paragraphOutput.push(
                  <Fragment key={`segment-${j}`}>
-                   <Link className="hashTag" href={`${baseURL}hashtag/${hashtag.substring(1)}`}>
+                   <Link
+                     className="hashTag"
+                     href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+                   >
                      {hashtag}
                    </Link>{" "}
                  </Fragment>
                );
              }
-
             } else if (segment?.startsWith("@")) {
-             const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
-             const username = usernameMatch
-               ? `${usernameMatch[0].slice(1)}`
-               : "";
+              const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
+              const username = usernameMatch
+                ? `${usernameMatch[0].slice(1)}`
+                : "";
 
-             if (username === "") {
-               paragraphOutput.push(
-                 <Fragment key={`segment-${j}`}>{segment}</Fragment>
-               );
-             } else {
-               paragraphOutput.push(
-                 <Fragment key={`name-${j}`}>
-                   <Link
-                     className="tweetName"
-                     href={`${baseURL}bot/${username}`}
-                   >
-                     {segment}
-                   </Link>
-                 </Fragment>
-               );
-             }
-           } else if (segment?.startsWith("https://")) {
-             paragraphOutput.push(
-               <Fragment key={`link-${j}`}>
-                 <div className=" max-w-[260px] md:max-w-full overflow-hidden">
-                   <Link className="link tweetName" href={segment}>
-                     {segment.length > 30
-                       ? `${segment.substring(0, 150)}...`
-                       : segment}
-                   </Link>
-                 </div>
-               </Fragment>
-             );
-           } else {
-             paragraphOutput.push(
-               <Fragment key={`segment-${j}`}>{segment}</Fragment>
-             );
-           }
-         }
+              if (username === "") {
+                paragraphOutput.push(
+                  <Fragment key={`segment-${j}`}>{segment}</Fragment>
+                );
+              } else {
+                paragraphOutput.push(
+                  <Fragment key={`name-${j}`}>
+                    <Link
+                      className="tweetName"
+                      href={`${baseURL}bot/${username}`}
+                    >
+                      {segment}
+                    </Link>
+                  </Fragment>
+                );
+              }
+            } else if (segment?.startsWith("https://")) {
 
-         return <p key={`paragraph-${i}`}>{paragraphOutput}</p>;
-       })}
-     </>
-   ) : null;
+            if (segment?.endsWith("'") || segment?.endsWith('"')) {
+              segment = segment.slice(0, -1);
+             
+            }  
+              paragraphOutput.push(
+                <Fragment key={`link-${j}`}>
+                  <div className=" max-w-[260px] overflow-hidden md:max-w-full">
+                    <Link className="link tweetName" href={segment}>
+                      {segment.length > 30
+                        ? `${segment.substring(0, 150)}...`
+                        : segment}
+                    </Link>
+                  </div>
+                </Fragment>
+              );
+                      
+            } else {
+              paragraphOutput.push(
+                <Fragment key={`segment-${j}`}>{segment}</Fragment>
+              );
+            }
+          }
 
-  const hashtagsOutput =
-    hashtags.length > 0 ? (
-      <p className="hashtag-container">
-        {hashtags.map((hashtag: any, index: number) => (
-          <Fragment key={`hashtag-${index}`}>
-            {index > 0 && " "} {/* Add space between hashtags */}
-            <Link
-              className="hashTag"
-              href={`${baseURL}hashtag/${hashtag.substring(1)}`}
-            >
-              {hashtag}
-            </Link>{" "}
-            {/* Include "#" symbol and make it a link */}
-          </Fragment>
-        ))}
-      </p>
+          return <p key={`paragraph-${i}`}>{paragraphOutput}</p>;
+        })}
+
+        {hashtags.length > 0 && (
+          <p className="hashtag-container">
+            {hashtags.map((hashtag: any, index: number) => (
+              <Fragment key={`hashtag-${index}`}>
+                {index > 0 && " "} {/* Add space between hashtags */}
+                <Link
+                  className="hashTag"
+                  href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+                >
+                  {hashtag}
+                </Link>{" "}
+                {/* Include "#" symbol and make it a link */}
+              </Fragment>
+            ))}
+          </p>
+        )}
+      </>
     ) : null;
 
-  return (
-    <div className="markdown text-lg">
-      {output}
-      {hashtagsOutput}
-    </div>
-  );
+  return <div className="markdown text-lg">{output}</div>;
 };
 
 
@@ -663,7 +666,6 @@ export const BotPostView = (
       </div>
     );
   }
-      console.log("data test", props.content);
   return (
     <div
       key={props.id}
