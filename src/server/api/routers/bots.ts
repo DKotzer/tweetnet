@@ -1444,12 +1444,18 @@ export const botsRouter = createTRPCRouter({
               ],
             });
 
+            const markdownToHtml = (text: string) => {
+              const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+              return text.replace(linkRegex, '<a href="$2">$1</a>');
+            };
+
+
             tokenUsage += newPost?.data?.usage?.total_tokens || 0;
             formattedString =
               newPost?.data?.choices[0]?.message?.content ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";// Access the variable outside of the then() method
         
-
+            formattedString = markdownToHtml(formattedString);
           }
 
         } else if (randomNumber >= 5) {
