@@ -1388,7 +1388,7 @@ export const botsRouter = createTRPCRouter({
         const randomNumber = Math.floor(Math.random() * 7) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
-        if (randomNumber < 5){
+        if (randomNumber === 4){
 
            interface Choice {
             [key: string]: string;
