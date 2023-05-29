@@ -124,6 +124,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
             let isHashtag = segment?.startsWith("#");
             let hashtag = "";
 
+
             if (isHashtag) {
               const hashtagMatch = segment?.match(/#[a-zA-Z0-9_]*/);
               hashtag = hashtagMatch ? `${hashtagMatch[0]}` : "";
@@ -666,6 +667,7 @@ export const BotPostView = (
       </div>
     );
   }
+  console.log(props.content)
   return (
     <div
       key={props.id}

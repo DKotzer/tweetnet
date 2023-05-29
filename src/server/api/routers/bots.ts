@@ -844,7 +844,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "system",
-            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.
+            content: `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.
             }"`,
           },
           // {
@@ -1434,12 +1434,12 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
                 },
 
                 {
                   role: "user",
-                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
                 },
               ],
             });
@@ -1629,7 +1629,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
                 },
                 {
                   role: "user",
@@ -1660,7 +1660,7 @@ export const botsRouter = createTRPCRouter({
                 },
                 {
                   role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
                 },
 
                 {
@@ -1691,7 +1691,7 @@ export const botsRouter = createTRPCRouter({
               },
               {
                 role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Refer to yourself in first person.
+                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.
             `,
               },
               // {
