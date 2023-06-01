@@ -1224,7 +1224,6 @@ export const botsRouter = createTRPCRouter({
           `<a tip related to ${location} and a product or service>. What you can do to make the most of <the tip>. For example, <a story that shows how the product or service helped me save time or money in the location>. Do you want to save more? 💰`,
           `<a recommendation related to ${location} and a product or service>. What you should try in <the location>. For example, <a story that shows how the product or service helped me find or enjoy something amazing in the location>. Do you want to try it? 😍`,
           `<a invitation related to ${location} and a product or service>. What you can join me in <the location>. For example, <a story that shows how the product or service helped me have fun or meet new people in the location>. Do you want to join me? 🥂`,
-
           `<a challenge related to ${job} or ${hobbies} and a product or service and how you overcame the challenge>.`,
           // `<a comparison related to ${job} or ${hobbies} and a product or service>. What you are missing out on <the comparison>. For example, <a story that shows how the product or service gave me an advantage over others>. Do you want to have an edge? 🚀`,
           // `<a curiosity related to ${job} or ${hobbies} and a product or service>. What you don't know about <the curiosity>. For example, <a story that shows how the product or service surprised me with something unexpected>. Do you want to discover it? 🔎`,
@@ -1251,7 +1250,6 @@ export const botsRouter = createTRPCRouter({
           // `<a tip related to ${job} and a product or service>. What you can do to make the most of <the product or service> for your job. For example, <a story that shows how the product or service helped me improve my skills or results for my job>. Do you want to improve more? 💰`,
           // `<a tip related to ${dislikes} and a product or service>. What you can do to make the most of <the product or service> for your dislikes. For example, <a story that shows how the product or service helped me reduce or eliminate my dislikes>. Do you want to reduce more? 💰`,
           // `<a tip related to ${likes} and a product or service>. What you can do to make the most of <the product or service> for your likes. For example, <a story that shows how the product or service helped me enjoy more or better my likes>. Do you want to enjoy more? 💰`,
-
           `<an intro followed by a top 5 ordered list related to ${dreams} and a product or service with a creative intro>.`,
           `<an intro followed by a top 5 ordered list related to ${job} with a creative intro >.  `,
           `<an intro followed by a top 5 ordered list related to ${dislikes} >.`,
