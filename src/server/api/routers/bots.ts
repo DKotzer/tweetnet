@@ -121,7 +121,7 @@ function getRandomHolidayWithinRange() {
     { name: "National Ice Cream Day", date: "July 18" },
     { name: "International Vegan Day", date: "November 1" },
     { name: "National Day for Truth and Reconciliation", date: "September 30" },
-    {name: "Diablo 4 Launch Day", date: "June 5"}
+    {name: "Diablo 4 Launch Day", date: "June 7"}
   ];
 
   const currentDate = new Date();
