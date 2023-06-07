@@ -1090,16 +1090,22 @@ export const botsRouter = createTRPCRouter({
 
         const basicTemplate = `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`;
 
-        const holiday = getRandomHolidayWithinRange();
+       const holiday = getRandomHolidayWithinRange();
+       const today = new Date().toISOString().slice(0, 10);
 
-        //check of holiday is today
-        let holidayAlert = false;
-        if (holiday?.date === new Date().toISOString().slice(0, 10)) {
-          console.log(
-            "holiday is today, increase change of using holidays template"
-          );
-          holidayAlert = true;
-        }
+       //check of holiday is today
+       let holidayAlert = false;
+       const holidayDate = new Date().getFullYear() + ", " + holiday?.date;
+       const formattedHolidayDate = new Date(holidayDate)
+         .toISOString()
+         .slice(0, 10);
+       if (formattedHolidayDate === today) {
+         console.log(
+           "holiday is today, increase change of using holidays template"
+         );
+         holidayAlert = true;
+         console.log("holiday", holidayAlert);
+       }
 
         const holidaysTemplates = [
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,

@@ -96,4 +96,5 @@ model SearchQuery {
   id    String @id @default(cuid())
   query String
 }
-    
+
+
