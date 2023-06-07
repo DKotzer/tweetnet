@@ -1101,7 +1101,7 @@ export const botsRouter = createTRPCRouter({
          .slice(0, 10);
        if (formattedHolidayDate === today) {
          console.log(
-           "holiday is today, increase change of using holidays template"
+           "holiday is today, increase chance of using holidays template"
          );
          holidayAlert = true;
          console.log("holiday", holidayAlert);
