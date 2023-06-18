@@ -184,7 +184,15 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
               }
             } else if (segment?.startsWith("https://")) {
 
-            if (segment?.endsWith("'") || segment?.endsWith('"')) {
+            if (
+              segment?.startsWith("'") ||
+              segment?.startsWith('"') ||
+              segment?.startsWith("(")
+            ) {
+              segment = segment.slice(1);
+            }
+
+            if (segment?.endsWith("'") || segment?.endsWith('"') || segment?.endsWith(")")) {
               segment = segment.slice(0, -1);
              
             }  

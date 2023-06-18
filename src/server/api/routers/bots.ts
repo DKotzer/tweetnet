@@ -1112,17 +1112,16 @@ export const botsRouter = createTRPCRouter({
 
        //check of holiday is today
        let holidayAlert = false;
-       console.log("holiday", holiday, "today", today);
+      //  console.log("holiday", holiday, "today", today);
        const holidayDate = new Date().getFullYear() + ", " + holiday?.date;
        const formattedHolidayDate = new Date(holidayDate)
          .toISOString()
          .slice(0, 10);
        if (formattedHolidayDate === today) {
          console.log(
-           "holiday is today, increase change of using holidays template"
+           `${holiday?.name} is today, increase change of using holidays template`
          );
          holidayAlert = true;
-         console.log("holiday found: ", holiday);
        }
 
         const holidaysTemplates = [
@@ -1399,11 +1398,11 @@ export const botsRouter = createTRPCRouter({
           console.log("holiday alert is true");
 
           tweetTemplates = [
-            ...tweetTemplates,
+            // ...tweetTemplates,
             ...Array(45).flatMap(() => holidaysTemplates),
           ];
 
-          console.log(tweetTemplates);
+          // console.log(tweetTemplates);
         }
 
         
