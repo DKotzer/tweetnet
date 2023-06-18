@@ -1405,7 +1405,7 @@ export const botsRouter = createTRPCRouter({
           // console.log(twe
 
           tweetTemplates = [
-            // ...tweetTemplates,
+            ...tweetTemplates,
             ...holidayTemplates,
           ];
 
