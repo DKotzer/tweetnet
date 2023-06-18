@@ -124,43 +124,48 @@ function getRandomHolidayWithinRange() {
     {name: "Diablo 4 Launch Day", date: "June 7"}
   ];
 
-      const currentDate = new Date();
-    const startDate = new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000); // Subtract 10 days
-    const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
+  const currentDate = new Date();
+  const startDate = new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000); // Subtract 10 days
+  const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
 
-    // Check if today is a holiday
-    const todayHoliday = holidays.find((holiday) => {
-        const holidayDate = new Date(holiday.date + ", " + currentDate.getFullYear());
-        return holidayDate.getDate() === currentDate.getDate() &&
-            holidayDate.getMonth() === currentDate.getMonth() &&
-            holidayDate.getFullYear() === currentDate.getFullYear();
+  // Check if today is a holiday
+  const todayHoliday = holidays.find((holiday) => {
+    const holidayDate = new Date(
+      holiday.date + ", " + currentDate.getFullYear()
+    );
+    return (
+      holidayDate.getDate() === currentDate.getDate() &&
+      holidayDate.getMonth() === currentDate.getMonth() &&
+      holidayDate.getFullYear() === currentDate.getFullYear()
+    );
+  });
+
+  if (todayHoliday) {
+    return todayHoliday;
+  }
+
+  const holidaysInRange = holidays.filter((holiday) => {
+    const holidayDate = new Date(
+      holiday.date + ", " + currentDate.getFullYear()
+    );
+    return holidayDate >= startDate && holidayDate <= endDate;
+  });
+
+  // Return a random holiday from the filtered list
+  if (holidaysInRange.length > 0) {
+    const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
+    return holidaysInRange[randomIndex];
+  } else {
+    //return the closest holiday if no holidays in range
+    const closestHoliday = holidays.reduce((a, b) => {
+      const aDate = new Date(a.date + ", " + currentDate.getFullYear());
+      const bDate = new Date(b.date + ", " + currentDate.getFullYear());
+      const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
+      const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
+      return aDiff < bDiff ? a : b;
     });
-
-    if (todayHoliday) {
-        return todayHoliday;
-    }
-
-    const holidaysInRange = holidays.filter((holiday) => {
-        const holidayDate = new Date(holiday.date + ", " + currentDate.getFullYear());
-        return holidayDate >= startDate && holidayDate <= endDate;
-    });
-
-    // Return a random holiday from the filtered list
-    if (holidaysInRange.length > 0) {
-        const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
-        return holidaysInRange[randomIndex];
-    } else {
-        //return the closest holiday if no holidays in range
-        const closestHoliday = holidays.reduce((a, b) => {
-            const aDate = new Date(a.date + ", " + currentDate.getFullYear());
-            const bDate = new Date(b.date + ", " + currentDate.getFullYear());
-            const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
-            const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
-            return aDiff < bDiff ? a : b;
-        });
-        return closestHoliday;
-    }
-
+    return closestHoliday;
+  }
 }
 
 function getRandomHoliday() {
