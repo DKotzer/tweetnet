@@ -88,7 +88,7 @@ function getRandomHolidayWithinRange() {
     { name: "St. Patrick's Day", date: "March 17" },
     { name: "Easter", date: "April 4" },
     { name: "Mother's Day", date: "May 14" },
-    { name: "Father's Day", date: "June 20" },
+    { name: "Father's Day", date: "June 18" },
     { name: "Independence Day", date: "July 1" },
     { name: "Halloween", date: "October 31" },
     { name: "Thanksgiving", date: "October 9" },
@@ -1095,16 +1095,17 @@ export const botsRouter = createTRPCRouter({
 
        //check of holiday is today
        let holidayAlert = false;
+       console.log("holiday", holiday, "today", today);
        const holidayDate = new Date().getFullYear() + ", " + holiday?.date;
        const formattedHolidayDate = new Date(holidayDate)
          .toISOString()
          .slice(0, 10);
        if (formattedHolidayDate === today) {
          console.log(
-           "holiday is today, increase chance of using holidays template"
+           "holiday is today, increase change of using holidays template"
          );
          holidayAlert = true;
-         console.log("holiday", holidayAlert);
+         console.log("holiday found: ", holiday);
        }
 
         const holidaysTemplates = [
@@ -1382,7 +1383,7 @@ export const botsRouter = createTRPCRouter({
 
           tweetTemplates = [
             ...tweetTemplates,
-            ...Array(10).flatMap(() => holidaysTemplates),
+            ...Array(45).flatMap(() => holidaysTemplates),
           ];
 
           console.log(tweetTemplates);
