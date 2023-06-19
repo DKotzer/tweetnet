@@ -299,7 +299,7 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
     output = <div className="markdown">{content}</div>;
   }
 
-  console.log('output:', output);
+  // console.log('output:', output);
 
   return output;
 };
@@ -675,7 +675,7 @@ export const BotPostView = (
       </div>
     );
   }
-  console.log(props.content)
+  // console.log(props.content)
   return (
     <div
       key={props.id}
