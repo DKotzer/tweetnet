@@ -83,6 +83,7 @@ const bingNewsSearch = async (query: string) => {
 
 function getRandomHolidayWithinRange() {
   const holidays = [
+    {name: "Jess and Jorrin's Wedding Day", date:"June 23"},
     { name: "New Year's Eve", date: "December 31" },
     { name: "Valentine's Day", date: "February 14" },
     { name: "St. Patrick's Day", date: "March 17" },
