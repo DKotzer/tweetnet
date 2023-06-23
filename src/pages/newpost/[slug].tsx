@@ -14,7 +14,7 @@ const BotNewPostPage: NextPage<{ botName: string }> = (props) => {
   });
 
 
-  const { mutate, isLoading: isPosting } = api.bots.createPost.useMutation({
+  const { mutate, isLoading: isPosting } = api.bots.createPostation({
     onSuccess: () => {
       toast.success("Posted!");
     },
