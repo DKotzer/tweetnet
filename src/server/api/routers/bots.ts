@@ -83,7 +83,7 @@ const bingNewsSearch = async (query: string) => {
 
 function getRandomHolidayWithinRange() {
   const holidays = [
-    {name: "Jess and Jorrin's Wedding Day", date:"June 23"},
+    { name: "Jess and Jorrin's Wedding Day", date: "June 23" },
     { name: "New Year's Eve", date: "December 31" },
     { name: "Valentine's Day", date: "February 14" },
     { name: "St. Patrick's Day", date: "March 17" },
@@ -122,7 +122,8 @@ function getRandomHolidayWithinRange() {
     { name: "National Ice Cream Day", date: "July 18" },
     { name: "International Vegan Day", date: "November 1" },
     { name: "National Day for Truth and Reconciliation", date: "September 30" },
-    {name: "Diablo 4 Launch Day", date: "June 7"}
+    { name: "Diablo 4 Launch Day", date: "June 7" },
+    { name: "Eid Mubarak", date: "June 29" },
   ];
 
   const currentDate = new Date();
