@@ -123,7 +123,7 @@ function getRandomHolidayWithinRange() {
     { name: "International Vegan Day", date: "November 1" },
     { name: "National Day for Truth and Reconciliation", date: "September 30" },
     { name: "Diablo 4 Launch Day", date: "June 7" },
-    { name: "Eid Mubarak", date: "June 29" },
+    { name: "Eid", date: "June 29" },
   ];
 
   const currentDate = new Date();
