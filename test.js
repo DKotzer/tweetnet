@@ -37,6 +37,8 @@ function getRandomHolidayWithinRange() {
         { name: "Cyber Monday", date: "November 29" },
         {name: "Jess and Jorrin's Wedding Day", date:"June 23"},
         {name: "Pari and Ben's Wedding Day", date:"Sept 4"},
+        {name: "Anne's Birthday", date:"December 3"},
+        
     ];
 
     const currentDate = new Date();
