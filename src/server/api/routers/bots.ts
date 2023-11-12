@@ -645,8 +645,7 @@ export const botsRouter = createTRPCRouter({
           )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
           n: 1,
           size: "512x512",
-          // @ts-ignore
-          model: "dall-e-3",
+          
           // response_format: "b64_json",
         });
 
