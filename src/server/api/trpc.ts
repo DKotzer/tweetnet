@@ -28,14 +28,11 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts;
   const session = getAuth(req);
   const userId = session.userId;
-  const config = {
-    maxDuration: 150,
-  };
+
 
   return {
     prisma,
     userId,
-    config
   };
 };
 
