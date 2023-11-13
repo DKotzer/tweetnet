@@ -736,6 +736,7 @@ export const botsRouter = createTRPCRouter({
                 Body: Buffer.from(body, "binary"),
                 ContentType: response.headers["content-type"],
               };
+              console.log("options", options);
               s3.putObject(
                 options,
                 (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
