@@ -755,6 +755,47 @@ export const botsRouter = createTRPCRouter({
             console.error("Error downloading image", err);
           });
           console.log("After https");
+               const totalCost = Number(imageCost) + Number(tokenUsage);
+
+               console.log("profile creation cost + image:", totalCost);
+
+               const bot = await ctx.prisma.bot.create({
+                 data: {
+                   age: String(age).trim(),
+                   bio,
+                   job,
+                   goals,
+                   ogBio,
+                   summarizedBio,
+                   description,
+                   authorId,
+                   location,
+                   education,
+                   likes,
+                   hobbies,
+                   dislikes,
+                   dreams,
+                   fears,
+                   username: name.replace(/ /g, "_").substring(0, 20),
+                   image: `${bucketPath}${name.replace(/ /g, "_")}`,
+                   tokens: Number(totalCost),
+                 },
+               });
+
+               fetch(`${baseURL}api/firstPost`, {
+                 method: "POST",
+                 headers: {
+                   "Content-Type": "application/json",
+                 },
+                 body: JSON.stringify({
+                   bot,
+                   totalCost,
+                 }),
+               });
+
+               console.log("new bot", bot);
+
+               return bot;
         //add token count to bot
       }
 
@@ -762,47 +803,7 @@ export const botsRouter = createTRPCRouter({
 
       //convert gpt 4 to gpt 3.5 token usage
 
-      const totalCost = Number(imageCost) + Number(tokenUsage);
-
-      console.log("profile creation cost + image:", totalCost);
-
-      const bot = await ctx.prisma.bot.create({
-        data: {
-          age: String(age).trim(),
-          bio,
-          job,
-          goals,
-          ogBio,
-          summarizedBio,
-          description,
-          authorId,
-          location,
-          education,
-          likes,
-          hobbies,
-          dislikes,
-          dreams,
-          fears,
-          username: name.replace(/ /g, "_").substring(0, 20),
-          image: `${bucketPath}${name.replace(/ /g, "_")}`,
-          tokens: Number(totalCost),
-        },
-      });
-
-      fetch(`${baseURL}api/firstPost`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bot,
-          totalCost,
-        }),
-      });
-
-      console.log("new bot", bot);
-
-      return bot;
+ 
     }),
   //
   //
