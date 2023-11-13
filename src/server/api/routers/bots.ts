@@ -737,6 +737,7 @@ export const botsRouter = createTRPCRouter({
                 ContentType: response.headers["content-type"],
               };
               console.log("options", options);
+              console.log("Before s3.putObject");
               s3.putObject(
                 options,
                 (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
@@ -747,11 +748,13 @@ export const botsRouter = createTRPCRouter({
                   }
                 }
               );
+              console.log("After s3.putObject");
             });
           })
           .on("error", (err: Error) => {
             console.error("Error downloading image", err);
           });
+          console.log("After https");
         //add token count to bot
       }
 
