@@ -721,6 +721,7 @@ export const botsRouter = createTRPCRouter({
       }
 
       if (imageUrl) {
+        console.log("image url", imageUrl)
         https
           .get(imageUrl, (response) => {
             let body = "";
