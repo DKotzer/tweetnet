@@ -2,6 +2,9 @@
   "functions": {
     "src/pages/api/trpc/[trpc].ts": {
       "maxDuration": 300
+    },
+    "src/pages/api/firstPost.ts": {
+      "maxDuration": 300
     }
   }
 }
