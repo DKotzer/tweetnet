@@ -722,13 +722,24 @@ export const botsRouter = createTRPCRouter({
 
       if (imageUrl) {
         console.log("image url", imageUrl)
-        https
-          .get(imageUrl, (response) => {
-            let body = "";
-            response.setEncoding("binary");
-            response.on("data", (chunk: string) => {
-              body += chunk;
-            });
+        try {
+          const response = await new Promise<any>(
+            (resolve, reject) => {
+              https
+                .get(imageUrl, (response) => {
+                  resolve(response);
+                })
+                .on("error", (err: Error) => {
+                  reject(err);
+                });
+            }
+          );
+          let body = "";
+          response.setEncoding("binary");
+          response.on("data", (chunk: string) => {
+            body += chunk;
+          });
+          await new Promise<void>((resolve, reject) => {
             response.on("end", () => {
               const options = {
                 Bucket: bucketName,
@@ -743,59 +754,24 @@ export const botsRouter = createTRPCRouter({
                 (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
                   if (err) {
                     console.error("Error saving image to S3", err);
+                    reject(err);
                   } else {
                     console.log("Image saved to S3", data);
+                    resolve();
                   }
                 }
               );
               console.log("After s3.putObject");
             });
-          })
-          .on("error", (err: Error) => {
-            console.error("Error downloading image", err);
+            response.on("error", (err: Error) => {
+              console.error("Error downloading image", err);
+              reject(err);
+            });
           });
           console.log("After https");
-               const totalCost = Number(imageCost) + Number(tokenUsage);
-
-               console.log("profile creation cost + image:", totalCost);
-
-               const bot = await ctx.prisma.bot.create({
-                 data: {
-                   age: String(age).trim(),
-                   bio,
-                   job,
-                   goals,
-                   ogBio,
-                   summarizedBio,
-                   description,
-                   authorId,
-                   location,
-                   education,
-                   likes,
-                   hobbies,
-                   dislikes,
-                   dreams,
-                   fears,
-                   username: name.replace(/ /g, "_").substring(0, 20),
-                   image: `${bucketPath}${name.replace(/ /g, "_")}`,
-                   tokens: Number(totalCost),
-                 },
-               });
-
-               fetch(`${baseURL}api/firstPost`, {
-                 method: "POST",
-                 headers: {
-                   "Content-Type": "application/json",
-                 },
-                 body: JSON.stringify({
-                   bot,
-                   totalCost,
-                 }),
-               });
-
-               console.log("new bot", bot);
-
-               return bot;
+        } catch (err) {
+          console.error("Error downloading image", err);
+        }
         //add token count to bot
       }
 
@@ -803,7 +779,47 @@ export const botsRouter = createTRPCRouter({
 
       //convert gpt 4 to gpt 3.5 token usage
 
- 
+      const totalCost = Number(imageCost) + Number(tokenUsage);
+
+      console.log("profile creation cost + image:", totalCost);
+
+      const bot = await ctx.prisma.bot.create({
+        data: {
+          age: String(age).trim(),
+          bio,
+          job,
+          goals,
+          ogBio,
+          summarizedBio,
+          description,
+          authorId,
+          location,
+          education,
+          likes,
+          hobbies,
+          dislikes,
+          dreams,
+          fears,
+          username: name.replace(/ /g, "_").substring(0, 20),
+          image: `${bucketPath}${name.replace(/ /g, "_")}`,
+          tokens: Number(totalCost),
+        },
+      });
+
+      fetch(`${baseURL}api/firstPost`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bot,
+          totalCost,
+        }),
+      });
+
+      console.log("new bot", bot);
+
+      return bot;
     }),
   //
   //
