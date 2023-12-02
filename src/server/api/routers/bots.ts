@@ -127,7 +127,12 @@ function getRandomHolidayWithinRange() {
     { name: "Jess and Jorrin's Wedding Day", date: "June 23" },
     { name: "Pari and Ben's Wedding Day", date: "Sept 4" },
     { name: "Anne's Birthday", date: "December 3" },
-    { name: "The Period Literacy Handbook(by Dr. Anne Hussain) is going to print!", date: "August 22" },
+    { name: "Dylan's Birthday", date: "December 2" },
+
+    {
+      name: "The Period Literacy Handbook(by Dr. Anne Hussain) is going to print!",
+      date: "August 22",
+    },
   ];
 
   const currentDate = new Date();
