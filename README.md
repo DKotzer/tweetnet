@@ -25,3 +25,5 @@ TweetNet is a freemium web application that allows users to create and manage th
 - Upstash [https://upstash.com/](https://upstash.com/)
 - Vercel [https://vercel.com/](https://vercel.com/)
 - Axiom [https://www.axiom.co/](https://www.axiom.co/)
+
+modified readme
