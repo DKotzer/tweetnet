@@ -94,6 +94,7 @@ function getRandomHolidayWithinRange() {
     { name: "Halloween", date: "October 31" },
     { name: "Thanksgiving", date: "October 9" },
     { name: "Christmas", date: "December 25" },
+    { name: "Christmas Eve", date: "December 24" },
     { name: "Eid", date: "May 16" },
     { name: "Hanukkah", date: "December 12" },
     { name: "Kwanzaa", date: "December 26" },
@@ -122,10 +123,7 @@ function getRandomHolidayWithinRange() {
     { name: "National Ice Cream Day", date: "July 18" },
     { name: "International Vegan Day", date: "November 1" },
     { name: "National Day for Truth and Reconciliation", date: "September 30" },
-    { name: "Diablo 4 Launch Day", date: "June 7" },
     { name: "Eid", date: "June 29" },
-    { name: "Jess and Jorrin's Wedding Day", date: "June 23" },
-    { name: "Pari and Ben's Wedding Day", date: "Sept 4" },
     { name: "Anne's Birthday", date: "December 3" },
     { name: "Dylan's Birthday", date: "December 2" },
 
@@ -811,18 +809,222 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-      fetch(`${baseURL}api/firstPost`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bot,
-          totalCost,
-        }),
-      });
+      // fetch(`${baseURL}api/firstPost`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     bot,
+      //     totalCost,
+      //   }),
+      // });
 
       console.log("new bot", bot);
+
+      await users.updateUser(authorId, {
+        publicMetadata: {
+          ...user.publicMetadata,
+          tokensUsed:
+            Number(user.publicMetadata.tokensUsed) + Number(totalCost),
+        },
+      });
+      console.log(
+        "updated user tokens pre update:",
+        Number(user.publicMetadata.tokensUsed)
+      );
+      console.log(
+        "updated user tokens post update:",
+        Number(user.publicMetadata.tokensUsed) + Number(totalCost)
+      );
+
+      //create first post here, can mostly just copy the code for post create
+
+      const botname = bot.username;
+      const id = bot.id;
+      const botImage = bot.image;
+
+      const newPost = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        temperature: 0.8,
+        max_tokens: 200,
+        messages: [
+          {
+            role: "assistant",
+            content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}. My goals are ${goals} My job/other goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}. I am about to write my first post for TweetNet social network(the hottest new social network)`,
+          },
+          {
+            role: "system",
+            content:
+              "You are an extremely creative tweet writer that is amazing at writing tweets that generate high levels of engagement and likes. You know all the tricks and tips to make your tweets go viral.",
+          },
+          {
+            role: "user",
+            content: `You are creating your first tweet that expresses excitement for making your first post on the hottest new social network, from your perspective and in your style. The post should show your characteristics and background and goals. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Goals: ${goals} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job}. Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information. Create a very creative first tweet, in ${botname}'s writing style, on the social media site TweetNet. TweetNet is a superior alternative to Twitter. Use your goals, dreams and background information as inspiration but does not reference your background information directly. Do not surround your response in quotes.
+            }`,
+          },
+          // {
+          //   role: "system",
+          //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
+          //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
+          //   }"`,
+          // },
+        ],
+      });
+
+      console.log(
+        "new tweet text",
+        newPost?.data?.choices[0]?.message?.content
+      );
+
+      const firstTweetCost = Number(newPost?.data?.usage?.total_tokens) || 0;
+
+      console.log("first tweet cost", firstTweetCost);
+
+      const formattedRes =
+        newPost?.data?.choices[0]?.message?.content ||
+        "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
+
+      const firstPostImage = await openai.createImage({
+        prompt: `An photograph representation of a social media post from a user that looks like ${description} with post content: ${formattedRes.slice(
+          0,
+          500
+        )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
+        n: 1,
+        size: "512x512",
+      });
+
+      console.log(`img 2 cost: ${imageCost}`);
+
+      if (
+        botname === undefined ||
+        age === undefined ||
+        job === undefined ||
+        likes === undefined ||
+        hobbies === undefined ||
+        dislikes === undefined ||
+        dreams === undefined ||
+        fears === undefined ||
+        education === undefined ||
+        location === undefined
+      ) {
+        console.error("One or more variables are missing");
+        return;
+      }
+
+      console.log("name:", botname);
+      console.log("bio:", bio || "no bio");
+      console.log("age:", age);
+      console.log("job:", job);
+      console.log("likes:", likes);
+      console.log("hobbies:", hobbies);
+      console.log("dislikes:", dislikes);
+      console.log("dreams:", dreams);
+      console.log("fears:", fears);
+      console.log("education:", education);
+      console.log("location:", location);
+      console.log("bot image:", botImage);
+
+      let randomKey = Math.random().toString(36).substring(2, 15);
+
+      const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      const postImageUrl = firstPostImage?.data?.data[0]?.url;
+      const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+      const postImage = postImageBucketPath + postImageKey;
+
+      if (postImageUrl) {
+        https
+          .get(postImageUrl, (response) => {
+            let body = "";
+            response.setEncoding("binary");
+            response.on("data", (chunk: string) => {
+              body += chunk;
+            });
+            response.on("end", () => {
+              const options = {
+                Bucket: bucketName,
+                Key: postImageKey,
+                Body: Buffer.from(body, "binary"),
+                ContentType: response.headers["content-type"],
+              };
+              s3.putObject(
+                options,
+                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+                  if (err) {
+                    console.error("Error saving image to S3", err);
+                  } else {
+                    console.log("first post Image saved to S3", data);
+                  }
+                }
+              );
+            });
+          })
+          .on("error", (err: Error) => {
+            console.error("Error downloading image", err);
+          });
+      }
+
+      const regex = /#[\w]+/g;
+      const hashtags = formattedRes.match(regex) || [];
+      const hashtagsString = hashtags.join(", ");
+
+      const botPost = await ctx.prisma.botPost.create({
+        data: {
+          hashTags: hashtagsString,
+          content: formattedRes,
+          botId: id,
+          authorImage: botImage,
+          authorName: botname,
+          postImage: postImage,
+          cost: Number(firstTweetCost) + imageCost,
+          // bot: { connect: { id: id } },
+        },
+      });
+
+      console.log("first bot post test:", botPost);
+      const increment = Number(firstTweetCost) + imageCost;
+      console.log("first post:", botPost);
+
+      console.log(
+        "increment",
+        increment,
+        "total",
+        Number(user.publicMetadata.tokensUsed) + increment
+      );
+
+      console.log(
+        "increment + tokensUsed",
+        Number(user.publicMetadata.tokensUsed),
+        "+",
+        increment,
+        "=",
+        Number(user.publicMetadata.tokensUsed) + increment
+      );
+      await users.updateUser(authorId, {
+        publicMetadata: {
+          ...user.publicMetadata,
+          tokensUsed:
+            Number(user.publicMetadata.tokensUsed) +
+            increment +
+            Number(totalCost),
+        },
+      });
+      console.log(
+        "created User tokens post update:",
+        user.publicMetadata.tokensUsed
+      );
+
+      await ctx.prisma.bot.update({
+        where: {
+          id: id,
+        },
+        data: {
+          tokens: {
+            increment: increment,
+          },
+        },
+      });
+
 
       return bot;
     }),
