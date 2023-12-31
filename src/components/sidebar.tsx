@@ -13,7 +13,7 @@ export const Sidebar = () => {
 
   return (
     <div className="top-0">
-      <div className="height-screen hidden flex-col border-t border-slate-400/50 text-slate-100 md:flex">
+      <div className="hidden flex-col border-t border-slate-400/50 text-slate-100 md:flex">
         <div className="width-40 w-30 mx-auto">
           <div className=" my-6 mx-5 text-2xl  font-bold hover:scale-105">
             <Link
