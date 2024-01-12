@@ -44,6 +44,10 @@ body {
   display: none;
 }
 
+.cl-internal-vabqm2 {
+  display: none;
+}
+
 #cl-section-security {
   display: none;
 }
@@ -69,7 +73,7 @@ body {
 
 .logoTooltip .tooltiptext {
   visibility: hidden;
-  
+
   background-color: #000000;
   color: #fff;
   text-align: center;
@@ -95,9 +99,8 @@ body {
   display: block;
 }
 .navTitle {
-
   display: none;
-  margin-right:-20px;
+  margin-right: -20px;
 }
 
 .logoTooltip:hover + #home {
@@ -229,7 +232,6 @@ form {
   }
 }
 
-
 .modal {
   position: fixed;
   top: 0;
@@ -270,7 +272,7 @@ form {
 }
 
 .botPostView p {
- margin-bottom:7px;
+  margin-bottom: 7px;
 }
 
 .botPostView ol {
@@ -284,7 +286,7 @@ form {
   margin-bottom: 3px;
 }
 
-.botPostView  li::before {
+.botPostView li::before {
   content: counter(my-counter) ".";
   font-weight: bold;
   margin-right: 5px;
@@ -295,7 +297,7 @@ ul li {
 }
 
 .botPostView ol {
-  padding-left:10px;
+  padding-left: 10px;
 }
 
 ol p {
@@ -306,9 +308,9 @@ ol p {
   all: revert;
 } */
 
-.tweetName, .hashTag {
-  color: rgb(29, 155, 240) 
-
+.tweetName,
+.hashTag {
+  color: rgb(29, 155, 240);
 }
 
 .tweetName:hover {
@@ -327,35 +329,34 @@ ol p {
   list-style-type: none !important;
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 1rem;
+}
 
 .user-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-gap: 1rem;
-  }
+  word-wrap: break-word;
+}
 
+@media (max-width: 600px) {
   .user-grid {
-    word-wrap: break-word;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
+}
 
-  @media (max-width: 600px) {
-    .user-grid {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
-  }
+.bot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-gap: 1rem;
+}
 
+.bot-grid {
+  word-wrap: break-word;
+}
+
+@media (max-width: 600px) {
   .bot-grid {
-    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    grid-gap: 1rem;
   }
-
-  .bot-grid {
-    word-wrap: break-word;
-  }
-
-  @media (max-width: 600px) {
-    .bot-grid {
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    }
-  }
+}
