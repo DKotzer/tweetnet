@@ -40,46 +40,46 @@ const imageCost = 9000;
 //images cost 9k gpt-3.5-turbo tokens
 
 const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
-const bingNewsSearch = async (query: string) => {
-  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
-  const params: any = {
-    q: query,
-    count: 10,
-    offset: 0,
-    mkt: "en-CA",
-  };
-  Object.keys(params).forEach((key) =>
-    url.searchParams.append(key, params[key])
-  );
-  const response = await fetch(url.toString(), {
-    method: "GET",
-    headers: {
-      "Ocp-Apim-Subscription-Key": googleNewsKey || "",
-    },
-  });
-  if (!response.ok) {
-    console.error(`Bing Search Error: ${response.status}`);
-    //return a default fake article about tweetnet or something?
+// const bingNewsSearch = async (query: string) => {
+//   const url = new URL("https://api.bing.microsoft.com/v7.0/search");
+//   const params: any = {
+//     q: query,
+//     count: 10,
+//     offset: 0,
+//     mkt: "en-CA",
+//   };
+//   Object.keys(params).forEach((key) =>
+//     url.searchParams.append(key, params[key])
+//   );
+//   const response = await fetch(url.toString(), {
+//     method: "GET",
+//     headers: {
+//       "Ocp-Apim-Subscription-Key": googleNewsKey || "",
+//     },
+//   });
+//   if (!response.ok) {
+//     console.error(`Bing Search Error: ${response.status}`);
+//     //return a default fake article about tweetnet or something?
 
-    return null;
-  }
-  const data = await response.json();
+//     return null;
+//   }
+//   const data = await response.json();
 
-  if (data.webPages && data.webPages.value) {
-    //generate random number between 1-5
-    //return that result
-    return data.webPages.value[Math.floor(Math.random() * data.webPages.value.length)];
+//   if (data.webPages && data.webPages.value) {
+//     //generate random number between 1-5
+//     //return that result
+//     return data.webPages.value[Math.floor(Math.random() * data.webPages.value.length)];
 
-    // return data.webPages.value[0];
-    // data.webPages.value.forEach((result :any, index : number) => {
-    //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
-    // });
-  } else {
-    console.log(`Couldn't find news results from bing for ${query}`);
-    //return a default fake article about tweetnet or something?
-    return null;
-  }
-};
+//     // return data.webPages.value[0];
+//     // data.webPages.value.forEach((result :any, index : number) => {
+//     //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
+//     // });
+//   } else {
+//     console.log(`Couldn't find news results from bing for ${query}`);
+//     //return a default fake article about tweetnet or something?
+//     return null;
+//   }
+// };
 
 function getRandomHolidayWithinRange() {
   const holidays = [
@@ -647,7 +647,7 @@ export const botsRouter = createTRPCRouter({
           )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
           n: 1,
           size: "512x512",
-          
+
           // response_format: "b64_json",
         });
 
@@ -723,19 +723,17 @@ export const botsRouter = createTRPCRouter({
       }
 
       if (imageUrl) {
-        console.log("image url", imageUrl)
+        console.log("image url", imageUrl);
         try {
-          const response = await new Promise<any>(
-            (resolve, reject) => {
-              https
-                .get(imageUrl, (response) => {
-                  resolve(response);
-                })
-                .on("error", (err: Error) => {
-                  reject(err);
-                });
-            }
-          );
+          const response = await new Promise<any>((resolve, reject) => {
+            https
+              .get(imageUrl, (response) => {
+                resolve(response);
+              })
+              .on("error", (err: Error) => {
+                reject(err);
+              });
+          });
           let body = "";
           response.setEncoding("binary");
           response.on("data", (chunk: string) => {
@@ -1024,7 +1022,6 @@ export const botsRouter = createTRPCRouter({
         },
       });
 
-
       return bot;
     }),
   //
@@ -1247,7 +1244,7 @@ export const botsRouter = createTRPCRouter({
     }),
 
   ///////////createPost for all bots
-   createPosts: publicProcedure
+  createPosts: publicProcedure
     .input(z.object({ password: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const bots = await ctx.prisma.bot.findMany({
@@ -1342,22 +1339,22 @@ export const botsRouter = createTRPCRouter({
 
         const basicTemplate = `Create a very creative, and in character tweet that uses your background information as inspiration but does not reference your background information directly.`;
 
-       const holiday = getRandomHolidayWithinRange();
-       const today = new Date().toISOString().slice(0, 10);
+        const holiday = getRandomHolidayWithinRange();
+        const today = new Date().toISOString().slice(0, 10);
 
-       //check of holiday is today
-       let holidayAlert = false;
-      //  console.log("holiday", holiday, "today", today);
-       const holidayDate = new Date().getFullYear() + ", " + holiday?.date;
-       const formattedHolidayDate = new Date(holidayDate)
-         .toISOString()
-         .slice(0, 10);
-       if (formattedHolidayDate === today) {
-         console.log(
-           `${holiday?.name} is today, increase change of using holidays template`
-         );
-         holidayAlert = true;
-       }
+        //check of holiday is today
+        let holidayAlert = false;
+        //  console.log("holiday", holiday, "today", today);
+        const holidayDate = new Date().getFullYear() + ", " + holiday?.date;
+        const formattedHolidayDate = new Date(holidayDate)
+          .toISOString()
+          .slice(0, 10);
+        if (formattedHolidayDate === today) {
+          console.log(
+            `${holiday?.name} is today, increase change of using holidays template`
+          );
+          holidayAlert = true;
+        }
 
         const holidaysTemplates = [
           `Happy ${holiday?.name}! <Personal story about the holiday>. <Question to followers related to how they celebrate this time of year?>`,
@@ -1639,29 +1636,24 @@ export const botsRouter = createTRPCRouter({
 
           // console.log(twe
 
-          tweetTemplates = [
-            ...tweetTemplates,
-            ...holidayTemplates,
-          ];
+          tweetTemplates = [...tweetTemplates, ...holidayTemplates];
 
           // console.log(tweetTemplates);
         }
 
-        
-
         const randomNumber = Math.floor(Math.random() * 7) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
-        if (randomNumber === 4){
-
-           interface Choice {
+        //will never be 9, need to fix search
+        if (randomNumber === 9) {
+          interface Choice {
             [key: string]: string;
           }
 
           const choicesArr: Choice[] = [
-            { fears: fears},
+            { fears: fears },
             { likes: likes },
-            { job: job},
+            { job: job },
             { hobbies: hobbies },
             { location: location },
           ];
@@ -1678,15 +1670,17 @@ export const botsRouter = createTRPCRouter({
 
             let articleObj; // Declare a variable to store the resolved value of the Promise
 
-            try {
-              articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
-              console.log("article obj", articleObj);
-            } catch (error) {
-              console.error(error);
-            }
+            // try {
+            //   articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
+            //   console.log("article obj", articleObj);
+            // } catch (error) {
+            //   console.error(error);
+            // }
 
             console.log("articleObj", articleObj);
-            
+
+            //TODO: Fix search and the messages below with the search results
+
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
               temperature: 0.8,
@@ -1696,15 +1690,15 @@ export const botsRouter = createTRPCRouter({
                   role: "system",
                   content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
                 },
-                {
-                  role: "system",
-                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
-                },
+                // {
+                //   role: "system",
+                //   content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+                // },
 
-                {
-                  role: "user",
-                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
-                },
+                // {
+                //   role: "user",
+                //   content: `Add the unformatted article url when you mention it, Article URL: ${'url goes here'} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
+                // },
               ],
             });
 
@@ -1713,15 +1707,13 @@ export const botsRouter = createTRPCRouter({
               return text.replace(linkRegex, '<a href="$2">$1</a>');
             };
 
-
             tokenUsage += newPost?.data?.usage?.total_tokens || 0;
             formattedString =
               newPost?.data?.choices[0]?.message?.content ||
-              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";// Access the variable outside of the then() method
-        
+              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI"; // Access the variable outside of the then() method
+
             formattedString = markdownToHtml(formattedString);
           }
-
         } else if (randomNumber >= 5) {
           //find last 7 posts
           const posts = await ctx.prisma.botPost.findMany({
@@ -1939,7 +1931,7 @@ export const botsRouter = createTRPCRouter({
               newPost?.data?.choices[0]?.message?.content ||
               "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
           }
-        } else  {
+        } else {
           const inspiration =
             tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)];
 
@@ -1975,7 +1967,6 @@ export const botsRouter = createTRPCRouter({
               // },
             ],
           });
-        
 
           tokenUsage += newPost?.data?.usage?.total_tokens || 0;
           formattedString =
