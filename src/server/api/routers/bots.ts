@@ -40,46 +40,48 @@ const imageCost = 9000;
 //images cost 9k gpt-3.5-turbo tokens
 
 const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
-// const bingNewsSearch = async (query: string) => {
-//   const url = new URL("https://api.bing.microsoft.com/v7.0/search");
-//   const params: any = {
-//     q: query,
-//     count: 10,
-//     offset: 0,
-//     mkt: "en-CA",
-//   };
-//   Object.keys(params).forEach((key) =>
-//     url.searchParams.append(key, params[key])
-//   );
-//   const response = await fetch(url.toString(), {
-//     method: "GET",
-//     headers: {
-//       "Ocp-Apim-Subscription-Key": googleNewsKey || "",
-//     },
-//   });
-//   if (!response.ok) {
-//     console.error(`Bing Search Error: ${response.status}`);
-//     //return a default fake article about tweetnet or something?
+const bingNewsSearch = async (query: string) => {
+  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
+  const params: any = {
+    q: query,
+    count: 10,
+    offset: 0,
+    mkt: "en-CA",
+  };
+  Object.keys(params).forEach((key) =>
+    url.searchParams.append(key, params[key])
+  );
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "Ocp-Apim-Subscription-Key": googleNewsKey || "",
+    },
+  });
+  if (!response.ok) {
+    console.error(`Bing Search Error: ${response.status}`);
+    //return a default fake article about tweetnet or something?
 
-//     return null;
-//   }
-//   const data = await response.json();
+    return null;
+  }
+  const data = await response.json();
 
-//   if (data.webPages && data.webPages.value) {
-//     //generate random number between 1-5
-//     //return that result
-//     return data.webPages.value[Math.floor(Math.random() * data.webPages.value.length)];
+  if (data.webPages && data.webPages.value) {
+    //generate random number between 1-5
+    //return that result
+    return data.webPages.value[
+      Math.floor(Math.random() * data.webPages.value.length)
+    ];
 
-//     // return data.webPages.value[0];
-//     // data.webPages.value.forEach((result :any, index : number) => {
-//     //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
-//     // });
-//   } else {
-//     console.log(`Couldn't find news results from bing for ${query}`);
-//     //return a default fake article about tweetnet or something?
-//     return null;
-//   }
-// };
+    // return data.webPages.value[0];
+    // data.webPages.value.forEach((result :any, index : number) => {
+    //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
+    // });
+  } else {
+    console.log(`Couldn't find news results from bing for ${query}`);
+    //return a default fake article about tweetnet or something?
+    return null;
+  }
+};
 
 function getRandomHolidayWithinRange() {
   const holidays = [
@@ -1644,8 +1646,7 @@ export const botsRouter = createTRPCRouter({
         const randomNumber = Math.floor(Math.random() * 7) + 1;
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
-        //will never be 9, need to fix search
-        if (randomNumber === 9) {
+        if (randomNumber === 4) {
           interface Choice {
             [key: string]: string;
           }
@@ -1670,16 +1671,14 @@ export const botsRouter = createTRPCRouter({
 
             let articleObj; // Declare a variable to store the resolved value of the Promise
 
-            // try {
-            //   articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
-            //   console.log("article obj", articleObj);
-            // } catch (error) {
-            //   console.error(error);
-            // }
+            try {
+              articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
+              console.log("article obj", articleObj);
+            } catch (error) {
+              console.error(error);
+            }
 
             console.log("articleObj", articleObj);
-
-            //TODO: Fix search and the messages below with the search results
 
             const newPost = await openai.createChatCompletion({
               model: "gpt-3.5-turbo",
@@ -1690,15 +1689,15 @@ export const botsRouter = createTRPCRouter({
                   role: "system",
                   content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
                 },
-                // {
-                //   role: "system",
-                //   content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
-                // },
+                {
+                  role: "system",
+                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+                },
 
-                // {
-                //   role: "user",
-                //   content: `Add the unformatted article url when you mention it, Article URL: ${'url goes here'} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
-                // },
+                {
+                  role: "user",
+                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
+                },
               ],
             });
 
