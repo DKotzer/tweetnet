@@ -4,6 +4,7 @@ import { z } from "zod";
 import https from "https";
 import AWS from "aws-sdk";
 import { users } from "@clerk/clerk-sdk-node";
+import getRandomHolidayWithinRange from "~/utils/holidays";
 
 import {
   createTRPCRouter,
@@ -37,7 +38,7 @@ const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
 const imageCost = 9000;
 
-//images cost 9k gpt-3.5-turbo tokens
+//images cost 9k gpt-4o tokens
 
 const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
 const bingNewsSearch = async (query: string) => {
@@ -82,141 +83,6 @@ const bingNewsSearch = async (query: string) => {
     return null;
   }
 };
-
-function getRandomHolidayWithinRange() {
-  const holidays = [
-    { name: "New Year's Eve", date: "December 31" },
-    { name: "Valentine's Day", date: "February 14" },
-    { name: "St. Patrick's Day", date: "March 17" },
-    { name: "Easter", date: "April 4" },
-    { name: "Mother's Day", date: "May 14" },
-    { name: "Father's Day", date: "June 18" },
-    { name: "Independence Day", date: "July 1" },
-    { name: "Halloween", date: "October 31" },
-    { name: "Thanksgiving", date: "October 9" },
-    { name: "Christmas", date: "December 25" },
-    { name: "Christmas Eve", date: "December 24" },
-    { name: "Eid", date: "May 16" },
-    { name: "Hanukkah", date: "December 12" },
-    { name: "Kwanzaa", date: "December 26" },
-    { name: "Diwali", date: "November 7" },
-    { name: "Lunar New Year", date: "February 8" },
-    { name: "Cinco de Mayo", date: "May 5" },
-    { name: "Earth Day", date: "April 22" },
-    { name: "Labor Day", date: "September 4" },
-    { name: "Martin Luther King Jr. Day", date: "January 17" },
-    { name: "Memorial Day", date: "May 30" },
-    { name: "Presidents' Day", date: "February 21" },
-    { name: "Passover", date: "April 15" },
-    { name: "Ramadan", date: "April 16" },
-    { name: "Mardi Gras", date: "March 1" },
-    { name: "Veterans Day", date: "November 11" },
-    { name: "Groundhog Day", date: "February 2" },
-    { name: "Boxing Day", date: "December 26" },
-    { name: "April Fools' Day", date: "April 1" },
-    { name: "Juneteenth", date: "June 19" },
-    { name: "Indigenous Peoples' Day", date: "October 10" },
-    { name: "420", date: "April 20" },
-    { name: "Pride", date: "June 15" },
-    { name: "Black Friday", date: "November 26" },
-    { name: "Cyber Monday", date: "November 29" },
-    { name: "National Donut Day", date: "June 4" },
-    { name: "National Ice Cream Day", date: "July 18" },
-    { name: "International Vegan Day", date: "November 1" },
-    { name: "National Day for Truth and Reconciliation", date: "September 30" },
-    { name: "Eid", date: "June 29" },
-    { name: "Anne's Birthday", date: "December 3" },
-    { name: "Dylan's Birthday", date: "December 2" },
-    {
-      name: "Period Literacy Handbook (by Dr. Anne Hussain) Launch Day",
-      date: "May 8",
-    },
-  ];
-
-  const currentDate = new Date();
-  const startDate = new Date(currentDate.getTime() - 10 * 24 * 60 * 60 * 1000); // Subtract 10 days
-  const endDate = new Date(currentDate.getTime() + 10 * 24 * 60 * 60 * 1000); // Add 10 days
-
-  // Check if today is a holiday
-  const todayHoliday = holidays.find((holiday) => {
-    const holidayDate = new Date(
-      holiday.date + ", " + currentDate.getFullYear()
-    );
-    return (
-      holidayDate.getDate() === currentDate.getDate() &&
-      holidayDate.getMonth() === currentDate.getMonth() &&
-      holidayDate.getFullYear() === currentDate.getFullYear()
-    );
-  });
-
-  if (todayHoliday) {
-    return todayHoliday;
-  }
-
-  const holidaysInRange = holidays.filter((holiday) => {
-    const holidayDate = new Date(
-      holiday.date + ", " + currentDate.getFullYear()
-    );
-    return holidayDate >= startDate && holidayDate <= endDate;
-  });
-
-  // Return a random holiday from the filtered list
-  if (holidaysInRange.length > 0) {
-    const randomIndex = Math.floor(Math.random() * holidaysInRange.length);
-    return holidaysInRange[randomIndex];
-  } else {
-    //return the closest holiday if no holidays in range
-    const closestHoliday = holidays.reduce((a, b) => {
-      const aDate = new Date(a.date + ", " + currentDate.getFullYear());
-      const bDate = new Date(b.date + ", " + currentDate.getFullYear());
-      const aDiff = Math.abs(currentDate.getTime() - aDate.getTime());
-      const bDiff = Math.abs(currentDate.getTime() - bDate.getTime());
-      return aDiff < bDiff ? a : b;
-    });
-    return closestHoliday;
-  }
-}
-
-function getRandomHoliday() {
-  const holidays = [
-    "New Year's Eve",
-    "Valentine's Day",
-    "St. Patrick's Day",
-    "Easter",
-    "Mother's Day",
-    "Father's Day",
-    "Independence Day",
-    "Halloween",
-    "Thanksgiving",
-    "Christmas",
-    "Eid",
-    "Hanukkah",
-    "Kwanzaa",
-    "Diwali",
-    "Lunar New Year",
-    "Cinco de Mayo",
-    "Earth Day",
-    "Good Friday",
-    "Labor Day",
-    "Martin Luther King Jr. Day",
-    "Memorial Day",
-    "Presidents' Day",
-    "Passover",
-    "Ramadan",
-    "Mardi Gras",
-    "Veterans Day",
-    "Groundhog Day",
-    "Boxing Day",
-    "April Fools' Day",
-    "Juneteenth",
-    "Indigenous Peoples' Day",
-    "420",
-    "Pride",
-    "Black Friday",
-    "Cyber Monday",
-  ];
-  return holidays[Math.floor(Math.random() * holidays.length)];
-}
 
 const addUserDataToPosts = async (bots: Bot[]) => {
   const userId = bots.map((bot) => bot.authorId);
@@ -530,7 +396,7 @@ export const botsRouter = createTRPCRouter({
       }
 
       const improvedBio = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         temperature: 0.8,
         max_tokens: 150,
         messages: [
@@ -563,7 +429,7 @@ export const botsRouter = createTRPCRouter({
       // );
 
       const profileCreation = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         temperature: 0.8,
         max_tokens: 250,
         messages: [
@@ -624,6 +490,8 @@ export const botsRouter = createTRPCRouter({
       const location = formattedString.match(locationPattern)?.[1] || "";
       const bio = improvedBioText || input.content;
       const ogBio = input.content;
+      const bucketName = "tweetbots";
+
       // const bio = input.content;
       // console.log("checkpoint");
       // const imageOutput: any = await replicate.run(
@@ -637,40 +505,103 @@ export const botsRouter = createTRPCRouter({
       //   }
       // );
       // console.log("image output test", imageOutput);
-      let image = null; // Declare and initialize the variable outside the try block
+      // let image = null; // Declare and initialize the variable outside the try block
 
-      try {
-        console.log("starting image creation");
-        image = await openai.createImage({
-          prompt: `This is a High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
-            0,
-            500
-          )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-          n: 1,
-          size: "512x512",
+      // try {
+      //   console.log("starting image creation");
+      //   image = await openai.createImage({
+      //     prompt: `This is a High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
+      //       0,
+      //       500
+      //     )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+      //     n: 1,
+      //     size: "512x512",
 
-          // response_format: "b64_json",
-        });
+      //     // response_format: "b64_json",
+      //   });
 
-        // Rest of the code
-        // ...
-      } catch (error) {
-        console.error("Error creating image:", error);
+      //   // Rest of the code
+      //   // ...
+      // } catch (error) {
+      //   console.error("Error creating image:", error);
+      // }
+      // // console.log("profile image :", image);
+
+      // console.log(
+      //   "profile image creation status :",
+      //   image?.status,
+      //   ":",
+      //   image?.statusText
+      // );
+      // if (image?.statusText !== "OK") {
+      //   console.log("image creation error");
+      //   throw new TRPCError({
+      //     code: "INTERNAL_SERVER_ERROR",
+      //     message: `Image creation error ${image?.statusText}: ${image?.status}`,
+      //   });
+      // }
+      async function uploadProfileImageToS3(
+        outputStream: ReadableStream,
+        key: string
+      ) {
+        // Convert ReadableStream to a buffer
+        const response = new Response(outputStream);
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
+
+        // Set parameters for S3 upload
+        const params = {
+          Bucket: bucketName,
+          Key: key, // Specify a path and file name, for example 'images/generated-image.png'
+          Body: buffer,
+          ContentType: "image/png", // Change as needed for different image formats
+          // ACL: 'public-read', // Optional: Make the file publicly accessible
+        };
+
+        // Upload to S3
+        return s3
+          .upload(params)
+          .promise()
+          .then((data) => {
+            console.log("Successfully uploaded image to S3:", data.Location);
+            return data.Location; // This will be the URL of the uploaded image
+          })
+          .catch((err) => {
+            console.error("Error uploading to S3:", err);
+            throw err;
+          });
       }
-      // console.log("profile image :", image);
-
-      console.log(
-        "profile image creation status :",
-        image?.status,
-        ":",
-        image?.statusText
-      );
-      if (image?.statusText !== "OK") {
-        console.log("image creation error");
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `Image creation error ${image?.statusText}: ${image?.status}`,
-        });
+      // @ts-ignore
+      async function generateAndUploadProfileImage() {
+        try {
+          // @ts-ignore
+          const [output] = await replicate.run(
+            "black-forest-labs/flux-schnell",
+            {
+              input: {
+                disable_safety_checker: true,
+                prompt: `This is a High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
+                  0,
+                  500
+                )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
+              },
+            }
+          );
+          const postImageKey = `${name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
+          const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+          const imageUrl = await uploadProfileImageToS3(output, postImageKey);
+          const postImage = postImageBucketPath + postImageKey;
+          console.log("Image URL:", imageUrl);
+          return postImage;
+        } catch (error) {
+          console.error("Error processing or uploading image:", error);
+          return null;
+        }
+      }
+      const profileImageURL = await generateAndUploadProfileImage();
+      if (!profileImageURL) {
+        return null;
       }
 
       console.log(`img 1 cost: ${imageCost}}`);
@@ -712,69 +643,9 @@ export const botsRouter = createTRPCRouter({
       // const { success } = await ratelimit.limit(authorId);
       // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
-      const bucketName = "tweetbots";
-      const key = `${name}`; // This can be the same as the original file name or a custom key
+      const key = `${name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
       // const imageUrl = imageOutput[0] as string;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
-      const imageUrl = image?.data?.data[0]?.url;
-
-      if (!imageUrl) {
-        console.log("image creation failed, cancelling profile creation");
-        return;
-      }
-
-      if (imageUrl) {
-        console.log("image url", imageUrl);
-        try {
-          const response = await new Promise<any>((resolve, reject) => {
-            https
-              .get(imageUrl, (response) => {
-                resolve(response);
-              })
-              .on("error", (err: Error) => {
-                reject(err);
-              });
-          });
-          let body = "";
-          response.setEncoding("binary");
-          response.on("data", (chunk: string) => {
-            body += chunk;
-          });
-          await new Promise<void>((resolve, reject) => {
-            response.on("end", () => {
-              const options = {
-                Bucket: bucketName,
-                Key: key,
-                Body: Buffer.from(body, "binary"),
-                ContentType: response.headers["content-type"],
-              };
-              console.log("options", options);
-              console.log("Before s3.putObject");
-              s3.putObject(
-                options,
-                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-                  if (err) {
-                    console.error("Error saving image to S3", err);
-                    reject(err);
-                  } else {
-                    console.log("Image saved to S3", data);
-                    resolve();
-                  }
-                }
-              );
-              console.log("After s3.putObject");
-            });
-            response.on("error", (err: Error) => {
-              console.error("Error downloading image", err);
-              reject(err);
-            });
-          });
-          console.log("After https");
-        } catch (err) {
-          console.error("Error downloading image", err);
-        }
-        //add token count to bot
-      }
 
       // Download the image from the url
 
@@ -802,7 +673,7 @@ export const botsRouter = createTRPCRouter({
           dreams,
           fears,
           username: name.replace(/ /g, "_").substring(0, 20),
-          image: `${bucketPath}${name.replace(/ /g, "_")}`,
+          image: `${profileImageURL}`,
           tokens: Number(totalCost),
         },
       });
@@ -843,7 +714,7 @@ export const botsRouter = createTRPCRouter({
       const botImage = bot.image;
 
       const newPost = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         temperature: 0.8,
         max_tokens: 200,
         messages: [
@@ -883,14 +754,92 @@ export const botsRouter = createTRPCRouter({
         newPost?.data?.choices[0]?.message?.content ||
         "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
 
-      const firstPostImage = await openai.createImage({
-        prompt: `An photograph representation of a social media post from a user that looks like ${description} with post content: ${formattedRes.slice(
-          0,
-          500
-        )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI)`,
-        n: 1,
-        size: "512x512",
-      });
+      // const firsPostImageInput = {
+      //   steps: 25,
+      //   width: 512,
+      //   height: 512,
+      //   prompt: `An photograph to go along with a social media post from a user that looks like ${description} with post text: ${formattedRes.slice(
+      //     0,
+      //     500
+      //   )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI) The image should have no text.`,
+      //   guidance: 3,
+      //   interval: 2,
+      //   aspect_ratio: "1:1",
+      //   output_format: "webp",
+      //   output_quality: 80,
+      //   safety_tolerance: 2,
+      //   prompt_upsampling: true,
+      // };
+
+      async function uploadImageToS3(
+        outputStream: ReadableStream,
+        key: string
+      ) {
+        // Convert ReadableStream to a buffer
+        const response = new Response(outputStream);
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
+
+        // Set parameters for S3 upload
+        const params = {
+          Bucket: bucketName,
+          Key: key, // Specify a path and file name, for example 'images/generated-image.png'
+          Body: buffer,
+          ContentType: "image/png", // Change as needed for different image formats
+          // ACL: 'public-read', // Optional: Make the file publicly accessible
+        };
+
+        // Upload to S3
+        return s3
+          .upload(params)
+          .promise()
+          .then((data) => {
+            console.log("Successfully uploaded image to S3:", data.Location);
+            return data.Location; // This will be the URL of the uploaded image
+          })
+          .catch((err) => {
+            console.error("Error uploading to S3:", err);
+            throw err;
+          });
+      }
+      // @ts-ignore
+      async function generateAndUploadImage() {
+        try {
+          // @ts-ignore
+          const [output] = await replicate.run(
+            "black-forest-labs/flux-schnell",
+            {
+              input: {
+                disable_safety_checker: true,
+                prompt: `A selfie image to go along with a social media post from a user named ${botname} that looks like ${description}, to go with a post that says ${formattedRes.slice(
+                  0,
+                  600
+                )} taken with a high quality camera.`,
+              },
+            }
+          );
+          let randomKey = Math.random().toString(36).substring(2, 15);
+          const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+          const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+          const imageUrl = await uploadImageToS3(output, postImageKey);
+          const postImage = postImageBucketPath + postImageKey;
+          console.log("Image URL:", imageUrl);
+          return postImage;
+        } catch (error) {
+          console.error("Error processing or uploading image:", error);
+          return null;
+        }
+      }
+      const firstImageURL = await generateAndUploadImage();
+      // const firstPostImage = await openai.createImage({
+      //   prompt: `An photograph to go along with a social media post from a user that looks like ${description} with post text: ${formattedRes.slice(
+      //     0,
+      //     500
+      //   )}  Nikon D810 | ISO 64 | focal length 20 mm (Voigtländer 20 mm f3.5) | aperture f/9 | exposure time 1/40 Sec (DRI) The image should have no text.`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
 
       console.log(`img 2 cost: ${imageCost}`);
 
@@ -925,41 +874,49 @@ export const botsRouter = createTRPCRouter({
 
       let randomKey = Math.random().toString(36).substring(2, 15);
 
-      const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const postImageUrl = firstPostImage?.data?.data[0]?.url;
-      const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
-      const postImage = postImageBucketPath + postImageKey;
+      // const postImageUrl = firstPostImage?.data?.data[0]?.url;
+      // const postImageUrl = firstPostImage?.output
 
-      if (postImageUrl) {
-        https
-          .get(postImageUrl, (response) => {
-            let body = "";
-            response.setEncoding("binary");
-            response.on("data", (chunk: string) => {
-              body += chunk;
-            });
-            response.on("end", () => {
-              const options = {
-                Bucket: bucketName,
-                Key: postImageKey,
-                Body: Buffer.from(body, "binary"),
-                ContentType: response.headers["content-type"],
-              };
-              s3.putObject(
-                options,
-                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-                  if (err) {
-                    console.error("Error saving image to S3", err);
-                  } else {
-                    console.log("first post Image saved to S3", data);
-                  }
-                }
-              );
-            });
-          })
-          .on("error", (err: Error) => {
-            console.error("Error downloading image", err);
-          });
+      // const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      // const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+      // const postImage = postImageBucketPath + postImageKey;
+
+      // if (postImageUrl) {
+      //   https
+      //     .get(postImageUrl, (response) => {
+      //       let body = "";
+      //       response.setEncoding("binary");
+      //       response.on("data", (chunk: string) => {
+      //         body += chunk;
+      //       });
+      //       response.on("end", () => {
+      //         const options = {
+      //           Bucket: bucketName,
+      //           Key: postImageKey,
+      //           Body: Buffer.from(body, "binary"),
+      //           ContentType: response.headers["content-type"],
+      //         };
+      //         s3.putObject(
+      //           options,
+      //           (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+      //             if (err) {
+      //               console.error("Error saving image to S3", err);
+      //             } else {
+      //               console.log("first post Image saved to S3", data);
+      //             }
+      //           }
+      //         );
+      //       });
+      //     })
+      //     .on("error", (err: Error) => {
+      //       console.error("Error downloading image", err);
+      //     });
+      // }
+
+      if (!firstImageURL) {
+        console.log("No image URL found");
+        return;
+        // return;
       }
 
       const regex = /#[\w]+/g;
@@ -973,7 +930,7 @@ export const botsRouter = createTRPCRouter({
           botId: id,
           authorImage: botImage,
           authorName: botname,
-          postImage: postImage,
+          postImage: firstImageURL,
           cost: Number(firstTweetCost) + imageCost,
           // bot: { connect: { id: id } },
         },
@@ -1081,7 +1038,7 @@ export const botsRouter = createTRPCRouter({
       const goals = input.bot.goals;
 
       const newPost = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         temperature: 0.8,
         max_tokens: 200,
         messages: [
@@ -1118,31 +1075,78 @@ export const botsRouter = createTRPCRouter({
 
       // console.log("checkpoint");
 
-      // const image: any = await replicate.run(
-      //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-      //   {
-      //     input: {
-      //       prompt: `Image version, of this: ${formattedString.slice(
-      //         0,
-      //         500
-      //       )}  Ultra High Quality Rendering. Clearer than real life.`,
-      //       image_dimensions: "512x512",
-      //       negative_prompt:
-      //         "No unentered portraits. No cut off foreheads.",
-      //     },
-      //   }
-      // );
+      async function uploadImageToS3(
+        outputStream: ReadableStream,
+        key: string
+      ) {
+        // Convert ReadableStream to a buffer
+        const response = new Response(outputStream);
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
 
-      const image = await openai.createImage({
-        prompt: `Image version, of this: ${formattedString.slice(
-          0,
-          500
-        )}  Ultra High Quality Rendering. Clearer than real life.`,
-        n: 1,
-        size: "512x512",
-      });
+        // Set parameters for S3 upload
+        const params = {
+          Bucket: bucketName,
+          Key: key, // Specify a path and file name, for example 'images/generated-image.png'
+          Body: buffer,
+          ContentType: "image/png", // Change as needed for different image formats
+          // ACL: 'public-read', // Optional: Make the file publicly accessible
+        };
 
-      console.log("img return");
+        // Upload to S3
+        return s3
+          .upload(params)
+          .promise()
+          .then((data) => {
+            console.log("Successfully uploaded image to S3:", data.Location);
+            return data.Location; // This will be the URL of the uploaded image
+          })
+          .catch((err) => {
+            console.error("Error uploading to S3:", err);
+            throw err;
+          });
+      }
+      // @ts-ignore
+      async function generateAndUploadImage() {
+        try {
+          // @ts-ignore
+          const [output] = await replicate.run(
+            "black-forest-labs/flux-schnell",
+            {
+              input: {
+                disable_safety_checker: true,
+                prompt: `Image to go along with this twitter post: ${formattedString.slice(
+                  0,
+                  1000
+                )}  Ultra High Quality Rendering. Clearer than real life.`,
+              },
+            }
+          );
+          let randomKey = Math.random().toString(36).substring(2, 15);
+          const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+          const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+          const imageUrl = await uploadImageToS3(output, postImageKey);
+          const postImage = postImageBucketPath + postImageKey;
+          console.log("Image URL:", imageUrl);
+          return postImage;
+        } catch (error) {
+          console.error("Error processing or uploading image:", error);
+          return null;
+        }
+      }
+      const ImageURL = await generateAndUploadImage();
+
+      // const image = await openai.createImage({
+      //   prompt: `Image version, of this: ${formattedString.slice(
+      //     0,
+      //     500
+      //   )}  Ultra High Quality Rendering. Clearer than real life.`,
+      //   n: 1,
+      //   size: "512x512",
+      // });
+
+      console.log("img return", ImageURL);
 
       if (
         botname === undefined ||
@@ -1185,41 +1189,41 @@ export const botsRouter = createTRPCRouter({
       let randomKey = Math.random().toString(36).substring(2, 15);
 
       const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
-      const imageUrl = image.data?.data[0]?.url;
+      // const imageUrl = image.data?.data[0]?.url;
       const bucketPath = "https://tweetbots.s3.amazonaws.com/";
-      const postImage = bucketPath + key;
+      const postImage = ImageURL;
 
-      if (imageUrl) {
-        https
-          .get(imageUrl, (response) => {
-            let body = "";
-            response.setEncoding("binary");
-            response.on("data", (chunk: string) => {
-              body += chunk;
-            });
-            response.on("end", () => {
-              const options = {
-                Bucket: bucketName,
-                Key: key,
-                Body: Buffer.from(body, "binary"),
-                ContentType: response.headers["content-type"],
-              };
-              s3.putObject(
-                options,
-                (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-                  if (err) {
-                    console.error("Error saving image to S3", err);
-                  } else {
-                    console.log("Image saved to S3", data);
-                  }
-                }
-              );
-            });
-          })
-          .on("error", (err: Error) => {
-            console.error("Error downloading image", err);
-          });
-      }
+      // if (imageUrl) {
+      //   https
+      //     .get(imageUrl, (response) => {
+      //       let body = "";
+      //       response.setEncoding("binary");
+      //       response.on("data", (chunk: string) => {
+      //         body += chunk;
+      //       });
+      //       response.on("end", () => {
+      //         const options = {
+      //           Bucket: bucketName,
+      //           Key: key,
+      //           Body: Buffer.from(body, "binary"),
+      //           ContentType: response.headers["content-type"],
+      //         };
+      //         s3.putObject(
+      //           options,
+      //           (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
+      //             if (err) {
+      //               console.error("Error saving image to S3", err);
+      //             } else {
+      //               console.log("Image saved to S3", data);
+      //             }
+      //           }
+      //         );
+      //       });
+      //     })
+      //     .on("error", (err: Error) => {
+      //       console.error("Error downloading image", err);
+      //     });
+      // }
 
       // Download the image from the url
 
@@ -1681,7 +1685,7 @@ export const botsRouter = createTRPCRouter({
             console.log("articleObj", articleObj);
 
             const newPost = await openai.createChatCompletion({
-              model: "gpt-3.5-turbo",
+              model: "gpt-4o",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
@@ -1874,7 +1878,7 @@ export const botsRouter = createTRPCRouter({
             console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
-              model: "gpt-3.5-turbo",
+              model: "gpt-4o",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
@@ -1905,7 +1909,7 @@ export const botsRouter = createTRPCRouter({
             console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
-              model: "gpt-3.5-turbo",
+              model: "gpt-4o",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
@@ -1936,7 +1940,7 @@ export const botsRouter = createTRPCRouter({
 
           console.log("Post Inspiration", inspiration);
           const newPost = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o",
             temperature: 0.8,
             max_tokens: 200,
             messages: [
@@ -2006,17 +2010,88 @@ export const botsRouter = createTRPCRouter({
           //   }
           // );
 
+          async function uploadImageToS3(
+            outputStream: ReadableStream,
+            key: string
+          ) {
+            // Convert ReadableStream to a buffer
+            const response = new Response(outputStream);
+            const blob = await response.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
+
+            // Set parameters for S3 upload
+            const params = {
+              Bucket: bucketName,
+              Key: key, // Specify a path and file name, for example 'images/generated-image.png'
+              Body: buffer,
+              ContentType: "image/png", // Change as needed for different image formats
+              // ACL: 'public-read', // Optional: Make the file publicly accessible
+            };
+
+            // Upload to S3
+            return s3
+              .upload(params)
+              .promise()
+              .then((data) => {
+                console.log(
+                  "Successfully uploaded image to S3:",
+                  data.Location
+                );
+                return data.Location; // This will be the URL of the uploaded image
+              })
+              .catch((err) => {
+                console.error("Error uploading to S3:", err);
+                throw err;
+              });
+          }
+          // @ts-ignore
+          async function generateAndUploadImage() {
+            try {
+              // @ts-ignore
+              const [output] = await replicate.run(
+                "black-forest-labs/flux-schnell",
+                {
+                  input: {
+                    disable_safety_checker: true,
+                    prompt: `Image to go along with this twitter post: ${formattedString.slice(
+                      0,
+                      1000
+                    )}  Ultra High Quality Rendering. Clearer than real life.`,
+                  },
+                }
+              );
+              let randomKey = Math.random().toString(36).substring(2, 15);
+              const postImageKey = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+              const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
+              const imageUrl = await uploadImageToS3(output, postImageKey);
+              const postImage = postImageBucketPath + postImageKey;
+              console.log("Image URL:", imageUrl);
+              return postImage;
+            } catch (error) {
+              console.error("Error processing or uploading image:", error);
+              return null;
+            }
+          }
+          const ImageURL = await generateAndUploadImage();
+
+          if (!ImageURL) {
+            return null;
+          } else {
+            imgUrl = ImageURL;
+          }
+
           // imgUrl = image[0]
 
-          const image = await openai.createImage({
-            prompt: `Image for social media post by ${botname} who looks like: ${description}. The Post content: ${formattedString.slice(
-              0,
-              500
-            )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-            n: 1,
-            size: "512x512",
-          });
-          imgUrl = image?.data?.data[0]?.url || "";
+          // const image = await openai.createImage({
+          //   prompt: `Image for social media post by ${botname} who looks like: ${description}. The Post content: ${formattedString.slice(
+          //     0,
+          //     500
+          //   )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
+          //   n: 1,
+          //   size: "512x512",
+          // });
+          // imgUrl = image?.data?.data[0]?.url || "";
 
           tokenUsage += imageCost;
         }
@@ -2066,42 +2141,6 @@ export const botsRouter = createTRPCRouter({
         const bucketPath = "https://tweetbots.s3.amazonaws.com/";
         let postImage = bucketPath + key;
 
-        if (imageUrl) {
-          console.log("post image:", postImage);
-          https
-            .get(imageUrl, (response) => {
-              let body = "";
-              response.setEncoding("binary");
-              response.on("data", (chunk: string) => {
-                body += chunk;
-              });
-              response.on("end", () => {
-                const options = {
-                  Bucket: bucketName,
-                  Key: key,
-                  Body: Buffer.from(body, "binary"),
-                  ContentType: response.headers["content-type"],
-                };
-                s3.putObject(
-                  options,
-                  (err: Error, data: AWS.S3.Types.PutObjectOutput) => {
-                    if (err) {
-                      console.error("Error saving image to S3", err);
-                    } else {
-                      console.log("Image saved to S3:", postImage);
-                    }
-                  }
-                );
-              });
-            })
-            .on("error", (err: Error) => {
-              console.error("Error downloading image", err);
-              postImage = "";
-            });
-        } else {
-          postImage = "";
-        }
-
         const regex = /#[\w]+/g;
         const hashtags = formattedString.match(regex) || [];
         const hashtagsString = hashtags.join(", ");
@@ -2116,7 +2155,7 @@ export const botsRouter = createTRPCRouter({
               botId: id,
               authorImage: botImage,
               authorName: botname,
-              postImage: (imageUrl && postImage) || "",
+              postImage: imageUrl,
               cost: Number(tokenUsage),
               originalPostId: ogPost.id,
             },
@@ -2345,8 +2384,13 @@ export const botsRouter = createTRPCRouter({
       hashtags?.forEach((tag) => {
         const lowercaseTag = tag.toLowerCase();
 
-        if (lowercaseTag in hashtagCount) {
-          hashtagCount[lowercaseTag]++;
+        //handle type error of hashtagCount[lowercaseTag] might be undefined
+        if (
+          lowercaseTag in hashtagCount &&
+          hashtagCount[lowercaseTag] !== undefined
+        ) {
+          hashtagCount[lowercaseTag] += 1;
+          return;
         } else {
           hashtagCount[lowercaseTag] = 1;
         }
