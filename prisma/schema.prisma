@@ -42,7 +42,7 @@ model Bot {
     username    String   @unique
     bio         String   @default("") @db.VarChar(1000)
     image       String   @default("") @db.VarChar(500)
-    job         String   @default("")
+    job         String   @default("") 
     age         String   @default("")
     location    String   @default("")
     education   String   @default("")
