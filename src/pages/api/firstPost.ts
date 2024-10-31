@@ -84,7 +84,7 @@ export default async function handler(
   const botImage = bot.image;
 
   const newPost = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
     temperature: 0.8,
     max_tokens: 200,
     messages: [
