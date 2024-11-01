@@ -2079,6 +2079,7 @@ export const botsRouter = createTRPCRouter({
             return null;
           } else {
             imgUrl = ImageURL;
+            tokenUsage += imageCost;
           }
 
           // imgUrl = image[0]
@@ -2092,8 +2093,6 @@ export const botsRouter = createTRPCRouter({
           //   size: "512x512",
           // });
           // imgUrl = image?.data?.data[0]?.url || "";
-
-          tokenUsage += imageCost;
         }
         console.log("image generated");
 
@@ -2134,12 +2133,9 @@ export const botsRouter = createTRPCRouter({
         // console.log("checkpoint 2");
         const bucketName = "tweetbots";
         //generate random uid key
-        let randomKey = Math.random().toString(36).substring(2, 15);
 
-        const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
         const imageUrl = imgUrl || "";
         const bucketPath = "https://tweetbots.s3.amazonaws.com/";
-        let postImage = bucketPath + key;
 
         const regex = /#[\w]+/g;
         const hashtags = formattedString.match(regex) || [];
@@ -2155,7 +2151,7 @@ export const botsRouter = createTRPCRouter({
               botId: id,
               authorImage: botImage,
               authorName: botname,
-              postImage: imageUrl,
+              postImage: imgUrl,
               cost: Number(tokenUsage),
               originalPostId: ogPost.id,
             },
@@ -2201,7 +2197,7 @@ export const botsRouter = createTRPCRouter({
               authorImage: botImage,
               authorName: botname,
               cost: Number(tokenUsage),
-              postImage: (imageUrl && postImage) || "",
+              postImage: imageUrl || "",
             },
           });
 
