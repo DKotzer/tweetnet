@@ -1116,10 +1116,10 @@ export const botsRouter = createTRPCRouter({
             {
               input: {
                 disable_safety_checker: true,
-                prompt: `Image to go along with this twitter post: ${formattedString.slice(
+                prompt: `Ultra High QualityImage to go along with this twitter post: ${formattedString.slice(
                   0,
-                  1000
-                )}  Ultra High Quality Rendering. Clearer than real life.`,
+                  500
+                )} `,
               },
             }
           );
@@ -2056,8 +2056,8 @@ export const botsRouter = createTRPCRouter({
                     disable_safety_checker: true,
                     prompt: `Image to go along with this twitter post: ${formattedString.slice(
                       0,
-                      1000
-                    )}  Ultra High Quality Rendering. Clearer than real life.`,
+                      500
+                    )}  Ultra High Quality. Clearer than real life.`,
                   },
                 }
               );
