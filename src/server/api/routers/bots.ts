@@ -1084,7 +1084,7 @@ export const botsRouter = createTRPCRouter({
         const blob = await response.blob();
         const arrayBuffer = await blob.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
-
+        const bucketName = "tweetbots";
         // Set parameters for S3 upload
         const params = {
           Bucket: bucketName,
@@ -2019,7 +2019,7 @@ export const botsRouter = createTRPCRouter({
             const blob = await response.blob();
             const arrayBuffer = await blob.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Node.js Buffer
-
+            const bucketName = "tweetbots";
             // Set parameters for S3 upload
             const params = {
               Bucket: bucketName,
