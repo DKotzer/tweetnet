@@ -324,16 +324,7 @@ export const botsRouter = createTRPCRouter({
         console.log("no user found, cancelling bot creation");
         return;
       }
-      //if user has no tokens used yet (first bot), set tokens to 0
-      // if (!user.publicMetadata.tokensUsed) {
-      //   console.log("no tokens found on account, setting to 0");
-      //   await users.updateUser(authorId, {
-      //     publicMetadata: {
-      //       ...user.publicMetadata,
-      //       tokensUsed: 0,
-      //     },
-      //   });
-      // }
+
       if (!user.publicMetadata.tokensLimit) {
         console.log("no token limit found on account, setting to 150000");
         await users.updateUser(authorId, {
@@ -344,9 +335,6 @@ export const botsRouter = createTRPCRouter({
           },
         });
       }
-      // console.log("user test", user);
-      // const privateMetadata = user.privateMetadata;
-      // console.log("metadata", privateMetadata);
 
       if (
         Number(user.publicMetadata.tokensLimit) -
@@ -359,12 +347,12 @@ export const botsRouter = createTRPCRouter({
         return;
       }
 
-      console.log(
-        "token limit:",
-        user.publicMetadata.tokensLimit,
-        "vs tokens used:",
-        user.publicMetadata.tokensUsed
-      );
+      // console.log(
+      //   "token limit:",
+      //   user.publicMetadata.tokensLimit,
+      //   "vs tokens used:",
+      //   user.publicMetadata.tokensUsed
+      // );
 
       let tokenUsage = 0;
       let botCount = await ctx.prisma.bot.findMany({
@@ -440,7 +428,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Goals: <goals>. Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> Description: <extremely brief 5-6 word physical description used for generating images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
+            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Goals: <goals>. Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> Description: <extremely brief 10-15 word physical description used for generating images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
           },
         ],
       });
@@ -872,7 +860,7 @@ export const botsRouter = createTRPCRouter({
       console.log("location:", location);
       console.log("bot image:", botImage);
 
-      let randomKey = Math.random().toString(36).substring(2, 15);
+      // let randomKey = Math.random().toString(36).substring(2, 15);
 
       // const postImageUrl = firstPostImage?.data?.data[0]?.url;
       // const postImageUrl = firstPostImage?.output
@@ -1184,13 +1172,13 @@ export const botsRouter = createTRPCRouter({
       const { success } = await ratelimit.limit(authorId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
       // console.log("checkpoint 2");
-      const bucketName = "tweetbots";
+      // const bucketName = "tweetbots";
       //generate random uid key
-      let randomKey = Math.random().toString(36).substring(2, 15);
+      // let randomKey = Math.random().toString(36).substring(2, 15);
 
-      const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
+      // const key = `${botname.replace(/ /g, "_")}-${randomKey}`; // This can be the same as the original file name or a custom key
       // const imageUrl = image.data?.data[0]?.url;
-      const bucketPath = "https://tweetbots.s3.amazonaws.com/";
+      // const bucketPath = "https://tweetbots.s3.amazonaws.com/";
       const postImage = ImageURL;
 
       // if (imageUrl) {
@@ -1883,16 +1871,16 @@ export const botsRouter = createTRPCRouter({
               max_tokens: 200,
               messages: [
                 {
-                  role: "assistant",
-                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                  role: "system",
+                  content: `Your task is to generate a creative tweet reply.`,
                 },
                 {
-                  role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName} which is itself a reply to @${ogOgPoster}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+                  role: "assistant",
+                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams} and goals are ${goals}. My job/second goal is ${job}. I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears}. My hobbies: ${hobbies}. My Location: ${location}. I will do my best to write amazing tweets.`,
                 },
                 {
                   role: "user",
-                  content: `Create a very creative, and in character tweet reply to this tweet chain, you are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use your background information and the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
+                  content: `Create a very creative, and in character tweet reply to this tweet chain. You are replying to @${ogPost?.authorName}: ${ogPost?.content} which is itself a reply to @${ogOgPoster}: ${ogOgText}. Use your background information and the following idea loosely for inspiration: ${inspiration}. Do not use the inspiration word for word. Aim for a fun, creative, in-character reply. Add hashtags at the end of your tweet.`,
                 },
               ],
             });
@@ -1914,17 +1902,16 @@ export const botsRouter = createTRPCRouter({
               max_tokens: 200,
               messages: [
                 {
-                  role: "assistant",
-                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location} . I will do my best to write amazing tweets.`,
+                  role: "system",
+                  content: `Generate a creative, in-character tweet reply to this tweet from @${ogPost?.authorName} without quoting the post or using angled brackets. Refer to yourself using first person.`,
                 },
                 {
-                  role: "system",
-                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName} Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits. Use your background information as inspiration but do not reference your background information directly. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+                  role: "assistant",
+                  content: `I am ${botname}. My background includes: ${bio}. Dreams and goals: ${dreams}, ${goals}. Job: ${job}. Likes: ${likes}. Dislikes: ${dislikes}. Education: ${education}. Fears: ${fears}. Hobbies: ${hobbies}. Location: ${location}.`,
                 },
-
                 {
                   role: "user",
-                  content: `Create a very creative, and in character tweet reply to this tweet from @${ogPost?.authorName}: "${ogPost?.content}. Reply to @${ogPost?.authorName}'s tweet, in a writing style based on your traits in a fun, creative and in character way. Use the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
+                  content: `Create a tweet reply to a post by @${ogPost?.authorName}: "${ogPost?.content}". Use the idea: ${inspiration}. The tweet should creatively reflect your traits, include hashtags at the end, and follow given instructions.`,
                 },
               ],
             });
@@ -1946,28 +1933,16 @@ export const botsRouter = createTRPCRouter({
             messages: [
               {
                 role: "system",
-                content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
+                content: `I am ${botname}. My background includes: ${bio}. Dreams: ${dreams}. Goals: ${goals}. Job: ${job}. Likes: ${likes}. Dislikes: ${dislikes}. Education: ${education}. Fears: ${fears}. Hobbies: ${hobbies}. Location: ${location}. Operating on TweetNet, a social media platform.`,
               },
               {
                 role: "system",
-                content: `Create a very creative, and in character tweet that uses your background information as inspiration. Do not surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.
-            `,
+                content: `Create a creative tweet in character that uses your background for inspiration. Avoid quotes around the tweet, refer to yourself in the first person, and avoid arrow brackets.`,
               },
-              // {
-              //   role: "user",
-              //   content: `We are creating a tweet that shows your characteristics and background. Name: ${botname} Bio: ${bio} Dreams: ${dreams} Likes: ${likes} Dislikes: ${dislikes} Education: ${education} Fears: ${fears} Hobbies: ${hobbies} Location: ${location} Job: ${job} Part of your job or dreams/goal is being fulfilled by your tweets, your tweet should be related to a few of your pieces of background information.`,
-              // },
               {
                 role: "user",
-                content: `Create a very creative tweet in a writing style based on your traits using the following idea loosely for inspiration - do not use the inspiration word for word, use your own words to create a tweet reply. : ${inspiration}. ". Use your background information combined with the template. Feel free to edit the initial prompt slightly to work better with your traits if needed. Do not surround the tweet in quotes. Add hashtags at the end of your tweet.`,
+                content: `Create a tweet in your style, using this idea for loose inspiration: ${inspiration}. Leverage your background combined with the template. Adjust prompts to align with your traits if necessary. No quotes around the tweet. Include hashtags.`,
               },
-
-              // {
-              //   role: "system",
-              //   content: `Here is a general idea on how you can format the tweet based on the information you provided, you do not need to follow it strictly: "${
-              //     tweetTemplates[Math.floor(Math.random() * tweetTemplates.length)]
-              //   }"`,
-              // },
             ],
           });
 
