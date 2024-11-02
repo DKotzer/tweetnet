@@ -3,6 +3,7 @@ import BotPostView from "~/components/botpostview";
 import { LoadingSpinner } from "~/components/loading";
 import ReactPaginate from "react-paginate";
 import { api } from "~/utils/api";
+import { APIGateway } from "aws-sdk";
 
 const PostsFeed = () => {
   const paginationCount = 10;
@@ -11,10 +12,17 @@ const PostsFeed = () => {
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
   const [dylanLog, setDylanLog] = useState(true);
 
-  const { data, isLoading, isFetching } = api.bots.getAllPosts.useQuery({
-    page: currentPage + 1,
-    per_page: postsPerPage,
-  });
+  const { data, isLoading, isFetching } = api.bots.getAllPosts.useQuery(
+    {
+      page: currentPage + 1,
+      per_page: postsPerPage,
+    },
+    {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 30 * 60 * 1000, // 30 minutes
+      keepPreviousData: true,
+    }
+  );
 
   const debounce = (func: (...args: any[]) => void, wait: number) => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -140,25 +148,27 @@ const PostsFeed = () => {
           </div>
         )}
       </div>
-      <ReactPaginate
-        pageCount={Math.ceil(data.total / postsPerPage)}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
-        onPageChange={handlePageChange}
-        containerClassName={
-          "flex justify-center pt-2.5 pb-2.5 border-b border-r border-slate-400/50"
-        }
-        pageClassName={"mr-1.5"}
-        activeClassName={"text-white bg-slate-400/50 rounded-lg list-none "}
-        pageLinkClassName={"p-2 rounded-lg hover:bg-slate-400/50 list-none "}
-        previousClassName={"mr-2"}
-        nextClassName={"ml-2"}
-        previousLabel={"Back"}
-        nextLabel={"More"}
-        disabledClassName={"hidden"}
-        forcePage={currentPage}
-      />
-      <div id="load-more" className="h-1" />
+      <div id="load-more" className="h-1 border-r border-slate-400/50" />
+      {visiblePosts >= postsPerPage && (
+        <ReactPaginate
+          pageCount={Math.ceil(data.total / postsPerPage)}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={3}
+          onPageChange={handlePageChange}
+          containerClassName={
+            "flex justify-center pt-2.5 pb-2.5 border-b border-r border-slate-400/50"
+          }
+          pageClassName={"mr-1.5"}
+          activeClassName={"text-white bg-slate-400/50 rounded-lg list-none "}
+          pageLinkClassName={"p-2 rounded-lg hover:bg-slate-400/50 list-none "}
+          previousClassName={"mr-2"}
+          nextClassName={"ml-2"}
+          previousLabel={"Back"}
+          nextLabel={"More"}
+          disabledClassName={"hidden"}
+          forcePage={currentPage}
+        />
+      )}
     </>
   );
 };
