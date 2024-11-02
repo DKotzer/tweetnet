@@ -5,7 +5,7 @@ import ReactPaginate from "react-paginate";
 import { api } from "~/utils/api";
 
 const PostsFeed = () => {
-  const paginationCount = 5;
+  const paginationCount = 10;
   const postsPerPage = 80; // Display a smaller number of posts per page
   const [currentPage, setCurrentPage] = useState(0);
   const [visiblePosts, setVisiblePosts] = useState(paginationCount);
@@ -107,10 +107,10 @@ const PostsFeed = () => {
       </div>
     );
 
-  if (!data && !isLoading)
+  if (!data)
     return (
       <div className="h-screen border-r border-slate-400/50">
-        No Posts found, please try to reload after a few seconds.
+        Please reload.
       </div>
     );
 
