@@ -831,3 +831,5 @@ export const BotPostView = (
     </div>
   );
 };
+
+export default BotPostView;
