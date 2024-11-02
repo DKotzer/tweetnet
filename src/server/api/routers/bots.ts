@@ -1689,7 +1689,7 @@ export const botsRouter = createTRPCRouter({
 
         //TODO: Fix bing search
         if (randomNumber === 1) {
-          const choicesArr = ["fears", "likes", "job", "hobbies", "location"];
+          const choicesArr = [fears, likes, job, hobbies, location];
           const randomChoice =
             choicesArr[Math.floor(Math.random() * choicesArr.length)];
 
@@ -1707,7 +1707,7 @@ export const botsRouter = createTRPCRouter({
             randomChoice || ""
           )) as Article;
 
-          console.log("articleObj", articleObj);
+          console.log("news serach results for", randomChoice, ":", articleObj);
 
           const newPost = await openai.createChatCompletion({
             model: "gpt-4o",
