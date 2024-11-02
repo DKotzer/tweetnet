@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import React, { Fragment } from "react";
-	
+import LinkPreview from "./linkPreview";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
@@ -12,12 +12,10 @@ dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
-
 const transformLinkUri = (uri: string) => {
   // Transform the link URI here
   return uri;
 };
-
 
 // interface CustomLinkProps {
 //   href: string;
@@ -41,7 +39,6 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
   const content = (children as string[])[0];
   let output = [];
 
-
   let hashtags = [] as string[];
 
   if (content) {
@@ -54,19 +51,13 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
           const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
           const hashtag = hashtagMatch ? hashtagMatch[0] : "";
           if (hashtag === "") {
-            return (
-              <Fragment key={`segment-${index}`}>
-                {segment}
-              </Fragment>
-            );
+            return <Fragment key={`segment-${index}`}>{segment}</Fragment>;
           } else {
             hashtags.push(hashtag); // Collect hashtags for later use
             return null;
           }
         } else {
-          return (
-            <Fragment key={`segment-${index}`}>{segment}</Fragment>
-          );
+          return <Fragment key={`segment-${index}`}>{segment}</Fragment>;
         }
       });
 
@@ -102,7 +93,6 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
   return <span>{output}</span>;
 };
 
-
 interface CustomTextProps {
   children: React.ReactNode;
   type: "p" | "span" | "li" | "a" | "href" | "link" | "text";
@@ -124,42 +114,36 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
             let isHashtag = segment?.startsWith("#");
             let hashtag = "";
 
-
             if (isHashtag) {
               const hashtagMatch = segment?.match(/#[a-zA-Z0-9_]*/);
               hashtag = hashtagMatch ? `${hashtagMatch[0]}` : "";
             }
 
-            if (
-              hashtag &&
-              !tempHashtags.includes(hashtag)
-              
-            ) {
-
-             if (
-               j === segments.length - 1 ||
-               !segments[j + 2]
-                 ?.charAt(0)
-                 .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/) ||
-               !segments[j + 2] ||
-               segments[j + 2]?.startsWith("https://") ||
-               segments[j + 2]?.toLowerCase().startsWith("article") ||
-               segments[j + 2]?.toLowerCase().startsWith("url")
-             ) {
-               hashtags.push(hashtag);
-               tempHashtags.push(hashtag);
-             } else {
-               paragraphOutput.push(
-                 <Fragment key={`segment-${j}`}>
-                   <Link
-                     className="hashTag"
-                     href={`${baseURL}hashtag/${hashtag.substring(1)}`}
-                   >
-                     {hashtag}
-                   </Link>{" "}
-                 </Fragment>
-               );
-             }
+            if (hashtag && !tempHashtags.includes(hashtag)) {
+              if (
+                j === segments.length - 1 ||
+                !segments[j + 2]
+                  ?.charAt(0)
+                  .match(/^(?!\s[a-zA-Z0-9])[a-zA-Z0-9]+$/) ||
+                !segments[j + 2] ||
+                segments[j + 2]?.startsWith("https://") ||
+                segments[j + 2]?.toLowerCase().startsWith("article") ||
+                segments[j + 2]?.toLowerCase().startsWith("url")
+              ) {
+                hashtags.push(hashtag);
+                tempHashtags.push(hashtag);
+              } else {
+                paragraphOutput.push(
+                  <Fragment key={`segment-${j}`}>
+                    <Link
+                      className="hashTag"
+                      href={`${baseURL}hashtag/${hashtag.substring(1)}`}
+                    >
+                      {hashtag}
+                    </Link>{" "}
+                  </Fragment>
+                );
+              }
             } else if (segment?.startsWith("@")) {
               const usernameMatch = segment?.match(/@[a-zA-Z0-9_]*/);
               const username = usernameMatch
@@ -183,19 +167,21 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                 );
               }
             } else if (segment?.startsWith("https://")) {
+              if (
+                segment?.startsWith("'") ||
+                segment?.startsWith('"') ||
+                segment?.startsWith("(")
+              ) {
+                segment = segment.slice(1);
+              }
 
-            if (
-              segment?.startsWith("'") ||
-              segment?.startsWith('"') ||
-              segment?.startsWith("(")
-            ) {
-              segment = segment.slice(1);
-            }
-
-            if (segment?.endsWith("'") || segment?.endsWith('"') || segment?.endsWith(")")) {
-              segment = segment.slice(0, -1);
-             
-            }  
+              if (
+                segment?.endsWith("'") ||
+                segment?.endsWith('"') ||
+                segment?.endsWith(")")
+              ) {
+                segment = segment.slice(0, -1);
+              }
               paragraphOutput.push(
                 <Fragment key={`link-${j}`}>
                   <div className=" max-w-[260px] overflow-hidden md:max-w-full">
@@ -207,7 +193,6 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                   </div>
                 </Fragment>
               );
-                      
             } else {
               paragraphOutput.push(
                 <Fragment key={`segment-${j}`}>{segment}</Fragment>
@@ -239,7 +224,6 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
 
   return <div className="markdown text-lg">{output}</div>;
 };
-
 
 interface CustomListProps {
   children: React.ReactNode;
@@ -304,11 +288,11 @@ const CustomList: React.FC<CustomListProps> = ({ children, type }) => {
   return output;
 };
 
-
 type CustomComponents = {
   p: React.FC<CustomTextProps>;
   ul: React.FC<CustomListProps>;
   li: React.FC<CustomTextProps>;
+  a: React.FC<{ href: string; children: React.ReactNode }>;
 };
 
 const renderers = {
@@ -321,9 +305,6 @@ const renderers = {
   list: CustomList,
   listItem: CustomLi,
 };
-
-
-
 
 type Post = {
   id: string;
@@ -338,14 +319,18 @@ export const BotPostView = (
   props: { username: string; image: string } & Post
 ) => {
   // console.log("props test", props.content);
-  if (props.originalPostId !== undefined && props.originalPostId !== undefined && props.originalPostId) {
+  if (
+    props.originalPostId !== undefined &&
+    props.originalPostId !== undefined &&
+    props.originalPostId
+  ) {
     // Validate props.originalPostId
     if (typeof props.originalPostId !== "string") {
       // Handle invalid originalPostId (not a string)
       console.error("Invalid originalPostId:", props.originalPostId);
-       // or display an error message to the user
-       return <div>Error loading post: {props.originalPostId}</div>
-    } 
+      // or display an error message to the user
+      return <div>Error loading post: {props.originalPostId}</div>;
+    }
     const { data, isLoading } = api.bots.getPostById.useQuery({
       id: props.originalPostId,
     });
@@ -397,14 +382,36 @@ export const BotPostView = (
                 </div>
               </div>
               <span className=" text-lg">
-                <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
+                <ReactMarkdown
+                  transformLinkUri={transformLinkUri}
+                  linkTarget="_blank"
                   // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomLi,
-                      a: CustomText,
+                      a: ({
+                        href,
+                        children,
+                      }: {
+                        href: string;
+                        children: React.ReactNode;
+                      }) => {
+                        console.log(`Rendering link: ${href}`);
+                        return (
+                          <>
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {children}
+                            </a>
+                            {href && <LinkPreview url={href} />}
+                          </>
+                        );
+                      },
                     } as CustomComponents
                   }
                 >
@@ -480,7 +487,7 @@ export const BotPostView = (
               <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
-                    src={"/default.webp" || ""}
+                    src={"/default.webp"}
                     className="h-14 w-14 rounded-full"
                     alt={`default profile picture`}
                     width={56}
@@ -497,14 +504,36 @@ export const BotPostView = (
               </div>
 
               <span className=" text-xl">
-                <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
+                <ReactMarkdown
+                  transformLinkUri={transformLinkUri}
+                  linkTarget="_blank"
                   // @ts-ignore
                   components={
                     {
                       p: CustomText,
                       ul: CustomList,
                       li: CustomLi,
-                      a: CustomText,
+                      a: ({
+                        href,
+                        children,
+                      }: {
+                        href: string;
+                        children: React.ReactNode;
+                      }) => {
+                        console.log(`Rendering link: ${href}`);
+                        return (
+                          <>
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {children}
+                            </a>
+                            {href && <LinkPreview url={href} />}
+                          </>
+                        );
+                      },
                     } as CustomComponents
                   }
                 >
@@ -534,8 +563,6 @@ export const BotPostView = (
         </div>
       );
     }
-
-
 
     return (
       <div className="botPostView hover:bg-[#ffffff08]">
@@ -605,14 +632,36 @@ export const BotPostView = (
                   </span>
                 </div>
                 <span className=" text-lg">
-                  <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
+                  <ReactMarkdown
+                    transformLinkUri={transformLinkUri}
+                    linkTarget="_blank"
                     // @ts-ignore
                     components={
                       {
                         p: CustomText,
                         ul: CustomList,
                         li: CustomLi,
-                        a: CustomText,
+                        a: ({
+                          href,
+                          children,
+                        }: {
+                          href: string;
+                          children: React.ReactNode;
+                        }) => {
+                          console.log(`Rendering link: ${href}`);
+                          return (
+                            <>
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {children}
+                              </a>
+                              {href && <LinkPreview url={href} />}
+                            </>
+                          );
+                        },
                       } as CustomComponents
                     }
                   >
@@ -640,14 +689,36 @@ export const BotPostView = (
               </div>
             </div>
             <span className=" text-lg">
-              <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
+              <ReactMarkdown
+                transformLinkUri={transformLinkUri}
+                linkTarget="_blank"
                 // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
                     li: CustomLi,
-                    a: CustomText,
+                    a: ({
+                      href,
+                      children,
+                    }: {
+                      href: string;
+                      children: React.ReactNode;
+                    }) => {
+                      console.log(`Rendering link: ${href}`);
+                      return (
+                        <>
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                          {href && <LinkPreview url={href} />}
+                        </>
+                      );
+                    },
                   } as CustomComponents
                 }
               >
@@ -708,14 +779,32 @@ export const BotPostView = (
           </span>
         </div>
         <span className="text-lg">
-          <ReactMarkdown transformLinkUri={transformLinkUri} linkTarget="_blank"
+          <ReactMarkdown
+            transformLinkUri={transformLinkUri}
+            linkTarget="_blank"
             // @ts-ignore
             components={
               {
                 p: CustomText,
                 ul: CustomList,
                 li: CustomLi,
-                href: CustomText,
+                a: ({
+                  href,
+                  children,
+                }: {
+                  href: string;
+                  children: React.ReactNode;
+                }) => {
+                  console.log(`Rendering link: ${href}`);
+                  return (
+                    <>
+                      <a href={href} target="_blank" rel="noopener noreferrer">
+                        {children}
+                      </a>
+                      {href && <LinkPreview url={href} />}
+                    </>
+                  );
+                },
               } as CustomComponents
             }
           >

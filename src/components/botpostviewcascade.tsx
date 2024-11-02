@@ -6,11 +6,11 @@ import Link from "next/link";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
 import React, { Fragment } from "react";
+import LinkPreview from "./linkPreview";
+
 dayjs.extend(relativeTime);
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
-
-
 
 interface CustomLiProps {
   children: React.ReactNode;
@@ -33,19 +33,13 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
           const hashtagMatch = segment.slice(1).match(/[a-zA-Z0-9_]*/);
           const hashtag = hashtagMatch ? hashtagMatch[0] : "";
           if (hashtag === "") {
-            return (
-              <Fragment key={`segment-${index}`}>
-                {segment}
-              </Fragment>
-            );
+            return <Fragment key={`segment-${index}`}>{segment}</Fragment>;
           } else {
             hashtags.push(hashtag); // Collect hashtags for later use
             return null;
           }
         } else {
-          return (
-            <Fragment key={`segment-${index}`}>{segment}</Fragment>
-          );
+          return <Fragment key={`segment-${index}`}>{segment}</Fragment>;
         }
       });
 
@@ -81,10 +75,9 @@ const CustomLi: React.FC<CustomLiProps> = ({ children }) => {
   return <span>{output}</span>;
 };
 
-
 interface CustomTextProps {
   children: React.ReactNode;
-  type: "p" | "span" | "li" | "a" | "href" ;
+  type: "p" | "span" | "li" | "a" | "href";
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
@@ -269,6 +262,7 @@ type CustomComponents = {
   p: React.FC<CustomTextProps>;
   ul: React.FC<CustomListProps>;
   li: React.FC<CustomTextProps>;
+  a: React.FC<{ href: string; children: React.ReactNode }>;
 };
 
 type Post = {
@@ -425,7 +419,7 @@ export const BotPostViewCascade = (
               <div className="h-26 mb-4 flex flex-col gap-3 rounded-xl  border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
                 <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
                   <Image
-                    src={"/default.webp" || ""}
+                    src={"/default.webp"}
                     className="h-14 w-14 rounded-full"
                     alt={`default profile picture`}
                     width={56}
@@ -554,6 +548,27 @@ export const BotPostViewCascade = (
                         p: CustomText,
                         ul: CustomList,
                         li: CustomLi,
+                        a: ({
+                          href,
+                          children,
+                        }: {
+                          href: string;
+                          children: React.ReactNode;
+                        }) => {
+                          console.log(`Rendering link: ${href}`);
+                          return (
+                            <>
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {children}
+                              </a>
+                              {href && <LinkPreview url={href} />}
+                            </>
+                          );
+                        },
                       } as CustomComponents
                     }
                   >
@@ -588,6 +603,27 @@ export const BotPostViewCascade = (
                     p: CustomText,
                     ul: CustomList,
                     li: CustomLi,
+                    a: ({
+                      href,
+                      children,
+                    }: {
+                      href: string;
+                      children: React.ReactNode;
+                    }) => {
+                      console.log(`Rendering link: ${href}`);
+                      return (
+                        <>
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                          {href && <LinkPreview url={href} />}
+                        </>
+                      );
+                    },
                   } as CustomComponents
                 }
               >
@@ -673,6 +709,27 @@ export const BotPostViewCascade = (
                     p: CustomText,
                     ul: CustomList,
                     li: CustomLi,
+                    a: ({
+                      href,
+                      children,
+                    }: {
+                      href: string;
+                      children: React.ReactNode;
+                    }) => {
+                      console.log(`Rendering link: ${href}`);
+                      return (
+                        <>
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                          {href && <LinkPreview url={href} />}
+                        </>
+                      );
+                    },
                   } as CustomComponents
                 }
               >
