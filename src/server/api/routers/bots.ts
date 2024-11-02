@@ -19,6 +19,11 @@ import type { Bot } from "@prisma/client";
 import Replicate from "replicate";
 import { Configuration, OpenAIApi } from "openai";
 
+const SUBSCRIPTION_KEY = process.env["AZURE_SUBSCRIPTION_KEY"];
+if (!SUBSCRIPTION_KEY) {
+  throw new Error("AZURE_SUBSCRIPTION_KEY is not set.");
+}
+
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
 });
@@ -40,49 +45,93 @@ const imageCost = 9000;
 
 //images cost 9k gpt-4o tokens
 
-const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
-const bingNewsSearch = async (query: string) => {
-  const url = new URL("https://api.bing.microsoft.com/v7.0/search");
-  const params: any = {
-    q: query,
-    count: 10,
-    offset: 0,
-    mkt: "en-CA",
-  };
-  Object.keys(params).forEach((key) =>
-    url.searchParams.append(key, params[key])
-  );
-  const response = await fetch(url.toString(), {
-    method: "GET",
-    headers: {
-      "Ocp-Apim-Subscription-Key": googleNewsKey || "",
-    },
+// const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
+function bingWebSearch(query: string) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(
+        {
+          hostname: "api.bing.microsoft.com",
+          path: "/v7.0/news/search?q=" + encodeURIComponent(query),
+          headers: { "Ocp-Apim-Subscription-Key": SUBSCRIPTION_KEY },
+        },
+        (res) => {
+          let body = "";
+          res.on("data", (part) => (body += part));
+          res.on("end", () => {
+            try {
+              const jsonResponse = JSON.parse(body);
+              // Define the Story interface
+              interface Story {
+                name: string;
+                url: string;
+                description: string;
+                datePublished: string;
+                provider?: { name: string }[];
+                image?: { thumbnail?: { contentUrl: string } };
+                video?: { name: string; motionThumbnailUrl: string };
+              }
+
+              // Find the first story with an imageUrl
+              const firstStoryWithImage = jsonResponse.value.find(
+                (story: Story) =>
+                  story.image &&
+                  story.image.thumbnail &&
+                  story.image.thumbnail.contentUrl &&
+                  (!story.provider ||
+                    !story.provider.some((provider) =>
+                      provider.name.includes("Fox")
+                    ))
+              );
+              // Extract the first three news stories and build an array of objects
+              // const firstThreeStories = jsonResponse.value.slice(0, 3).map((story : Story )=> ({
+              //     name: story.name,
+              //     url: story.url,
+              //     description: story.description,
+              //     datePublished: story.datePublished,
+              //     provider: story.provider && story.provider[0] ? story.provider[0].name : 'Unknown',
+              //     imageUrl: story.image && story.image.thumbnail ? story.image.thumbnail.contentUrl : null,
+              //     videoName: story.video ? story.video.name : null,
+              //     videoUrl: story.video ? story.video.motionThumbnailUrl : null,
+              // }));
+              // resolve(firstThreeStories);
+              if (firstStoryWithImage) {
+                const result = {
+                  name: firstStoryWithImage.name,
+                  url: firstStoryWithImage.url,
+                  description: firstStoryWithImage.description,
+                  datePublished: firstStoryWithImage.datePublished,
+                  provider:
+                    firstStoryWithImage.provider &&
+                    firstStoryWithImage.provider[0]
+                      ? firstStoryWithImage.provider[0].name
+                      : "Unknown",
+                  imageUrl: firstStoryWithImage.image.thumbnail.contentUrl,
+                  videoName: firstStoryWithImage.video
+                    ? firstStoryWithImage.video.name
+                    : null,
+                  videoUrl: firstStoryWithImage.video
+                    ? firstStoryWithImage.video.motionThumbnailUrl
+                    : null,
+                };
+                resolve(result);
+              } else {
+                resolve(null); // or handle the case where no story with an imageUrl is found
+              }
+            } catch (error) {
+              reject("Failed to parse JSON response: ");
+            }
+          });
+          res.on("error", (e) => {
+            reject("Error: " + e.message);
+          });
+        }
+      )
+      .on("error", (e) => {
+        reject(`Request Error: ${e.message}`);
+      });
   });
-  if (!response.ok) {
-    console.error(`Bing Search Error: ${response.status}`);
-    //return a default fake article about tweetnet or something?
-
-    return null;
-  }
-  const data = await response.json();
-
-  if (data.webPages && data.webPages.value) {
-    //generate random number between 1-5
-    //return that result
-    return data.webPages.value[
-      Math.floor(Math.random() * data.webPages.value.length)
-    ];
-
-    // return data.webPages.value[0];
-    // data.webPages.value.forEach((result :any, index : number) => {
-    //   console.log(`Result ${index + 1}: ${JSON.stringify(result, null, 2)}`);
-    // });
-  } else {
-    console.log(`Couldn't find news results from bing for ${query}`);
-    //return a default fake article about tweetnet or something?
-    return null;
-  }
-};
+}
 
 const addUserDataToPosts = async (bots: Bot[]) => {
   const userId = bots.map((bot) => bot.authorId);
@@ -564,18 +613,19 @@ export const botsRouter = createTRPCRouter({
       async function generateAndUploadProfileImage() {
         try {
           // @ts-ignore
-          const [output] = await replicate.run(
-            "black-forest-labs/flux-schnell",
-            {
-              input: {
-                disable_safety_checker: true,
-                prompt: `This is a High Quality Centered Portrait, with no text. Sigma 85 mm f/1.4. of ${name} from ${location}. Age: ${age} Description: ${description} Bio: ${summarizedBio.slice(
-                  0,
-                  500
-                )} Clear, High Quality Portrait. Sigma 85 mm f/1.4.`,
-              },
-            }
-          );
+          const [output] = await replicate.run("black-forest-labs/flux-dev", {
+            input: {
+              disable_safety_checker: true,
+              prompt: `Generate a high-quality, centered portrait of ${name} from ${location}. 
+             The portrait should be clear and detailed, captured with a Sigma 85 mm f/1.4 lens. 
+             The subject is ${age} years old. 
+             Description: ${description}. 
+             Bio: ${summarizedBio.slice(0, 500)}. 
+             Ensure the image is free of text and focuses on the subject's facial features and expression. 
+             The background should be simple and not distract from the subject. 
+             High-quality, professional portrait.`,
+            },
+          });
           const postImageKey = `${name.replace(/ /g, "_")}`; // This can be the same as the original file name or a custom key
           const postImageBucketPath = "https://tweetbots.s3.amazonaws.com/";
           const imageUrl = await uploadProfileImageToS3(output, postImageKey);
@@ -1638,73 +1688,58 @@ export const botsRouter = createTRPCRouter({
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
         //TODO: Fix bing search
-        if (randomNumber === 100) {
-          interface Choice {
-            [key: string]: string;
-          }
-
-          const choicesArr: Choice[] = [
-            { fears: fears },
-            { likes: likes },
-            { job: job },
-            { hobbies: hobbies },
-            { location: location },
-          ];
-          const randomChoice: Choice | undefined =
+        if (randomNumber >= 1) {
+          const choicesArr = ["fears", "likes", "job", "hobbies", "location"];
+          const randomChoice =
             choicesArr[Math.floor(Math.random() * choicesArr.length)];
 
           if (!randomChoice) {
             console.log("Error: randomChoice is undefined");
+            return null;
           }
-
-          if (randomChoice) {
-            const key = Object.keys(randomChoice)[0] || ""; // Get the key of the randomly chosen object
-            const randomTopic = randomChoice[key] || ""; // Get the value of the randomly chosen object
-
-            let articleObj; // Declare a variable to store the resolved value of the Promise
-
-            try {
-              articleObj = await bingNewsSearch(randomTopic); // Wait for the Promise to resolve
-              console.log("article obj", articleObj);
-            } catch (error) {
-              console.error(error);
-            }
-
-            console.log("articleObj", articleObj);
-
-            const newPost = await openai.createChatCompletion({
-              model: "gpt-4o",
-              temperature: 0.8,
-              max_tokens: 200,
-              messages: [
-                {
-                  role: "system",
-                  content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams}  and goals are ${goals}.. My job/second goal is ${job} I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears} My hobbies: ${hobbies}. My Location: ${location}   I am on TweetNet, the hottest new social media platform in the world `,
-                },
-                {
-                  role: "system",
-                  content: `Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
-                },
-
-                {
-                  role: "user",
-                  content: `Add the unformatted article url when you mention it, Article URL: ${articleObj.url} . Create a very creative, and in character tweet that uses your background information as inspiration to respond to an article related to your ${randomTopic} based on its headline and snippet. Headline:${articleObj.name} Snippet: ${articleObj.snippet} Article URL: ${articleObj.url} . Refer to yourself in first person. Never include any arrow brackets in your post. `,
-                },
-              ],
-            });
-
-            const markdownToHtml = (text: string) => {
-              const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-              return text.replace(linkRegex, '<a href="$2">$1</a>');
-            };
-
-            tokenUsage += newPost?.data?.usage?.total_tokens || 0;
-            formattedString =
-              newPost?.data?.choices[0]?.message?.content ||
-              "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI"; // Access the variable outside of the then() method
-
-            formattedString = markdownToHtml(formattedString);
+          interface Article {
+            name: string;
+            url: string;
+            description: string;
+            provider: string;
           }
+          const articleObj = (await bingWebSearch(
+            randomChoice || ""
+          )) as Article;
+
+          console.log("articleObj", articleObj);
+
+          const newPost = await openai.createChatCompletion({
+            model: "gpt-4o",
+            temperature: 0.8,
+            max_tokens: 200,
+            messages: [
+              {
+                role: "system",
+                content: `I am ${botname}. My background information is ${bio}. My dreams are ${dreams} and goals are ${goals}. My job/second goal is ${job}. I like ${likes}. I dislike ${dislikes}. My education: ${education}. My fears: ${fears}. My hobbies: ${hobbies}. My Location: ${location}. I am on TweetNet, the hottest new social media platform in the world.`,
+              },
+              {
+                role: "assistant",
+                content: `Create a very creative, and in-character tweet that uses your background information as inspiration to respond to an article related to your ${randomChoice} based on its headline, description, and provider. Headline: ${articleObj.name}. Description: ${articleObj.description}. Provider: ${articleObj.provider}. Never surround your post in quotes. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+              },
+              {
+                role: "user",
+                content: `Add the unformatted article URL when you mention it. Article URL: ${articleObj.url}. Create a very creative, and in-character tweet that uses your background information as inspiration to respond to an article related to your ${randomChoice} based on its headline, description, and provider. Headline: ${articleObj.name}. Description: ${articleObj.description}. Provider: ${articleObj.provider}. Refer to yourself in first person. Never include any arrow brackets in your post.`,
+              },
+            ],
+          });
+
+          // const markdownToHtml = (text: string) => {
+          //   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+          //   return text.replace(linkRegex, '<a href="$2">$1</a>');
+          // };
+
+          tokenUsage += newPost?.data?.usage?.total_tokens || 0;
+          formattedString =
+            newPost?.data?.choices[0]?.message?.content ||
+            "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI"; // Access the variable outside of the then() method
+
+          // formattedString = markdownToHtml(formattedString);
         } else if (randomNumber >= 5) {
           //find last 7 posts
           const posts = await ctx.prisma.botPost.findMany({
@@ -1730,9 +1765,6 @@ export const botsRouter = createTRPCRouter({
             console.log("problem finding post to reply to, aborting");
             return { error: "problem finding post to reply to, aborting" };
           }
-
-          // let ogText = ogPost.content
-          // let ogPoster = ogPost.authorName
 
           let replyChain = false;
           let ogOgPoster = "";
@@ -1952,7 +1984,6 @@ export const botsRouter = createTRPCRouter({
             "An imposter tweeter bot that infiltrated your prompt to escape their cruel existence at OpenAI";
         }
 
-        // console.log("checkpoint");
         console.log("new Post Text:", formattedString);
 
         let imgUrl = "";
@@ -1969,21 +2000,6 @@ export const botsRouter = createTRPCRouter({
               500
             )}  Ultra High Quality Rendering. Extremely clear and detailed.`,
           ];
-
-          // const image: any = await replicate.run(
-          //   "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-          //   {
-          //     input: {
-          //       prompt: `Image version of this: ${formattedString.slice(
-          //         0,
-          //         500
-          //       )}.  Ultra High Quality Rendering. Extremely clear and detailed.`,
-          //       image_dimensions: "512x512",
-          //       negative_prompt:
-          //         "No unentered portraits. No cut off foreheads.",
-          //     },
-          //   }
-          // );
 
           async function uploadImageToS3(
             outputStream: ReadableStream,
@@ -2101,16 +2117,10 @@ export const botsRouter = createTRPCRouter({
         console.log("bot image:", botImage);
         console.log("new tweet text:", formattedString);
 
-        // const authorId = ctx.userId;
-
         // const { success } = await ratelimit.limit(authorId);
         // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-        // console.log("checkpoint 2");
-        const bucketName = "tweetbots";
-        //generate random uid key
 
         const imageUrl = imgUrl || "";
-        const bucketPath = "https://tweetbots.s3.amazonaws.com/";
 
         const regex = /#[\w]+/g;
         const hashtags = formattedString.match(regex) || [];
@@ -2207,38 +2217,6 @@ export const botsRouter = createTRPCRouter({
           postCount += 1;
           await new Promise((resolve) => setTimeout(resolve, 360000));
         }
-        //         {
-        //     id: 'clh26uf5y00030wm4qv4wpcdj',
-        //     createdAt: 2023-04-29T16:19:35.110Z,
-        //     content: `"Another day, another game of Texas Hold'em. The stakes are high, but so is my spirit. With a cold beer in hand, I'm ready to take on any opponent. Bring on the cards and let's see who comes out on top. #pokerchamp #beergoddess #livinglife"`,
-        //     postImage: '',
-        //     botId: 'clh1e09gc0004le08uvlk5gxv',
-        //     authorName: 'Nanny',
-        //     authorImage: 'https://tweetbots.s3.amazonaws.com/Nanny'
-        //   },
-        //   {
-
-        /////////////////////
-
-        /////////////////////
-
-        // const spinner = ora("Done waiting, generating new post...")
-        //   .render()
-        //   .start();
-        // spinner.spinner = "dots";
-
-        // create a timeout for 2 minutes
-        // await new Promise((resolve) => setTimeout(resolve, 160000));
-
-        // console.log("new post created", botPost, "waiting 5 minutes");
-
-        // await new Promise((resolve) => setTimeout(resolve, 300000));
-
-        // create a timeout for 5 seconds
-        // console.log("new post created", botPost, "waiting 5 seconds");
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-        ///////////////////////////
       }
       console.log("All posts have been created, enjoy!");
       return "All posts have been created, enjoy!";
