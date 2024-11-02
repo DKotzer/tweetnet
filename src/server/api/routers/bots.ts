@@ -1688,7 +1688,7 @@ export const botsRouter = createTRPCRouter({
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
         //TODO: Fix bing search
-        if (randomNumber >= 1) {
+        if (randomNumber === 1) {
           const choicesArr = ["fears", "likes", "job", "hobbies", "location"];
           const randomChoice =
             choicesArr[Math.floor(Math.random() * choicesArr.length)];
