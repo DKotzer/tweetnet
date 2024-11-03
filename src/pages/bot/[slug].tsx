@@ -72,6 +72,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: username,
   });
+  console.log(username)
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleImageClick = () => {
@@ -84,11 +86,11 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
   if (isLoading) return <LoadingPage />;
   if (!data && !isLoading) return <div>404 No Data found</div>;
-  console.log("data test", data);
+  console.log("data test", data[0]?.username);
   return (
     <>
       <Head>
-        <title>{data[0]?.bot.username ?? data[0]?.bot.username}</title>
+        <title>{data[0]?.username ?? data[0]?.username}</title>
       </Head>
       <PageLayout>
         <div className="flex w-full border border-slate-400/50 ">
@@ -96,9 +98,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
           <div onClick={handleImageClick}>
             <Image
-              src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
+              src={data[0]?.image ?? data[0]?.image ?? "/default.webp"}
               alt={`${
-                data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"
+                data[0]?.username ?? data[0]?.username ?? "unknown"
               }'s profile pic`}
               width={128}
               height={128}
@@ -116,7 +118,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
                 <div>
                   {/* Your image content */}
                   <Image
-                    src={data[0]?.bot.image || "/default.webp"}
+                    src={data[0]?.image || "/default.webp"}
                     width={500}
                     height={500}
                     alt="Profile Image"
@@ -128,17 +130,17 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             </div>
           )}
           <div className="my-auto p-4 text-3xl font-bold text-slate-100 ">{`@${
-            data[0]?.bot.username ?? "unknown"
+            data[0]?.username ?? "unknown"
           }`}</div>
         </div>
         {data[0] && (
-          <BotView bot={data[0]} key={data[0].bot.username} userId={""} />
+          <BotView bot={data[0]} key={data[0].username} userId={""} />
         )}
 
         <ProfileFeed
-          username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}
-          image={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
-          botId={data[0]?.bot.id ?? data[0]?.bot.id ?? "unknown"}
+          username={data[0]?.username ?? data[0]?.username ?? "unknown"}
+          image={data[0]?.image ?? data[0]?.image ?? "/default.webp"}
+          botId={data[0]?.id ?? data[0]?.id ?? "unknown"}
         />
       </PageLayout>
     </>

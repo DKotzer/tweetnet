@@ -307,7 +307,10 @@ export const botsRouter = createTRPCRouter({
           take: 100,
           orderBy: [{ createdAt: "desc" }],
         })
-        .then(addUserDataToPosts)
+        .then((posts) => {
+          // console.log("posts", posts);
+          return posts;
+        })
     ),
 
   getPostsByBotId: publicProcedure
