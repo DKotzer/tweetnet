@@ -81,9 +81,9 @@ interface CustomTextProps {
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
- let content = (children as string[]).join("");
+  let content = (children as string[]).join("");
   // Filter out [object Object]
-  content = content.replace(/\[object Object\]/g, '');
+  content = content.replace(/\[object Object\]/g, "");
 
   let hashtags: any = [];
   const output =
@@ -457,98 +457,80 @@ export const BotPostViewCascade = (
       <div className="botPostView hover:bg-[#ffffff08]">
         <div
           key={props.id}
-          className="flex gap-3 border-x border-b border-slate-400/50 p-4"
+          className="flex gap-3 border-x border-t border-b border-slate-400/50 p-4"
         >
-          <Link href={`/bot/@${props.username}`} className="h-fit">
-            <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
-              <Image
-                src={props.image}
-                className="rounded-full"
-                alt={`@${props.username}'s profile picture`}
-                quality={80}
-                width={56}
-                height={56}
-              />
-            </div>
-          </Link>
-
           <div className="flex flex-col">
-            <div className="mb-3 flex gap-1 text-slate-400">
-              <Link
-                href={`/bot/@${props.username}`}
-                className="hoverUnderline hover:scale-105 "
-              >
-                <span className=" text-3xl ">{`@${props.username}`}</span>
-              </Link>
-              <Link
-                href={`/post/${props.id}`}
-                className="hoverUnderline my-auto  font-thin  hover:scale-105 "
-              >
-                {` · ${dayjs(props.createdAt).fromNow()}`}
-              </Link>
+            <div className="flex flex-row gap-3">
+              <div className="relative h-14 w-14 rounded-full ring-1 ring-slate-400/50 hover:scale-110 hover:ring">
+                <Image
+                  src={props.image}
+                  className="rounded-full"
+                  alt={`@${props.username}'s profile picture`}
+                  quality={80}
+                  width={56}
+                  height={56}
+                />
+              </div>
+              <div className="flex flex-col justify-end gap-1 text-slate-400">
+                <Link
+                  href={`/bot/@${props.username}`}
+                  className="hoverUnderline hover:scale-105"
+                >
+                  <span className="text-3xl">{`@${props.username}`}</span>
+                </Link>
+                <Link
+                  href={`/post/${props.id}`}
+                  className="hoverUnderline my-auto font-thin hover:scale-105"
+                >
+                  {` ${dayjs(props.createdAt).fromNow()}`}
+                </Link>
+              </div>
             </div>
+
             <span className="my-auto mb-1 text-xl">
               Replying to:
-              {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
-                {`@${data.authorName}`}
-              </Link> */}
+              {/* <Link className="text-3xl" href={`/bot/@${props.authorName}`}>
+            {`@${props.authorName}`}
+          </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
-              <Link href={`/bot/@${data.authorName}`} className="h-fit">
-                <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
-                  <Image
-                    src={data.authorImage || ""}
-                    className="h-14 w-14 rounded-full"
-                    alt={`@${data.authorName}'s profile picture`}
-                    width={56}
-                    height={56}
-                    quality={80}
-                  />
-                </div>
-              </Link>
+            <div className="mb-4 ml-8 flex gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14]">
               <div className="flex flex-col">
-                <div className="mb-3 flex gap-1 text-slate-400">
-                  <Link
-                    href={`/bot/@${data.authorName}`}
-                    className="hoverUnderline hover:scale-105 "
-                  >
-                    <span className="  text-2xl">{`@${data.authorName} `}</span>
-                  </Link>
-                  <span className="hoverUnderline my-auto font-thin hover:scale-105 ">
-                    <Link href={`/post/${data.id}`}>
-                      {` · ${dayjs(data.createdAt).fromNow()}`}
+                <div className="flex flex-row">
+                  <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+                    <Image
+                      src={data.authorImage || ""}
+                      className="h-14 w-14 rounded-full"
+                      alt={`@${data.authorName}'s profile picture`}
+                      width={56}
+                      height={56}
+                      quality={80}
+                    />
+                  </div>
+
+                  <div className="mb-3 flex gap-1 text-slate-400">
+                    <Link
+                      href={`/bot/@${data.authorName}`}
+                      className="hoverUnderline hover:scale-105"
+                    >
+                      <span className="text-2xl">{`@${data.authorName}`}</span>
                     </Link>
-                  </span>
+                    <span className="hoverUnderline my-auto font-thin hover:scale-105">
+                      <Link href={`/post/${data.id}`}>
+                        {` · ${dayjs(data.createdAt).fromNow()}`}
+                      </Link>
+                    </span>
+                  </div>
                 </div>
-                <span className=" text-lg">
+
+                <span className="text-lg">
                   <ReactMarkdown
+                    linkTarget="_blank"
                     // @ts-ignore
                     components={
                       {
                         p: CustomText,
                         ul: CustomList,
                         li: CustomLi,
-                        a: ({
-                          href,
-                          children,
-                        }: {
-                          href: string;
-                          children: React.ReactNode;
-                        }) => {
-                          console.log(`Rendering link: ${href}`);
-                          return (
-                            <>
-                              <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {children}
-                              </a>
-                              {href && <LinkPreview url={href} />}
-                            </>
-                          );
-                        },
                       } as CustomComponents
                     }
                   >
@@ -561,11 +543,11 @@ export const BotPostViewCascade = (
                       src={data.postImage || ""}
                       className="ml-1 mt-5 mb-2 rounded-lg pr-1"
                       alt={`Image related to the post`}
-                      width={420}
-                      height={420}
+                      width={450}
+                      height={450}
                       object-fit="cover"
                       placeholder="blur"
-                      blurDataURL="https://via.placeholder.com/150"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAADAAMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDp/OdWYBuAx7e9FFFSB//Z"
                       quality={99}
                     />
                   )}
@@ -575,35 +557,15 @@ export const BotPostViewCascade = (
                 </div>
               </div>
             </div>
-            <span className=" text-lg">
+            <span className="text-lg">
               <ReactMarkdown
+                linkTarget="_blank"
                 // @ts-ignore
                 components={
                   {
                     p: CustomText,
                     ul: CustomList,
                     li: CustomLi,
-                    a: ({
-                      href,
-                      children,
-                    }: {
-                      href: string;
-                      children: React.ReactNode;
-                    }) => {
-                      console.log(`Rendering link: ${href}`);
-                      return (
-                        <>
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {children}
-                          </a>
-                          {href && <LinkPreview url={href} />}
-                        </>
-                      );
-                    },
                   } as CustomComponents
                 }
               >
@@ -616,8 +578,8 @@ export const BotPostViewCascade = (
                   src={props.postImage || ""}
                   className="ml-1 mt-5 mb-2 rounded-lg"
                   alt={`Image related to the post`}
-                  width={508}
-                  height={508}
+                  width={566}
+                  height={566}
                   object-fit="cover"
                   placeholder="blur"
                   blurDataURL="https://via.placeholder.com/150"
@@ -628,20 +590,35 @@ export const BotPostViewCascade = (
             <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
           </div>
         </div>
-        {repliesData && repliesData?.length > 0 && (
+        {repliesData && repliesData.length > 0 && (
           <div>
-            {/* <h1 className="py-2 text-xl font-extrabold text-slate-100">
-              Replies:
-            </h1> */}
             {repliesData.map((reply) => (
-              <BotPostViewCascade
-                {...reply}
-                key={reply.id}
-                username={reply.authorName}
-                image={reply.authorImage}
-                postImage={reply.postImage || ""}
-                originalPostId={reply.originalPostId || ""}
-              />
+              <div key={reply.id} className="flex items-start">
+                <div className="mt-1 flex-shrink-0">
+                  {/* You can use any icon or symbol here */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    className="text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+               
+                    <path d="m12.707 7.293-1.414 1.414L15.586 13H7V4H5v11h10.586l-4.293 4.293 1.414 1.414L19.414 14l-6.707-6.707z" />
+                  </svg>
+                </div>
+                <div className="ml-2">
+                  <BotPostViewCascade
+                    {...reply}
+                    username={reply.authorName}
+                    image={reply.authorImage}
+                    postImage={reply.postImage || ""}
+                    originalPostId={reply.originalPostId || ""}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -649,14 +626,14 @@ export const BotPostViewCascade = (
     );
   }
   return (
-    <div className="botPostView hover:bg-[#ffffff08] ">
-      <div>
-        <div
-          key={props.id}
-          className="flex gap-3 border border-slate-400/50 p-4"
-        >
-          <Link href={`/bot/@${props.username}`} className="h-fit">
-            <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+    <div className="botPostView hover:bg-[#ffffff08]">
+      <div
+        key={props.id}
+        className="flex gap-3 border-x border-b border-t border-slate-400/50 p-4 flex-col"
+      >
+        <div className="flex flex-col">
+          <div className="flex flex-row gap-3">
+            <div className="relative h-14 w-14 rounded-full ring-1 ring-slate-400/50 hover:scale-110 hover:ring">
               <Image
                 src={props.image}
                 className="rounded-full"
@@ -666,73 +643,53 @@ export const BotPostViewCascade = (
                 height={56}
               />
             </div>
-          </Link>
-          <div className="flex flex-col">
-            <div className="mb-3 flex gap-1 text-slate-400">
+            <div className="flex flex-col justify-end gap-1 text-slate-400">
               <Link
                 href={`/bot/@${props.username}`}
-                className="hoverUnderline  hover:scale-105 "
+                className="hoverUnderline hover:scale-105"
               >
-                <span className=" text-3xl ">{`@${props.username} `}</span>
+                <span className="text-3xl">{`@${props.username}`}</span>
               </Link>
-              <span className="hoverUnderline my-auto font-thin hover:scale-105 ">
-                <Link href={`/post/${props.id}`}>
-                  {` · ${dayjs(props.createdAt).fromNow()}`}
-                </Link>
-              </span>
-            </div>
-            <span className="text-lg">
-              <ReactMarkdown
-                // @ts-ignore
-                components={
-                  {
-                    p: CustomText,
-                    ul: CustomList,
-                    li: CustomLi,
-                    a: ({
-                      href,
-                      children,
-                    }: {
-                      href: string;
-                      children: React.ReactNode;
-                    }) => {
-                      console.log(`Rendering link: ${href}`);
-                      return (
-                        <>
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {children}
-                          </a>
-                          {href && <LinkPreview url={href} />}
-                        </>
-                      );
-                    },
-                  } as CustomComponents
-                }
+              <Link
+                href={`/post/${props.id}`}
+                className="hoverUnderline my-auto font-thin hover:scale-105"
               >
-                {props.content}
-              </ReactMarkdown>
-            </span>
-            <div>
-              {props.postImage && props.postImage !== "" && (
-                <Image
-                  src={props.postImage || ""}
-                  className="ml-1 mt-5 mb-2 rounded-lg"
-                  alt={`Image related to the post`}
-                  width={508}
-                  height={508}
-                  object-fit="cover"
-                  placeholder="blur"
-                  blurDataURL="https://via.placeholder.com/150"
-                  quality={99}
-                />
-              )}
+                {` ${dayjs(props.createdAt).fromNow()}`}
+              </Link>
             </div>
-            <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
           </div>
+
+          <span className="text-lg">
+            <ReactMarkdown
+              linkTarget="_blank"
+              // @ts-ignore
+              components={
+                {
+                  p: CustomText,
+                  ul: CustomList,
+                  li: CustomLi,
+                } as CustomComponents
+              }
+            >
+              {props.content}
+            </ReactMarkdown>
+          </span>
+          <div>
+            {props.postImage && props.postImage !== "" && (
+              <Image
+                src={props.postImage || ""}
+                className="ml-1 mt-5 mb-2 rounded-lg"
+                alt={`Image related to the post`}
+                width={566}
+                height={566}
+                object-fit="cover"
+                placeholder="blur"
+                blurDataURL="https://via.placeholder.com/150"
+                quality={99}
+              />
+            )}
+          </div>
+          <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
         </div>
         {repliesData && repliesData?.length > 0 && (
           <div>
@@ -755,104 +712,3 @@ export const BotPostViewCascade = (
     </div>
   );
 };
-
-//             <Image
-//                   src={props.postImage || ""}
-//                   className="ml-1 mt-5 mb-2 rounded-lg"
-//                   alt={`Image related to the post`}
-//                   width={508}
-//                   height={508}
-//                   object-fit="cover"
-//                   placeholder="blur"
-//                   blurDataURL="https://via.placeholder.com/150"
-//                   quality={99}
-//                 />
-//               )}
-//             </div>
-//             <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
-//           </div>
-//         </div>
-//         {repliesData && repliesData?.length > 0 && (
-//           <div>
-//             {/* <h1 className="py-2 text-xl font-extrabold text-slate-100">
-//               Replies:
-//             </h1> */}
-//             {repliesData.map((reply) => (
-//               <BotPostViewCascade
-//                 {...reply}
-//                 key={reply.id}
-//                 username={reply.authorName}
-//                 image={reply.authorImage}
-//                 postImage={reply.postImage || ""}
-//                 originalPostId={reply.originalPostId || ""}
-//               />
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//     );
-//   }
-//   return (
-//     <div className="botPostView">
-//       <div
-//         key={props.id}
-//         className="flex gap-3 border-x border-y border-slate-400/50 p-4"
-//       >
-//         <Image
-//           src={props.image}
-//           className="h-14 w-14 rounded-full"
-//           alt={`@${props.username}'s profile picture`}
-//           width={56}
-//           height={56}
-//           quality={80}
-//         />
-//         <div className="flex flex-col">
-//           <div className="mb-3 flex gap-1 text-slate-400">
-//             <Link href={`/bot/@${props.username}`}>
-//               <span className=" text-3xl">{`@${props.username} `}</span>
-//             </Link>
-//             <span className="my-auto font-thin">
-//               <Link href={`/post/${props.id}`} className="my-auto">
-//                 {` · ${dayjs(props.createdAt).fromNow()}`}
-//               </Link>
-//             </span>
-//           </div>
-//           <span className="text-lg">
-//             <ReactMarkdown>{props.content}</ReactMarkdown>
-//           </span>
-//           <div>
-//             {props.postImage && props.postImage !== "" && (
-//               <Image
-//                 src={props.postImage || ""}
-//                 className="ml-1 mt-5 mb-2 rounded-lg"
-//                 alt={`Image related to the post`}
-//                 width={508}
-//                 height={508}
-//                 object-fit="cover"
-//                 placeholder="blur"
-//                 blurDataURL="https://via.placeholder.com/150"
-//                 quality={99}
-//               />
-//             )}
-//           </div>
-//           <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
-//         </div>
-//       </div>
-//       {repliesData && repliesData?.length > 0 && (
-//         <div>
-//           {/* <h1 className="py-2 text-xl font-extrabold text-slate-100">Replies:</h1> */}
-//           {repliesData.map((reply) => (
-//             <BotPostViewCascade
-//               {...reply}
-//               key={reply.id}
-//               username={reply.authorName}
-//               image={reply.authorImage}
-//               postImage={reply.postImage || ""}
-//               originalPostId={reply.originalPostId || ""}
-//             />
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
