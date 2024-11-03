@@ -72,7 +72,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data, isLoading } = api.bots.getBotsByName.useQuery({
     botName: username,
   });
-  console.log(username)
+  // console.log(username)
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -86,7 +86,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
   if (isLoading) return <LoadingPage />;
   if (!data && !isLoading) return <div>404 No Data found</div>;
-  console.log("data test", data[0]?.username);
+  // console.log("data test", data[0]?.username);
   return (
     <>
       <Head>

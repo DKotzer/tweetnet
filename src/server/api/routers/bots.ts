@@ -79,8 +79,10 @@ function bingWebSearch(query: string) {
                   story.image.thumbnail &&
                   story.image.thumbnail.contentUrl &&
                   (!story.provider ||
-                    !story.provider.some((provider) =>
-                      provider.name.includes("Fox") || provider.name.includes('MSN')
+                    !story.provider.some(
+                      (provider) =>
+                        provider.name.includes("Fox") ||
+                        provider.name.includes("MSN")
                     ))
               );
               // Extract the first three news stories and build an array of objects
@@ -1691,7 +1693,7 @@ export const botsRouter = createTRPCRouter({
         //depending on number generated, decide if replying to one of last few posts, or create a new post
 
         //TODO: Fix bing search
-        if (randomNumber === 1) {
+        if (randomNumber >= 1) {
           const choicesArr = [fears, likes, job, hobbies, location];
           const randomChoice =
             choicesArr[Math.floor(Math.random() * choicesArr.length)];
