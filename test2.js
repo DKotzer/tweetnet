@@ -1,6 +1,5 @@
 // const https = require('https');
 // // const SUBSCRIPTION_KEY = process.env['AZURE_SUBSCRIPTION_KEY'];
-// const SUBSCRIPTION_KEY = '5280b64fb691436992f27b313cab8222';
 
 // if (!SUBSCRIPTION_KEY) {
 //     throw new Error('Missing the AZURE_SUBSCRIPTION_KEY environment variable');
