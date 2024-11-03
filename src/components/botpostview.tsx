@@ -160,7 +160,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
               }
               return (
                 <Fragment key={`segment-${j}`}>
-                  <div className="max-w-[80%] overflow-hidden md:max-w-full">
+                  <div className=" overflow-hidden max-w-full">
                     <LinkPreview url={url} />
                   </div>
                 </Fragment>
