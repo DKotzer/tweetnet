@@ -7,55 +7,67 @@ interface LinkPreviewProps {
 
 const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   const [metadata, setMetadata] = useState<any>(null);
+  let cleanUrl = url.replace(/\.$/, "");
+  //if url missing https:// add it
+  if (!cleanUrl.match(/https?:\/\//)) {
+    cleanUrl = `https://${cleanUrl}`;
+  }
 
   useEffect(() => {
-    console.log(`Fetching metadata for URL: ${url}`);
-    fetch(`/api/link-preview?url=${encodeURIComponent(url)}`)
+    console.log(`Fetching metadata for URL: ${cleanUrl}`);
+    fetch(`/api/link-preview?url=${encodeURIComponent(cleanUrl)}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(`Metadata fetched for URL: ${url}`, data);
         setMetadata(data);
       })
       .catch((error) => {
-        console.error(`Error fetching metadata for URL: ${url}`, error);
+        console.error(`Error fetching metadata for URL: ${cleanUrl}`, error);
       });
-  }, [url]);
+  }, [cleanUrl]);
 
   if (!metadata) {
     return null;
   }
+  let domain = cleanUrl;
+
+  try {
+    domain = new URL(cleanUrl).hostname;
+  } catch (error) {
+    console.error(`Error parsing URL: ${cleanUrl}`, error);
+  }
+
   return (
-    <div className="link-preview flex flex-col overflow-hidden rounded-lg border shadow-lg">
-      { metadata.title && <div className="p-4">
-        <h3 className="text-lg font-semibold">{metadata.title}</h3>
-      </div>}
-      <div className="flex flex-col md:flex-row">
-        {metadata.images && metadata.images.length > 0 && (
-          <div className="h-48 w-full md:h-auto">
-            <img
-              src={metadata.images[0]}
-              alt={metadata.title}
-              className="h-full w-full object-cover rounded-lg"
-            />
-          </div>
-        )}
-        { metadata.description && <div className="flex flex-col justify-between p-4 md:w-2/3">
-          <p className="text-sm text-slate-400">{metadata.description}</p>
+    <div className="overflow-hidden rounded-xl border border-gray-700 transition-colors hover:bg-gray-800 w-[70%]">
+      {metadata.images && metadata.images.length > 0 && (
+        <div className="relative aspect-video bg-gray-800">
+          <img
+            src={metadata.images[0]}
+            alt={metadata.title}
+            className="h-full w-full object-cover"
+          />
         </div>
-        }
-      </div>
-      <div className="p-4">
+      )}
+      {(metadata.title || metadata.description) && (
+        <div className="bg-gray-800/50 p-4">
+          {metadata.title && (
+            <h3 className="mb-2 text-lg font-bold">{metadata.title}</h3>
+          )}
+          {metadata.description && (
+            <p className="text-sm text-gray-300">{metadata.description}</p>
+          )}
+        </div>
+      )}
+      <div className="p-4 bg-gray-800/50">
         <a
-          href={url}
+          href={cleanUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-blue-500 hover:underline"
+          className="text-sm text-gray-400 hover:underline"
         >
-          {url}
+          {domain}
         </a>
       </div>
     </div>
   );
 };
-
 export default LinkPreview;

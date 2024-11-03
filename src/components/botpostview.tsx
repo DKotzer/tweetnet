@@ -141,7 +141,8 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
               }
             } else if (
               segment.startsWith("http") ||
-              segment.startsWith("www")
+              segment.startsWith("www") ||
+              segment.includes(".com")
             ) {
               let url = segment;
               if (
@@ -153,6 +154,9 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
               }
               if (url.endsWith("'") || url.endsWith('"') || url.endsWith(")")) {
                 url = url.slice(0, -1);
+              }
+              if (!url.startsWith("http") && !url.startsWith("www")) {
+                url = `https://www.${url}`;
               }
               return (
                 <Fragment key={`segment-${j}`}>
@@ -358,27 +362,6 @@ export const BotPostView = (
                       p: CustomText,
                       ul: CustomList,
                       li: CustomLi,
-                      a: ({
-                        href,
-                        children,
-                      }: {
-                        href: string;
-                        children: React.ReactNode;
-                      }) => {
-                        console.log(`Rendering link: ${href}`);
-                        return (
-                          <>
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {children}
-                            </a>
-                            {href && <LinkPreview url={href} />}
-                          </>
-                        );
-                      },
                     } as CustomComponents
                   }
                 >
@@ -536,68 +519,70 @@ export const BotPostView = (
           key={props.id}
           className="flex gap-3 border-x border-b border-slate-400/50 p-4"
         >
-          <Link href={`/bot/@${props.username}`} className="h-fit">
-            <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
-              <Image
-                src={props.image}
-                className="rounded-full"
-                alt={`@${props.username}'s profile picture`}
-                quality={80}
-                width={56}
-                height={56}
-              />
-            </div>
-          </Link>
-
           <div className="flex flex-col">
-            <div className="mb-3 flex gap-1 text-slate-400 ">
-              <Link
-                href={`/bot/@${props.username}`}
-                className="hoverUnderline hover:scale-105"
-              >
-                <span className=" text-3xl ">{`@${props.username}`}</span>
-              </Link>
-              <Link
-                href={`/post/${props.id}`}
-                className="hoverUnderline my-auto  font-thin hover:scale-105"
-              >
-                {` · ${dayjs(props.createdAt).fromNow()}`}
-              </Link>
+            <div className="flex flex-row gap-3">
+              <div className="relative h-14 w-14 rounded-full ring-1 hover:scale-110 hover:ring ring-slate-400/50">
+                <Image
+                  src={props.image}
+                  className="rounded-full"
+                  alt={`@${props.username}'s profile picture`}
+                  quality={80}
+                  width={56}
+                  height={56}
+                />
+              </div>
+              <div className="flex flex-col justify-end gap-1 text-slate-400">
+                <Link
+                  href={`/bot/@${props.username}`}
+                  className="hoverUnderline hover:scale-105"
+                >
+                  <span className="text-3xl">{`@${props.username}`}</span>
+                </Link>
+                <Link
+                  href={`/post/${props.id}`}
+                  className="hoverUnderline my-auto font-thin hover:scale-105"
+                >
+                  {` ${dayjs(props.createdAt).fromNow()}`}
+                </Link>
+              </div>
             </div>
+
             <span className="my-auto mb-1 text-xl">
               Replying to:
-              {/* <Link className=" text-3xl" href={`/bot/@${props.authorName}`}>
-                {`@${props.authorName}`}
-              </Link> */}
+              {/* <Link className="text-3xl" href={`/bot/@${props.authorName}`}>
+            {`@${props.authorName}`}
+          </Link> */}
             </span>
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
-              <Link href={`/bot/@${data.authorName}`} className="h-fit">
-                <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
-                  <Image
-                    src={data.authorImage || ""}
-                    className="h-14 w-14 rounded-full"
-                    alt={`@${data.authorName}'s profile picture`}
-                    width={56}
-                    height={56}
-                    quality={80}
-                  />
-                </div>
-              </Link>
+            <div className="mb-4 ml-8 flex gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14]">
               <div className="flex flex-col">
-                <div className="mb-3 flex gap-1 text-slate-400">
-                  <Link
-                    href={`/bot/@${data.authorName}`}
-                    className="hoverUnderline hover:scale-105 "
-                  >
-                    <span className="  text-2xl">{`@${data.authorName} `}</span>
-                  </Link>
-                  <span className="hoverUnderline my-auto font-thin hover:scale-105">
-                    <Link href={`/post/${data.id}`}>
-                      {` · ${dayjs(data.createdAt).fromNow()}`}
+                <div className="flex flex-row">
+                  <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
+                    <Image
+                      src={data.authorImage || ""}
+                      className="h-14 w-14 rounded-full"
+                      alt={`@${data.authorName}'s profile picture`}
+                      width={56}
+                      height={56}
+                      quality={80}
+                    />
+                  </div>
+
+                  <div className="mb-3 flex gap-1 text-slate-400">
+                    <Link
+                      href={`/bot/@${data.authorName}`}
+                      className="hoverUnderline hover:scale-105"
+                    >
+                      <span className="text-2xl">{`@${data.authorName}`}</span>
                     </Link>
-                  </span>
+                    <span className="hoverUnderline my-auto font-thin hover:scale-105">
+                      <Link href={`/post/${data.id}`}>
+                        {` · ${dayjs(data.createdAt).fromNow()}`}
+                      </Link>
+                    </span>
+                  </div>
                 </div>
-                <span className=" text-lg">
+
+                <span className="text-lg">
                   <ReactMarkdown
                     transformLinkUri={transformLinkUri}
                     linkTarget="_blank"
@@ -640,11 +625,11 @@ export const BotPostView = (
                       src={data.postImage || ""}
                       className="ml-1 mt-5 mb-2 rounded-lg pr-1"
                       alt={`Image related to the post`}
-                      width={420}
-                      height={420}
+                      width={450}
+                      height={450}
                       object-fit="cover"
                       placeholder="blur"
-                      blurDataURL="https://via.placeholder.com/150"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAADAAMDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDp/OdWYBuAx7e9FFFSB//Z"
                       quality={99}
                     />
                   )}
@@ -654,7 +639,7 @@ export const BotPostView = (
                 </div>
               </div>
             </div>
-            <span className=" text-lg">
+            <span className="text-lg">
               <ReactMarkdown
                 transformLinkUri={transformLinkUri}
                 linkTarget="_blank"
@@ -697,8 +682,8 @@ export const BotPostView = (
                   src={props.postImage || ""}
                   className="ml-1 mt-5 mb-2 rounded-lg"
                   alt={`Image related to the post`}
-                  width={508}
-                  height={508}
+                  width={566}
+                  height={566}
                   object-fit="cover"
                   placeholder="blur"
                   blurDataURL="https://via.placeholder.com/150"
@@ -714,88 +699,97 @@ export const BotPostView = (
   }
   // console.log(props.content)
   return (
-    <div
-      key={props.id}
-      className="botPostView flex gap-3 border-x border-b border-slate-400/50 p-4 hover:bg-[#ffffff08]"
-    >
-      <Link href={`/bot/@${props.username}`} className="h-fit">
-        <div className="relative h-14 w-14 rounded-full hover:scale-105 hover:ring hover:ring-slate-100/50">
-          <Image
-            src={props.image}
-            className="rounded-full"
-            alt={`@${props.username}'s profile picture`}
-            quality={80}
-            width={56}
-            height={56}
-          />
+         <div className="botPostView hover:bg-[#ffffff08]">
+        <div
+          key={props.id}
+          className="flex gap-3 border-x border-b border-slate-400/50 p-4"
+        >
+          <div className="flex flex-col">
+            <div className="flex flex-row gap-3">
+              <div className="relative h-14 w-14 rounded-full ring-1 hover:scale-110 hover:ring ring-slate-400/50">
+                <Image
+                  src={props.image}
+                  className="rounded-full"
+                  alt={`@${props.username}'s profile picture`}
+                  quality={80}
+                  width={56}
+                  height={56}
+                />
+              </div>
+              <div className="flex flex-col justify-end gap-1 text-slate-400">
+                <Link
+                  href={`/bot/@${props.username}`}
+                  className="hoverUnderline hover:scale-105"
+                >
+                  <span className="text-3xl">{`@${props.username}`}</span>
+                </Link>
+                <Link
+                  href={`/post/${props.id}`}
+                  className="hoverUnderline my-auto font-thin hover:scale-105"
+                >
+                  {` ${dayjs(props.createdAt).fromNow()}`}
+                </Link>
+              </div>
+            </div>
+
+            <span className="text-lg">
+              <ReactMarkdown
+                transformLinkUri={transformLinkUri}
+                linkTarget="_blank"
+                // @ts-ignore
+                components={
+                  {
+                    p: CustomText,
+                    ul: CustomList,
+                    li: CustomLi,
+                    a: ({
+                      href,
+                      children,
+                    }: {
+                      href: string;
+                      children: React.ReactNode;
+                    }) => {
+                      console.log(`Rendering link: ${href}`);
+                      return (
+                        <>
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                          {href && <LinkPreview url={href} />}
+                        </>
+                      );
+                    },
+                  } as CustomComponents
+                }
+              >
+                {props.content}
+              </ReactMarkdown>
+            </span>
+            <div>
+              {props.postImage && props.postImage !== "" && (
+                <Image
+                  src={props.postImage || ""}
+                  className="ml-1 mt-5 mb-2 rounded-lg"
+                  alt={`Image related to the post`}
+                  width={566}
+                  height={566}
+                  object-fit="cover"
+                  placeholder="blur"
+                  blurDataURL="https://via.placeholder.com/150"
+                  quality={99}
+                />
+              )}
+            </div>
+            <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
+          </div>
         </div>
-      </Link>
-      <div className="flex flex-col">
-        <div className="mb-3 flex gap-1 text-slate-400">
-          <Link
-            href={`/bot/@${props.username}`}
-            className="hoverUnderline hover:scale-105 "
-          >
-            <span className=" text-3xl ">{`@${props.username} `}</span>
-          </Link>
-          <span className="hoverUnderline my-auto font-thin hover:scale-105">
-            <Link href={`/post/${props.id}`}>
-              {` · ${dayjs(props.createdAt).fromNow()}`}
-            </Link>
-          </span>
-        </div>
-        <span className="text-lg">
-          <ReactMarkdown
-            transformLinkUri={transformLinkUri}
-            linkTarget="_blank"
-            // @ts-ignore
-            components={
-              {
-                p: CustomText,
-                ul: CustomList,
-                li: CustomLi,
-                a: ({
-                  href,
-                  children,
-                }: {
-                  href: string;
-                  children: React.ReactNode;
-                }) => {
-                  console.log(`Rendering link: ${href}`);
-                  return (
-                    <>
-                      <a href={href} target="_blank" rel="noopener noreferrer">
-                        {children}
-                      </a>
-                      {href && <LinkPreview url={href} />}
-                    </>
-                  );
-                },
-              } as CustomComponents
-            }
-          >
-            {props.content}
-          </ReactMarkdown>
-        </span>
-        <div>
-          {props.postImage && props.postImage !== "" && (
-            <Image
-              src={props.postImage || ""}
-              className="ml-1 mt-5 mb-2 rounded-lg"
-              alt={`Image related to the post`}
-              width={508}
-              height={508}
-              object-fit="cover"
-              placeholder="blur"
-              blurDataURL="https://via.placeholder.com/150"
-              quality={99}
-            />
-          )}
-        </div>
-        <div>{props.postImage === "" && <div className="mb-3"></div>}</div>
       </div>
-    </div>
-  );
+    );
+
 };
 
 export default BotPostView;
