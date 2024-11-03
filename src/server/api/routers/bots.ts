@@ -482,7 +482,7 @@ export const botsRouter = createTRPCRouter({
           },
           {
             role: "user",
-            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Goals: <goals>. Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> Description: <extremely brief 10-15 word physical description used for generating images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
+            content: `Create me a profile, with every field Filled in with data - even if you have to make it up,  in this format: Age: <age> Job: <job> Goals: <goals>. Likes: <likes> Hobbies: <hobbies> Dislikes: <dislikes> Dreams: <dreams> Fears: <fears> Education: <education> Location <location> Description: <extremely brief physical description used for generating consistent images of subject>. SummarizedBio: <an extremely brief version of the new social media profile that only covers the most important points, used for image generation>.  These are all REQUIRED fields, if there is no relevant data for a field, creatively make something up. Description to base profile on: Name ${name} ${improvedBioText} and ${input.content}.`,
           },
         ],
       });
@@ -624,8 +624,8 @@ export const botsRouter = createTRPCRouter({
               prompt: `Generate a high-quality, centered portrait of ${name} from ${location}. 
              The portrait should be clear and detailed, captured with a Sigma 85 mm f/1.4 lens. 
              The subject is ${age} years old. 
-             Description: ${description}. 
-             Bio: ${summarizedBio.slice(0, 500)}. 
+             Physical Description: ${description}. 
+             Bio Summary: ${summarizedBio.slice(0, 500)}. 
              Ensure the image is free of text and focuses on the subject's facial features and expression. 
              The background should be simple and not distract from the subject. 
              High-quality, professional portrait.`,
@@ -855,10 +855,10 @@ export const botsRouter = createTRPCRouter({
             {
               input: {
                 disable_safety_checker: true,
-                prompt: `A selfie image to go along with a social media post from a user named ${botname} that looks like ${description}, to go with a post that says ${formattedRes.slice(
+                prompt: `A selfie image to go along with a social media post from a user named ${botname} (short bio: ${summarizedBio}) - physical description of ${botname}: ${description}, to go with a post that says ${formattedRes.slice(
                   0,
                   600
-                )} taken with a high quality camera.`,
+                )} If the user is in the picture, make sure you use their physical description. Taken with a high quality camera.`,
               },
             }
           );
@@ -1054,6 +1054,8 @@ export const botsRouter = createTRPCRouter({
           location: z.string(),
           username: z.string(),
           goals: z.string(),
+          summarizedBio: z.string(),
+          description: z.string(),
         }),
       })
     )
@@ -1079,6 +1081,8 @@ export const botsRouter = createTRPCRouter({
       const id = input.bot.id;
       const botImage = input.bot.image;
       const goals = input.bot.goals;
+      const summarizedBio = input.bot.summarizedBio;
+      const description = input.bot.description;
 
       const newPost = await openai.createChatCompletion({
         model: "gpt-4o",
@@ -1159,10 +1163,10 @@ export const botsRouter = createTRPCRouter({
             {
               input: {
                 disable_safety_checker: true,
-                prompt: `Ultra High QualityImage to go along with this twitter post: ${formattedString.slice(
+                prompt: `Ultra High QualityImage to go along with this twitter post by user named ${botname}: ${formattedString.slice(
                   0,
                   500
-                )} `,
+                )}.If the user is in the picture, make sure you use their physical description( ${description} ).  Short bio of ${botname}: ${summarizedBio}).`,
               },
             }
           );
@@ -1712,7 +1716,7 @@ export const botsRouter = createTRPCRouter({
             randomChoice || ""
           )) as Article;
 
-          console.log("news serach results for", randomChoice, ":", articleObj);
+          console.log("news search results for", randomChoice, ":", articleObj);
 
           const newPost = await openai.createChatCompletion({
             model: "gpt-4o",
@@ -2050,10 +2054,10 @@ export const botsRouter = createTRPCRouter({
                 {
                   input: {
                     disable_safety_checker: true,
-                    prompt: `Image to go along with this twitter post: ${formattedString.slice(
+                    prompt: `Ultra High QualityImage to go along with this twitter post by user named ${botname}: ${formattedString.slice(
                       0,
                       500
-                    )}  Ultra High Quality. Clearer than real life.`,
+                    )}.If the user is in the picture, make sure you use their physical description( ${description} ).  Short bio of ${botname}: ${summarizedBio}).`,
                   },
                 }
               );
