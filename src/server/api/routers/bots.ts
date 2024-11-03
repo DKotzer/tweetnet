@@ -80,7 +80,7 @@ function bingWebSearch(query: string) {
                   story.image.thumbnail.contentUrl &&
                   (!story.provider ||
                     !story.provider.some((provider) =>
-                      provider.name.includes("Fox")
+                      provider.name.includes("Fox") || provider.name.includes('MSN')
                     ))
               );
               // Extract the first three news stories and build an array of objects

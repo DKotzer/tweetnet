@@ -166,7 +166,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                   </Fragment>
                 );
               }
-            } else if (segment?.startsWith("https://")) {
+            } else if (segment?.startsWith("http") || segment?.startsWith("www")) {
               if (
                 segment?.startsWith("'") ||
                 segment?.startsWith('"') ||
@@ -184,12 +184,8 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
               }
               paragraphOutput.push(
                 <Fragment key={`link-${j}`}>
-                  <div className=" max-w-[260px] overflow-hidden md:max-w-full">
-                    <Link className="link tweetName" href={segment}>
-                      {segment.length > 150
-                        ? `${segment.substring(0, 150)}...`
-                        : segment}
-                    </Link>
+                  <div className="max-w-[260px] overflow-hidden md:max-w-full">
+                    <LinkPreview url={segment} />
                   </div>
                 </Fragment>
               );
@@ -204,7 +200,7 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         })}
 
         {hashtags.length > 0 && (
-          <p className="hashtag-container">
+          <div className="hashtag-container">
             {hashtags.map((hashtag: any, index: number) => (
               <Fragment key={`hashtag-${index}`}>
                 {index > 0 && " "} {/* Add space between hashtags */}
@@ -217,14 +213,13 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                 {/* Include "#" symbol and make it a link */}
               </Fragment>
             ))}
-          </p>
+          </div>
         )}
       </>
     ) : null;
 
   return <div className="markdown text-lg">{output}</div>;
 };
-
 interface CustomListProps {
   children: React.ReactNode;
   type: "ul" | "ol";
@@ -318,7 +313,7 @@ type Post = {
 export const BotPostView = (
   props: { username: string; image: string } & Post
 ) => {
-  // console.log("props test", props.content);
+  // console.log("props test", props);
   if (
     props.originalPostId !== undefined &&
     props.originalPostId !== undefined &&
@@ -372,8 +367,8 @@ export const BotPostView = (
               </div>
               <span className="my-auto mb-1 text-xl">
                 Replying to:
-                {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
-                {`@${data.authorName}`}
+                {/* <Link className=" text-3xl" href={`/bot/@${props.authorName}`}>
+                {`@${props.authorName}`}
               </Link> */}
               </span>
               <div className=" mb-4 flex h-56 gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] ">
@@ -440,7 +435,7 @@ export const BotPostView = (
           </div>
         </div>
       );
-    //  console.log("MyComponent content:", props.content);
+     console.log("MyComponent content:", props.content);
 
     if (!data) {
       return (
@@ -479,8 +474,8 @@ export const BotPostView = (
               </div>
               <span className="my-auto mb-1 text-xl">
                 Replying to:
-                {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
-                {`@${data.authorName}`}
+                {/* <Link className=" text-3xl" href={`/bot/@${props.authorName}`}>
+                {`@${props.authorName}`}
               </Link> */}
               </span>
 
@@ -600,8 +595,8 @@ export const BotPostView = (
             </div>
             <span className="my-auto mb-1 text-xl">
               Replying to:
-              {/* <Link className=" text-3xl" href={`/bot/@${data.authorName}`}>
-                {`@${data.authorName}`}
+              {/* <Link className=" text-3xl" href={`/bot/@${props.authorName}`}>
+                {`@${props.authorName}`}
               </Link> */}
             </span>
             <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-400/50 bg-[#ffffff0d] p-4 hover:bg-[#ffffff14] md:flex-row">
@@ -745,6 +740,7 @@ export const BotPostView = (
         </div>
       </div>
     );
+  
   }
   // console.log(props.content)
   return (

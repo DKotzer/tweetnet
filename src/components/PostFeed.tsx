@@ -106,7 +106,7 @@ const PostsFeed = () => {
         <div className="flex h-[340px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
-        <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
+      <div className="flex h-[360px] items-center justify-center border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
         <div className=" flex  h-[355px] items-center justify-center border-b border-slate-400/50">
@@ -140,6 +140,7 @@ const PostsFeed = () => {
             image={fullPost.authorImage}
             postImage={fullPost.postImage || ""}
             originalPostId={fullPost.originalPostId || ""}
+
           />
         ))}
         {isFetching && (

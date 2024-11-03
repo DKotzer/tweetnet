@@ -74,18 +74,17 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleImageClick = () => {
-      setIsModalOpen(true);
-    };
+  const handleImageClick = () => {
+    setIsModalOpen(true);
+  };
 
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
-    };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
-  
   if (isLoading) return <LoadingPage />;
-  if (!data) return <div>404 No Data found</div>;
-  // console.log("data test", data);
+  if (!data && !isLoading) return <div>404 No Data found</div>;
+  console.log("data test", data);
   return (
     <>
       <Head>
@@ -95,7 +94,6 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="flex w-full border border-slate-400/50 ">
           {/* <div className="sticky top-16 z-50 flex h-fit w-full border-x border-b md:border-t border-slate-400/50 bg-black/80 py-1 pl-11 text-2xl font-bold md:top-0"> */}
 
-   
           <div onClick={handleImageClick}>
             <Image
               src={data[0]?.bot.image ?? data[0]?.bot.image ?? "/default.webp"}
@@ -133,7 +131,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             data[0]?.bot.username ?? "unknown"
           }`}</div>
         </div>
-        {data[0] && <BotView bot={data[0]} key={data[0].bot.username} userId={""} />}
+        {data[0] && (
+          <BotView bot={data[0]} key={data[0].bot.username} userId={""} />
+        )}
 
         <ProfileFeed
           username={data[0]?.bot.username ?? data[0]?.bot.username ?? "unknown"}
