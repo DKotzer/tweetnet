@@ -37,7 +37,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-700 transition-colors hover:bg-gray-800 w-[70%]">
+    <div className="ml-8 mt-2 mb-1 w-[70%] overflow-hidden rounded-xl border border-gray-700 transition-colors hover:bg-gray-800">
       {metadata.images && metadata.images.length > 0 && (
         <div className="relative aspect-video bg-gray-800">
           <img
@@ -57,7 +57,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
           )}
         </div>
       )}
-      <div className="p-4 bg-gray-800/50">
+      <div className="bg-gray-800/50 p-4">
         <a
           href={cleanUrl}
           target="_blank"
