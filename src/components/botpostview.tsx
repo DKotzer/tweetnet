@@ -99,7 +99,10 @@ interface CustomTextProps {
 }
 
 const CustomText: React.FC<CustomTextProps> = ({ children }) => {
-  const content = (children as string[])[0];
+  let content = (children as string[]).join("");
+  // Filter out [object Object]
+  content = content.replace(/\[object Object\]/g, "");
+
   let hashtags: any = [];
   const output =
     content && content.length !== 0 ? (
@@ -158,10 +161,13 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
                   </div>
                 </Fragment>
               );
+            } else if (segment.length < 1) {
+              return null;
             } else {
               return <Fragment key={`segment-${j}`}>{segment}</Fragment>;
             }
           });
+
           return <p key={`paragraph-${i}`}>{paragraphOutput}</p>;
         })}
 
@@ -183,11 +189,6 @@ const CustomText: React.FC<CustomTextProps> = ({ children }) => {
         )}
       </>
     ) : null;
-
-    // if (output._owner.return.memoizedProps.children?.includes("shadows deep where darkness creeps")) {
-    //   console.log("output:", output._owner.return.memoizedProps.children);
-    // }
-    // console.log("output:", output._owner.return.memoizedProps.children);
 
   return <div className="markdown text-lg">{output}</div>;
 };

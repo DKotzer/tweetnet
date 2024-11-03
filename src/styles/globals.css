@@ -304,9 +304,10 @@ ol p {
   margin-left: -15px;
 }
 
-/* .markdown > * {
-  all: revert;
-} */
+.markdown {
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+  word-wrap: break-word; /* Break long words */
+}
 
 .tweetName,
 .hashTag {
