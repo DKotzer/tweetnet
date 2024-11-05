@@ -14,6 +14,9 @@ const PaymentForm = (props: {
   clientSecret: string;
   paymentIntent: string;
 }) => {
+  // const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(
+  //   null
+  // );
   const { user, isSignedIn, isLoaded } = useUser();
 
   type PaymentObject = {
@@ -58,14 +61,20 @@ const PaymentForm = (props: {
   });
 
   useEffect(() => {
+    console.log("payment test", paymentObj);
+    console.log(
+      isLoaded,
+      paymentSaved,
+      user?.id,
+      Object.keys(paymentObj).length === 0,
+      paymentObj.status,
+      paymentObj.data
+    );
     if (
       !isLoaded ||
       Object.keys(paymentObj).length === 0 ||
       paymentSaved ||
-      !paymentObj.status ||
-      !paymentObj.data ||
-      typeof paymentObj.data.client_secret !== "string" ||
-      typeof paymentObj.data.amount_received !== "number"
+      !paymentObj.status
     ) {
       return;
     }
@@ -88,6 +97,7 @@ const PaymentForm = (props: {
   if (!isLoaded || Object.keys(paymentObj).length === 0) {
     return <div>Processing payment...</div>;
   }
+
   //  console.log('p3 test',paymentObj)
 
   return (

@@ -51,10 +51,10 @@ export default function CheckoutForm(props: { clientSecret: string }) {
 
   const pricePerToken: PricePerToken = {
     CAD: { price: 5, symbol: "$" },
-    USD: { price: 3.7, symbol: "~$" },
-    EUR: { price: 3.36, symbol: "~€" },
-    GBP: { price: 2.93, symbol: "~£" },
-    JPY: { price: 496.54, symbol: "~¥" },
+    USD: { price: 3.70, symbol: "~$" },
+    EUR: { price: 3.40, symbol: "~€" },
+    GBP: { price: 2.90, symbol: "~£" },
+    JPY: { price: 55096.54, symbol: "~¥" },
     // add more currencies and their prices here
   };
 
@@ -83,9 +83,8 @@ export default function CheckoutForm(props: { clientSecret: string }) {
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [paymentIntent, setPaymentIntent] = useState({});
+  // const [paymentIntent, setPaymentIntent] = useState({});
   const [paymentIntentId, setPaymentIntentId] = useState("");
-  const [hasRun, setHasRun] = useState(false);
   
 
   useEffect(() => {
@@ -94,10 +93,7 @@ export default function CheckoutForm(props: { clientSecret: string }) {
       return;
     }
 
-      if (hasRun) {
-        return;
-      }
-set
+ 
     if (!props.clientSecret) {
       console.log("no client secret");
       return;
@@ -109,7 +105,7 @@ set
         if (!paymentIntent) {
           return;
         }
-        setPaymentIntent(paymentIntent);
+        // setPaymentIntent(paymentIntent);
         setPaymentIntentId(paymentIntent.id);
         switch (paymentIntent.status) {
           case "succeeded":
