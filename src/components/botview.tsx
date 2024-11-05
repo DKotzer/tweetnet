@@ -24,6 +24,7 @@ type Bot = {
   goals: string;
   summarizedBio: string;
   ogBio: string;
+  
 };
 
 

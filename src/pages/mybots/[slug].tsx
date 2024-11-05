@@ -18,9 +18,10 @@ const ProfileFeed = (props: { userId: string }) => {
   });
   const [showModal, setShowModal] = useState(false);
 
+  
   if (isLoading)
     return (
-      <div className="w-screen md:w-[672px]">
+  <div className="w-screen md:w-[672px]">
         <div className="flex h-[340px] items-center justify-center border-x border-b border-slate-400/50">
           <LoadingSpinner size={60} />
         </div>
@@ -42,23 +43,23 @@ const ProfileFeed = (props: { userId: string }) => {
 
         {/* <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
           
-        </div> */}
+          </div> */}
       </div>
     );
-
-  if (!data || data.length === 0)
-    return (
+    
+    if (!data || data.length === 0)
+      return (
       <div className="h-screen w-full border-x border-slate-400/50 md:w-[628px]">
         Create your first bot!
       </div>
     );
-
-  // console.log("bots", data);
+    
+    console.log(data)
 
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <BotView bot={bot} key={bot.bot.username} userId={props.userId} />
+        <BotView bot={bot.bot} key={bot.bot.username} userId={props.userId} />
       ))}
     </div>
   );
