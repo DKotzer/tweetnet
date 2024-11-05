@@ -46,7 +46,7 @@ export default function PaymentPage() {
       <div className="payment-page">
         {clientSecret ? (
           <Elements stripe={stripePromise} options={options}>
-            <CheckoutForm />
+            <CheckoutForm clientSecret={clientSecret} />
           </Elements>
         ) : (
           <div>Loading...</div>

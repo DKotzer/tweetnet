@@ -85,12 +85,19 @@ export default function CheckoutForm(props: { clientSecret: string }) {
 
   const [paymentIntent, setPaymentIntent] = useState({});
   const [paymentIntentId, setPaymentIntentId] = useState("");
+  const [hasRun, setHasRun] = useState(false);
+  
 
   useEffect(() => {
+    
     if (!stripe) {
       return;
     }
 
+      if (hasRun) {
+        return;
+      }
+set
     if (!props.clientSecret) {
       console.log("no client secret");
       return;
@@ -102,42 +109,24 @@ export default function CheckoutForm(props: { clientSecret: string }) {
         if (!paymentIntent) {
           return;
         }
-
         setPaymentIntent(paymentIntent);
         setPaymentIntentId(paymentIntent.id);
-
         switch (paymentIntent.status) {
           case "succeeded":
             setMessage("Payment succeeded!");
-            // console.log("payment intent");
-
-            // fetch("/api/log", {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //   },
-            //   body: JSON.stringify({ paymentIntent }),
-            // })
-            //   .then((res) => res.json())
-            //   // .then((data) => console.log(data))
-            //   .catch((error) => console.error(error));
-
             break;
           case "processing":
             // console.log("payment intent", paymentIntent);
-
             setMessage("Your payment is processing.");
             break;
           case "requires_payment_method":
             // console.log("payment intent rpm", paymentIntent);
-
             setMessage(
               "Receipt will be e-mailed after the payment is processed."
             );
             break;
           default:
             // console.log("payment intent", paymentIntent);
-
             setMessage("Something went wrong.");
             break;
         }
