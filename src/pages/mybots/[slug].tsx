@@ -225,14 +225,6 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 value={name}
                 maxLength={15}
                 onChange={(e) => setName(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter") {
-                //     e.preventDefault();
-                //     if (name !== "" && input !== "") {
-                //       mutate({ content: name, name: name });
-                //     }
-                //   }
-                // }}
                 disabled={isPosting}
               />
             </div>
@@ -245,14 +237,6 @@ const CreateBotsWizard = (props: { userId: string; publicMetadata: any }) => {
                 value={input}
                 maxLength={1000}
                 onChange={(e) => setInput(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter") {
-                //     e.preventDefault();
-                //     if (input !== "" && name !== "") {
-                //       mutate({ content: input, name: name });
-                //     }
-                //   }
-                // }}
                 disabled={isPosting}
                 style={{ resize: "none" }} // Set resize to none to prevent horizontal resize
               />

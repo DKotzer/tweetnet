@@ -60,76 +60,69 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <div className="flex flex-col">
       {data.map((bot) => (
-        <BotView bot={bot} key={bot.bot.username} userId={props.userId} />
+        <BotView bot={bot.bot} key={bot.bot.username} userId={props.userId} />
       ))}
     </div>
   );
 };
 
-const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
+const AccountInfo = (props: { publicMetadata: any; userId: string }) => {
+  const { data, isLoading } = api.profile.getPaymentsByUserId.useQuery({
+    userId: props.userId,
+  });
 
-      const { data, isLoading } = api.profile.getPaymentsByUserId.useQuery(
-        {userId:props.userId} ,
-      );
+  if (!isLoading && data && data.length > 0) {
+    return (
+      <div className="border-x border-slate-400/50">
+        <div className="flex flex-col justify-center text-lg">
+          {data.map((item) => (
+            <div className="border-y border-slate-400/50 p-4" key={item.id}>
+              <p>
+                <strong>Payment ID:</strong> {item.id}
+              </p>
+              <p>
+                <strong>Created at:</strong>{" "}
+                {new Date(item.createdAt).toLocaleString()}
+              </p>
+              <p>
+                <strong>Receipt Email:</strong> {item.receiptEmail}
+              </p>
 
-
-        if (!isLoading && data && data.length > 0) {
-          return (
-            <div className="border-x border-slate-400/50">
-              <div className="flex flex-col justify-center text-lg">
-                {data.map((item) => (
-                  <div
-                    className="border-y border-slate-400/50 p-4"
-                    key={item.id}
-                  >
-                    <p>
-                      <strong>Payment ID:</strong> {item.id}
-                    </p>
-                    <p>
-                      <strong>Created at:</strong>{" "}
-                      {new Date(item.createdAt).toLocaleString()}
-                    </p>
-                    <p>
-                      <strong>Receipt Email:</strong> {item.receiptEmail}
-                    </p>
-
-                    {/* <p>
+              {/* <p>
                       <strong>Stripe ID:</strong> {item.stripeId}
                     </p> */}
-                    <p>
-                      <strong>Status:</strong> {item.status}
-                    </p>
-                    <p>
-                      <strong>Amount:</strong>{" "}
-                      {(item.amount / 100).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "CAD",
-                      })}
-                    </p>
-                    <p>
-                      <strong>Currency:</strong> {"CAD"}
-                    </p>
-                    <p>
-                      <strong>Tokens bought:</strong>{" "}
-                      {(
-                        <Image
-                          src="/token.ico"
-                          width={30}
-                          height={30}
-                          alt={"tokens"}
-                          className="mr-1 inline hover:scale-110"
-                        />
-                      ) || "🪙"}
-                      {item.tokensBought.toLocaleString("en", {
-                        useGrouping: true,
-                      })}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              <p>
+                <strong>Status:</strong> {item.status}
+              </p>
+              <p>
+                <strong>Amount:</strong>{" "}
+                {(item.amount / 100).toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "CAD",
+                })}
+              </p>
+              <p>
+                <strong>Currency:</strong> {"CAD"}
+              </p>
+              <p>
+                <strong>Tokens bought:</strong>{" "}
+                <Image
+                  src="/token.ico"
+                  width={30}
+                  height={30}
+                  alt={"tokens"}
+                  className="mr-1 inline hover:scale-110"
+                />
+                {item.tokensBought.toLocaleString("en", {
+                  useGrouping: true,
+                })}
+              </p>
             </div>
-          );
-        }
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className=" border-x border-slate-400/50  bg-slate-900/80">
@@ -137,15 +130,13 @@ const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
         <span className="whitespace-nowrap">
           {" "}
           Spent:{" "}
-          {(
-            <Image
-              src="/token.ico"
-              width={35}
-              height={35}
-              alt={"tokens"}
-              className="mr-1 inline hover:scale-110"
-            />
-          ) || "🪙"}{" "}
+          <Image
+            src="/token.ico"
+            width={35}
+            height={35}
+            alt={"tokens"}
+            className="mr-1 inline hover:scale-110"
+          />
           {props.publicMetadata.tokensUsed
             ? props.publicMetadata.tokensUsed.toLocaleString("en", {
                 useGrouping: true,
@@ -158,7 +149,8 @@ const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
           {props.publicMetadata.tokensUsed &&
             `$${(
               (Number(props.publicMetadata.tokensUsed) / 1000) *
-              0.002 * 2.5
+              0.002 *
+              2.5
             ).toFixed(2)}`}
         </span>
         {/* <span>
@@ -193,16 +185,13 @@ const AccountInfo = (props: { publicMetadata: any, userId: string }) => {
   );
 };
 
-
-
 const UserPage: NextPage = () => {
   const { user, isLoaded } = useUser();
 
-  if(!isLoaded) return <LoadingPage />
-
+  if (!isLoaded) return <LoadingPage />;
 
   const { data, isLoading } = api.profile.getUserById.useQuery({
-    id: user?.id ??  "",
+    id: user?.id ?? "",
   });
 
   const [publicMetadata, setPublicMetadata] = useState<any>(null);
@@ -254,15 +243,14 @@ const UserPage: NextPage = () => {
               }`}
             </div>
             <div className="pl-3 text-2xl">
-              {(
-                <Image
-                  src="/token.ico"
-                  width={35}
-                  height={35}
-                  alt={"tokens"}
-                  className="mr-1 inline hover:scale-110"
-                />
-              ) || "🪙"}{" "}
+              <Image
+                src="/token.ico"
+                width={35}
+                height={35}
+                alt={"tokens"}
+                className="mr-1 inline hover:scale-110"
+              />
+
               {publicMetadata.tokensUsed
                 ? (
                     publicMetadata.tokensLimit - publicMetadata.tokensUsed
@@ -271,19 +259,15 @@ const UserPage: NextPage = () => {
                   })
                 : "150,000"}
             </div>
-
             <div className="flex flex-row gap-5 pl-3  text-2xl">
               <span className="whitespace-nowrap text-red-600">
-                {" "}
-                {(
-                  <Image
-                    src="/token.ico"
-                    width={35}
-                    height={35}
-                    alt={"tokens"}
-                    className="mr-1 inline hover:scale-110"
-                  />
-                ) || "🪙"}{" "}
+                <Image
+                  src="/token.ico"
+                  width={35}
+                  height={35}
+                  alt={"tokens"}
+                  className="mr-1 inline hover:scale-110"
+                />
                 {publicMetadata.tokensUsed
                   ? publicMetadata.tokensUsed.toLocaleString("en", {
                       useGrouping: true,
@@ -294,15 +278,14 @@ const UserPage: NextPage = () => {
             <div className="flex flex-row gap-5 pl-3  text-2xl">
               {" "}
               <span className="whitespace-nowrap text-red-600">
-                {(
-                  <Image
-                    src="/loonie.png"
-                    width={35}
-                    height={35}
-                    alt={"tokens"}
-                    className="mr-1 inline hover:scale-110"
-                  />
-                ) || "🪙"}
+                <Image
+                  src="/loonie.png"
+                  width={35}
+                  height={35}
+                  alt={"tokens"}
+                  className="mr-1 inline hover:scale-110"
+                />
+
                 {publicMetadata.tokensUsed &&
                   `$${(
                     (Number(publicMetadata.tokensUsed) / 1000) *
@@ -352,6 +335,5 @@ const UserPage: NextPage = () => {
     </>
   );
 };
-
 
 export default UserPage;
