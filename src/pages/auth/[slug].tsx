@@ -14,6 +14,9 @@ const PaymentForm = (props: {
   clientSecret: string;
   paymentIntent: string;
 }) => {
+  // const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(
+  //   null
+  // );
   const { user, isSignedIn, isLoaded } = useUser();
 
   type PaymentObject = {
@@ -25,24 +28,20 @@ const PaymentForm = (props: {
       client_secret?: string;
     };
   };
-
-  const [paymentObj, setPaymentObj] = useState<PaymentObject>({});
+  let paymentObj: PaymentObject = {};
+  //  const [payment, setPayment] = useState({}) as any;
   const [paymentSaved, setPaymentSaved] = useState(false);
 
-  const { data: fetchedPaymentObj } = api.profile.getPaymentById.useQuery({
-    paymentIntentId: props.paymentIntent,
-  });
+  if (
+    Object.keys(paymentObj).length === 0 ||
+    paymentObj.status !== "succeeded"
+  ) {
+    paymentObj = api.profile.getPaymentById.useQuery({
+      paymentIntentId: props.paymentIntent,
+    });
 
-  useEffect(() => {
-    if (
-      fetchedPaymentObj &&
-      (Object.keys(paymentObj).length === 0 ||
-        paymentObj.status !== "succeeded")
-    ) {
-      setPaymentObj(fetchedPaymentObj);
-    }
-  }, [fetchedPaymentObj, paymentObj]);
-
+    // console.log(paymentObj, 'p2test')
+  }
   const { mutate, isLoading: isPosting } = api.profile.savePayment.useMutation({
     onSuccess: () => {
       console.log("payment successful");
@@ -57,19 +56,17 @@ const PaymentForm = (props: {
     },
   });
 
-  useEffect(() => {
-    if (
-      !isLoaded ||
-      Object.keys(paymentObj).length === 0 ||
-      paymentSaved ||
-      !paymentObj.status ||
-      !paymentObj.data ||
-      typeof paymentObj.data.client_secret !== "string" ||
-      typeof paymentObj.data.amount_received !== "number"
-    ) {
-      return;
-    }
+  if (!isLoaded || Object.keys(paymentObj).length === 0) {
+    return <div>Processing payment...</div>;
+  }
 
+  if (
+    !paymentSaved &&
+    paymentObj.status &&
+    paymentObj.data &&
+    typeof paymentObj.data.client_secret === "string" &&
+    typeof paymentObj.data.amount_received === "number"
+  ) {
     setPaymentSaved(true);
     const paymentData = {
       stripeId: paymentObj.data?.id || "",
@@ -82,12 +79,10 @@ const PaymentForm = (props: {
       currency: "cad",
     };
     toast.success(`1,000,000 Tokens added!.`);
+    //  console.log(paymentData, "paymentData test");
     mutate({ ...paymentData });
-  }, [isLoaded, paymentObj, paymentSaved, user?.id, mutate]);
-
-  if (!isLoaded || Object.keys(paymentObj).length === 0) {
-    return <div>Processing payment...</div>;
   }
+
   //  console.log('p3 test',paymentObj)
 
   return (
