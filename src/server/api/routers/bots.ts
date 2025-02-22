@@ -1676,7 +1676,7 @@ export const botsRouter = createTRPCRouter({
 
         //create 20 copies of basic Template and combine with templateStrings array
         let tweetTemplates = [
-          ...Array(20).fill(basicTemplate),
+          ...Array(1).fill(basicTemplate),
           ...tweetTemplateStrings,
         ];
 
@@ -1691,6 +1691,7 @@ export const botsRouter = createTRPCRouter({
           // console.log(twe
 
           tweetTemplates = [...tweetTemplates, ...holidayTemplates];
+          // tweetTemplates = [...tweetTemplates, ...holidayTemplates];
 
           // console.log(tweetTemplates);
         }
