@@ -1304,7 +1304,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours in milliseconds
+            lt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour in milliseconds
           },
         },
       });
@@ -1376,7 +1376,8 @@ export const botsRouter = createTRPCRouter({
         }
 
         //check if LastPost was in the last hour
-        if (lastPost && new Date(lastPost).getTime() > Date.now() - 3600000) {
+        if (lastPost && new Date(lastPost).getTime() > Date.now() - 600000) { //3600000
+          //3600000
           console.log(
             "already posted in last hour, skipping bot:",
             botname,
