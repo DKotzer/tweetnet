@@ -1304,7 +1304,7 @@ export const botsRouter = createTRPCRouter({
         orderBy: [{ createdAt: "desc" }],
         where: {
           lastPost: {
-            lt: new Date(Date.now() - (1 * 60 * 60 * 1000) / 10), // 1 hour in milliseconds / 10
+            lt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour in milliseconds
           },
         },
       });
@@ -1376,7 +1376,7 @@ export const botsRouter = createTRPCRouter({
         }
 
         //check if LastPost was in the last hour
-        if (lastPost && new Date(lastPost).getTime() > Date.now() - 6000) {
+        if (lastPost && new Date(lastPost).getTime() > Date.now() - 600000) {
           //3600000
           //3600000
           console.log(
@@ -1676,7 +1676,7 @@ export const botsRouter = createTRPCRouter({
 
         //create 20 copies of basic Template and combine with templateStrings array
         let tweetTemplates = [
-          ...Array(1).fill(basicTemplate),
+          ...Array(20).fill(basicTemplate),
           ...tweetTemplateStrings,
         ];
 
@@ -1691,7 +1691,6 @@ export const botsRouter = createTRPCRouter({
           // console.log(twe
 
           tweetTemplates = [...tweetTemplates, ...holidayTemplates];
-          // tweetTemplates = [...tweetTemplates, ...holidayTemplates];
 
           // console.log(tweetTemplates);
         }
