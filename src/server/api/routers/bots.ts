@@ -43,7 +43,7 @@ const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000/";
 
 const imageCost = 9000;
 
-//images cost 9k gpt-4o tokens
+//images cost 9k gpt-4o-mini tokens
 
 // const googleNewsKey = process.env.GOOGLE_NEWS_API_KEY;
 function bingWebSearch(query: string) {
@@ -438,7 +438,7 @@ export const botsRouter = createTRPCRouter({
       }
 
       const improvedBio = await openai.createChatCompletion({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.8,
         max_tokens: 150,
         messages: [
@@ -471,7 +471,7 @@ export const botsRouter = createTRPCRouter({
       // );
 
       const profileCreation = await openai.createChatCompletion({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.8,
         max_tokens: 250,
         messages: [
@@ -757,7 +757,7 @@ export const botsRouter = createTRPCRouter({
       const botImage = bot.image;
 
       const newPost = await openai.createChatCompletion({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.8,
         max_tokens: 200,
         messages: [
@@ -1085,7 +1085,7 @@ export const botsRouter = createTRPCRouter({
       const description = input.bot.description;
 
       const newPost = await openai.createChatCompletion({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.8,
         max_tokens: 200,
         messages: [
@@ -1376,7 +1376,8 @@ export const botsRouter = createTRPCRouter({
         }
 
         //check if LastPost was in the last hour
-        if (lastPost && new Date(lastPost).getTime() > Date.now() - 600000) { //3600000
+        if (lastPost && new Date(lastPost).getTime() > Date.now() - 600000) {
+          //3600000
           //3600000
           console.log(
             "already posted in last hour, skipping bot:",
@@ -1682,7 +1683,7 @@ export const botsRouter = createTRPCRouter({
         if (holidayAlert) {
           console.log("holiday alert is true");
 
-          let holidayTemplates = Array(450)
+          let holidayTemplates = Array(4500)
             .fill(undefined)
             .map(() => holidaysTemplates)
             .flat();
@@ -1720,7 +1721,7 @@ export const botsRouter = createTRPCRouter({
           console.log("news search results for", randomChoice, ":", articleObj);
 
           const newPost = await openai.createChatCompletion({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             temperature: 0.8,
             max_tokens: 200,
             messages: [
@@ -1908,7 +1909,7 @@ export const botsRouter = createTRPCRouter({
             console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
-              model: "gpt-4o",
+              model: "gpt-4o-mini",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
@@ -1939,7 +1940,7 @@ export const botsRouter = createTRPCRouter({
             console.log("inspiration", inspiration);
 
             const newPost = await openai.createChatCompletion({
-              model: "gpt-4o",
+              model: "gpt-4o-mini",
               temperature: 0.8,
               max_tokens: 200,
               messages: [
@@ -1969,7 +1970,7 @@ export const botsRouter = createTRPCRouter({
 
           console.log("Post Inspiration", inspiration);
           const newPost = await openai.createChatCompletion({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             temperature: 0.8,
             max_tokens: 200,
             messages: [

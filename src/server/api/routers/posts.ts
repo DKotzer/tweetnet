@@ -113,7 +113,7 @@ export const postsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const modifiedInput = await openai.createChatCompletion({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.8,
         messages: [
           {
@@ -139,8 +139,7 @@ export const postsRouter = createTRPCRouter({
       const post = await ctx.prisma.post.create({
         data: {
           authorId,
-          content:
-            modifiedInput?.data?.choices[0]?.message?.content || "bob",
+          content: modifiedInput?.data?.choices[0]?.message?.content || "bob",
         },
       });
 
