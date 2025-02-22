@@ -1681,7 +1681,7 @@ export const botsRouter = createTRPCRouter({
         if (holidayAlert) {
           console.log("holiday alert is true");
 
-          let holidayTemplates = Array(45)
+          let holidayTemplates = Array(450)
             .fill(undefined)
             .map(() => holidaysTemplates)
             .flat();
