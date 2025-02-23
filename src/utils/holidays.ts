@@ -42,7 +42,7 @@ function getRandomHolidayWithinRange() {
     { name: "Eid", date: "June 29" },
     { name: "Anne's Birthday", date: "December 3" },
     { name: "Dylan's Birthday", date: "December 2" },
-    { name: "Wendy Kotzer's (@Wendy) Birthday", date: "February 22" },
+    { name: "@Wendy Kotzer's Birthday", date: "February 22" },
     {
       name: "Period Literacy Handbook (by Dr. Anne Hussain) Launch Day",
       date: "May 8",
